@@ -195,11 +195,6 @@ export abstract class Agent<T extends IpcService> {
    */
   public removeAllListeners(): void;
   /**
-   * Unsubscribes all listeners from the given channel.
-   * @param channel The channel to unsubscribe from
-   */
-  public removeAllListeners(channel: string): void;
-  /**
    * Unsubscribes all listeners from the given channel. Omit the channel to unsubscribe from all channels.
    * @param channel The channel to unsubscribe from (or nothing)
    */
