@@ -1,4 +1,3 @@
-import { Observable, Subscriber } from 'rxjs';
 import { Channels, CommunicationChannels } from './channels';
 import { IpcEvent, IpcService } from './aliases';
 import Promise from 'any-promise';
@@ -59,7 +58,6 @@ export abstract class Agent<T extends IpcService> {
    */
   protected abstract respond(event: IpcEvent, responseChannel: string, ...data: any[]): void;
 
-  // TODO: Mention at post$() that the message will only be sent ONCE the Observable is subscribed.
   // TODO: The Promise should be rejected if an uncaught error occurred at the listening endpoint.
   /**
    * Posts a message to the given channel.
@@ -106,24 +104,6 @@ export abstract class Agent<T extends IpcService> {
     };
     this.ipcService.on(requestChannel, handler);
     return new Canceler(this.ipcService, requestChannel, handler);
-  }
-
-  /**
-   * Listens for messages on the given channel and emits them when received.
-   * Responses using Observables are currently not supported, use on() instead if you need to respond.
-   * @param channel The channel to listen to
-   */
-  public on$(channel: string): Observable<any> {
-    const { requestChannel, responseChannel } = Channels.getCommunicationChannels(channel);
-    return new Observable((subscriber: Subscriber<any>) => {
-      const listener = (event: IpcEvent, ...args: any[]) => {
-        subscriber.next(Agent.transformObservableArgs(args));
-        const response: any = undefined;
-        this.respond(event, responseChannel, response);
-      };
-      this.ipcService.on(requestChannel, listener);
-      return () => this.ipcService.removeListener(requestChannel, listener);
-    });
   }
 
   /**
@@ -205,38 +185,7 @@ export abstract class Agent<T extends IpcService> {
     return new Canceler(this.ipcService, requestChannel, handler);
   }
 
-  /**
-   * Transform data to fit into a single argument.
-   * Arrays with length 0 will yield undefined.
-   * Arrays with length 1 will yield the object at index 0.
-   * Arrays with length 2 or above will yield the input array.
-   * @param args The arguments to transform
-   */
-  protected static transformObservableArgs(args: any[]): any | any[] {
-    const type = Math.min(args.length, 2);
-    return type < 2 ? args[0] : args;
-  }
-
-  /**
-   * Listens for a message on the given channel, emits it when received and completes afterwards.
-   * Responses using Observables are currently not supported, use once() instead if you need to respond.
-   * @param channel The channel to listen to
-   */
-  public once$(channel: string): Observable<any> {
-    const { requestChannel, responseChannel } = Channels.getCommunicationChannels(channel);
-    return new Observable(subscriber => {
-      const listener = (event: IpcEvent, ...args: any[]) => {
-        subscriber.next(Agent.transformObservableArgs(args));
-        subscriber.complete();
-        const response: any = undefined;
-        this.respond(event, responseChannel, response);
-      };
-      this.ipcService.once(requestChannel, listener);
-      return () => this.ipcService.removeListener(requestChannel, listener);
-    });
-  }
-
-  // TODO: Request Promises and Observables should be rejected when removeAllListeners() is called.
+  // TODO: Request Promises should be canceled/rejected when removeAllListeners() is called.
   /**
    * Unsubscribes all listeners from all channels.
    */
