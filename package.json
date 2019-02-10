@@ -9,9 +9,9 @@
     "build": "tsc",
     "format": "prettier --write src/**/*.ts src/**/*.js",
     "lint": "tslint -p tsconfig.json",
-    "doc:build": "compodoc -d docs -p tsconfig.json --theme readthedocs",
-    "doc:serve": "compodoc -d docs -r 4201 -s",
-    "doc:review": "npm run doc:build && npm run doc:serve",
+    "docs:build": "compodoc -d docs -p tsconfig.json --theme readthedocs",
+    "docs:serve": "compodoc -d docs -r 4201 -s -o",
+    "docs:review": "npm run doc:build && npm run doc:serve",
     "prepare": "npm run build",
     "prepublishOnly": "npm run lint",
     "preversion": "npm run lint",
@@ -38,7 +38,7 @@
     "tslint": "^5.12.1",
     "tslint-config-prettier": "^1.18.0",
     "tslint-config-standard": "^8.0.1",
-    "typescript": "^3.3.3",
+    "typescript": "^3.3.3"
   },
   "dependencies": {
     "@types/electron": "^1.6.10",
