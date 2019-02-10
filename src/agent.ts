@@ -2,10 +2,14 @@ import { Channels, CommunicationChannels } from './channels';
 import { IpcEvent, IpcService } from './aliases';
 import Promise from 'any-promise';
 
+export interface Cancelable {
+  cancel(): void;
+}
+
 /**
  * Represents a helper to unsubscribe a listener function from a channel.
  */
-export class Canceler {
+export class Canceler implements Cancelable {
   /**
    * Initializes a new Canceler.
    * @param ipcService The IPC service to use for unsubscribing
