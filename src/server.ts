@@ -1,5 +1,4 @@
 import { Agent } from './agent';
-import { ipcMain } from 'electron';
 import { IpcMain, IpcMainEvent, WebContents } from './aliases';
 
 /**
@@ -11,7 +10,7 @@ export class Server extends Agent<IpcMain> {
    * @param webContents The Electron WebContents of the renderer view to post messages to and receive messages from
    */
   constructor(private webContents: WebContents) {
-    super(ipcMain);
+    super(require('electron').ipcMain);
   }
 
   /**

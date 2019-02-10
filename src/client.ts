@@ -1,5 +1,4 @@
 import { Agent } from './agent';
-import { ipcRenderer } from 'electron';
 import { IpcRenderer, IpcRendererEvent } from './aliases';
 
 /**
@@ -10,7 +9,7 @@ export class Client extends Agent<IpcRenderer> {
    * Initializes a new IPC Client.
    */
   constructor() {
-    super(ipcRenderer);
+    super(require('electron').ipcRenderer);
   }
 
   /**
