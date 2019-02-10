@@ -42,6 +42,7 @@
   },
   "dependencies": {
     "@types/electron": "^1.6.10",
+    "any-promise": "^1.3.0",
     "electron": "^4.0.4"
   }
 }
