@@ -1,8 +1,6 @@
 import { Agent } from './agent';
 import { ipcMain } from 'electron';
-import WebContents = Electron.WebContents;
-import { IpcMainEvent } from './aliases';
-import IpcMain = Electron.IpcMain;
+import { IpcMain, IpcMainEvent, WebContents } from './aliases';
 
 /**
  * Represents an API wrapper around Electron's ipcMain.

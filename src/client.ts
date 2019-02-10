@@ -1,7 +1,6 @@
 import { Agent } from './agent';
 import { ipcRenderer } from 'electron';
-import { IpcRendererEvent } from './aliases';
-import IpcRenderer = Electron.IpcRenderer;
+import { IpcRenderer, IpcRendererEvent } from './aliases';
 
 /**
  * Represents an API wrapper around Electron's ipcRenderer.

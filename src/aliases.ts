@@ -1,5 +1,7 @@
-import IpcMain = Electron.IpcMain;
-import IpcRenderer = Electron.IpcRenderer;
+/// <reference types="electron" />
+export type IpcMain = Electron.IpcMain;
+export type IpcRenderer = Electron.IpcRenderer;
+export type WebContents = Electron.WebContents;
 
 export type IpcMainEvent = Electron.Event;
 
