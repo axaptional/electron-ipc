@@ -1,0 +1,47 @@
+{
+  "name": "@axaptional/electron-ipc",
+  "version": "0.1.0",
+  "description": "An easy-to-use wrapper around Electron's inter-process communication API",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc",
+    "format": "prettier --write src/**/*.ts src/**/*.js",
+    "lint": "tslint -p tsconfig.json",
+    "doc:build": "compodoc -d docs -p tsconfig.json --theme readthedocs",
+    "doc:serve": "compodoc -d docs -r 4201 -s",
+    "doc:review": "npm run doc:build && npm run doc:serve",
+    "prepare": "npm run build",
+    "prepublishOnly": "npm run lint",
+    "preversion": "npm run lint",
+    "version": "npm run format && git add -A src && npm run doc:build",
+    "postversion": "git push && git push --tags"
+  },
+  "keywords": [
+    "electron",
+    "ipc",
+    "process",
+    "communication"
+  ],
+  "author": "André Mategka <12amdeveloper@gmail.com>",
+  "license": "MIT",
+  "files": [
+    "dist/**/*",
+    "LICENSE",
+    "README.md",
+    "package.json"
+  ],
+  "devDependencies": {
+    "@compodoc/compodoc": "^1.1.8",
+    "prettier": "^1.16.4",
+    "tslint": "^5.12.1",
+    "tslint-config-prettier": "^1.18.0",
+    "tslint-config-standard": "^8.0.1",
+    "typescript": "^3.3.3",
+  },
+  "dependencies": {
+    "@types/electron": "^1.6.10",
+    "electron": "^4.0.4"
+  }
+}

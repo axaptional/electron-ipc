@@ -1,3 +1,9 @@
+# JetBrains
+.idea/
+
+# Compilation + Distribution
+dist/
+
 # Logs
 logs
 *.log

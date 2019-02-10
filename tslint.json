@@ -1,0 +1,9 @@
+{
+  "rules": {
+    "no-floating-promises": false // Floating promises are necessary for Promise responses
+  },
+  "extends": [
+    "tslint-config-standard",
+    "tslint-config-prettier"
+  ]
+}
