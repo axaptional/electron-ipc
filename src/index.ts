@@ -1,7 +1,2 @@
-import { Client } from "./client";
-import { Server } from "./server";
-
-module.exports = {
-  Client: Client,
-  Server: Server
-};
+export { Client } from "./client";
+export { Server } from "./server";
