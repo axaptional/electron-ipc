@@ -1,0 +1,142 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>@axaptional/electron-ipc documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="./images/favicon.ico">
+	      <link rel="stylesheet" href="./styles/style.css">
+        <link rel="stylesheet" href="./styles/readthedocs.css">
+    </head>
+    <body>
+
+        <div class="navbar navbar-default navbar-fixed-top visible-xs">
+            <a href="./" class="navbar-brand">@axaptional/electron-ipc documentation</a>
+            <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="hidden-xs menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content getting-started">
+                   <div class="content-data">
+
+<h1 id="electron-ipc">electron-ipc</h1>
+<p><img src="https://img.shields.io/badge/license-MIT-green.svg" alt="MIT license" class="img-responsive"></p>
+<p>An easy-to-use wrapper around Electron&#39;s inter-process communication API</p>
+<p>This package is still a <strong>work in progress</strong>. As always, constructive feedback
+and issue reports are appreciated. However, please refrain from reporting
+missing features (including missing method overloads) if they are already on
+the features list!</p>
+<h2 id="features">Features</h2>
+<p>This package supports the following means of asynchronous communication:</p>
+<ul>
+<li>Listeners</li>
+<li>Native Promises</li>
+<li>Custom Promises (like <code>bluebird</code>)</li>
+</ul>
+<h3 id="extensions">Extensions</h3>
+<p><strong>Cancelable Promises</strong></p>
+<p>If you want to use cancelable Promises, just install a Promise library like
+<a href="https://github.com/petkaantonov/bluebird">bluebird</a> supporting this feature,
+then register your Promise constructor with <code>any-promise</code> like this:</p>
+<div><pre class="line-numbers"><code class="language-js">require(&#39;any-promise/register/bluebird&#39;)</code></pre></div><p><code>any-promise</code> is automatically installed through a dependency of this package.
+For more information, see
+<a href="https://github.com/kevinbeaty/any-promise">any-promise</a>.</p>
+<p><strong>Observables</strong></p>
+<p>If you want to use Observables, just install <code>@axaptional/electron-ipc-rx</code>,
+which will add <code>$</code>-postfix counterparts to most methods, e.g. <code>post$(...)</code>.
+For more information, see
+<a href="https://github.com/axaptional/electron-ipc-rx">electron-ipc-rx</a>.</p>
+<h2 id="installation">Installation</h2>
+<h2 id="usage">Usage</h2>
+<h3 id="post-messages-and-receive-data">Post messages and receive data</h3>
+<div><pre class="line-numbers"><code class="language-js">// Renderer Process
+import { Client } from &#39;&#64;axaptional/electron-ipc&#39;
+
+const client = new Client()
+client.post(&#39;message&#39;, &quot;This is my message&quot;).then(response =&gt; {
+  console.log(response) // Prints &quot;And here&#39;s the reply&quot;
+})</code></pre></div><div><pre class="line-numbers"><code class="language-js">// Main Process
+import { Server } from &#39;&#64;axaptional/electron-ipc&#39;
+
+const server = new Server(window.webContents)
+server.once(&#39;message&#39;, message =&gt; {
+  return &quot;And here&#39;s the reply&quot;
+})</code></pre></div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> result-matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 0;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'getting-started';
+            var COMPODOC_CURRENT_PAGE_URL = 'index.html';
+       </script>
+
+       <script src="./js/libs/custom-elements.min.js"></script>
+       <script src="./js/libs/lit-html.js"></script>
+       <!-- Required to polyfill modern browsers as code is ES5 for IE... -->
+       <script src="./js/libs/custom-elements-es5-adapter.js" charset="utf-8" defer></script>
+       <script src="./js/menu-wc.js" defer></script>
+
+       <script src="./js/libs/bootstrap-native.js"></script>
+
+       <script src="./js/libs/es6-shim.min.js"></script>
+       <script src="./js/libs/EventDispatcher.js"></script>
+       <script src="./js/libs/promise.min.js"></script>
+       <script src="./js/libs/zepto.min.js"></script>
+
+       <script src="./js/compodoc.js"></script>
+
+       <script src="./js/tabs.js"></script>
+       <script src="./js/menu.js"></script>
+       <script src="./js/libs/clipboard.min.js"></script>
+       <script src="./js/libs/prism.js"></script>
+       <script src="./js/sourceCode.js"></script>
+          <script src="./js/search/search.js"></script>
+          <script src="./js/search/lunr.min.js"></script>
+          <script src="./js/search/search-lunr.js"></script>
+          <script src="./js/search/search_index.js"></script>
+       <script src="./js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>
