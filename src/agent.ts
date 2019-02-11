@@ -81,8 +81,8 @@ export abstract class Agent<T extends IpcService> {
   public post(channel: string, ...data: any[]): Promise<any> {
     const { requestChannel, responseChannel } = Channels.getCommunicationChannels(channel);
     const response = new Promise((resolve, reject) => {
-      const handler = (event: IpcEvent, ...args: any[]) => {
-        resolve(args);
+      const handler = (event: IpcEvent, response: any) => {
+        resolve(response);
       };
       this.ipcService.once(responseChannel, handler);
     });
@@ -107,8 +107,8 @@ export abstract class Agent<T extends IpcService> {
       options,
     );
     const handler = (event: IpcEvent, ...args: any[]) => {
-      const respond = (...data: any[]) => this.respond(event, responseChannel, ...data);
       const response: any = params.spread ? listener(...args) : listener(args);
+      const respond = (response: any) => this.respond(event, responseChannel, response);
       if (response instanceof Promise) {
         response.then(respond);
       } else {
@@ -186,8 +186,8 @@ export abstract class Agent<T extends IpcService> {
       options,
     );
     const handler = (event: IpcEvent, ...args: any[]) => {
-      const respond = (...data: any[]) => this.respond(event, responseChannel, ...data);
       const response: any = params.spread ? listener(...args) : listener(args);
+      const respond = (response: any) => this.respond(event, responseChannel, response);
       if (response instanceof Promise) {
         response.then(respond);
       } else {
