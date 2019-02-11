@@ -2,7 +2,13 @@ import { Channels, CommunicationChannels } from './channels';
 import { IpcEvent, IpcService } from './aliases';
 import Promise from 'any-promise';
 
+/**
+ * Represents a process that can be aborted.
+ */
 export interface Cancelable {
+  /**
+   * Cancels the process.
+   */
   cancel(): void;
 }
 
@@ -37,6 +43,7 @@ export interface ListenerOptions {
 }
 
 // TODO: Replies
+// TODO: De/serialize values separately (with Date support)
 /**
  * Represents an IPC communicator through which messages can be posted and received.
  */
@@ -63,6 +70,8 @@ export abstract class Agent<T extends IpcService> {
   protected abstract respond(event: IpcEvent, responseChannel: string, ...data: any[]): void;
 
   // TODO: The Promise should be rejected if an uncaught error occurred at the listening endpoint.
+  // TODO: post with listener
+  // TODO: Change ListenerOptions to Request/ResponseOptions and let it turn off atomize for listeners AND Promises
   /**
    * Posts a message to the given channel.
    * The Promise resolves either when a response is received or when the listening endpoint terminates.
