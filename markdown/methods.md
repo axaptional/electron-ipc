@@ -29,7 +29,7 @@ even if no response is returned (the response will simply be `undefined`).
 
 To settle the promise and not wait for a response, cancel it.
 For more information on Promise canceling,
-see [Cancelable Promises](README.md#cancelable-promises).
+see [Cancelable Promises](../README.md#cancelable-promises).
 
 ### post(channel, listener, options?, ...data): Canceler
 
@@ -109,4 +109,4 @@ Otherwise, this method acts just like the one above.
 
 ## Links
 
-[Back to README.md](README.md)
+[Back to README.md](../README.md)

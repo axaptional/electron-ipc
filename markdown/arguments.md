@@ -2,6 +2,7 @@
 
 Refer to the following table to see which input arguments are transformed to
 which output arguments.
+
 Keep in mind that `{ args: 'as-is' }` is only available for listeners.
 
 | Options             | `()`   | `(1)`   | `(1, 2)`   | `([1])`   | `([1, 2])`   | `([1], 2)`   |
@@ -68,4 +69,4 @@ you can pass `{ args: 'as-is' }` as options to receive arguments as-is.
 
 ## Links
 
-[Back to README.md](README.md)
+[Back to README.md](../README.md)

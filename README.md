@@ -114,11 +114,13 @@ Keep in mind that `{ args: 'as-is' }` is only available for listeners.
 | `{ args: 'array' }` | `([])` | `([1])` | `([1, 2])` | `([[1]])` | `([[1, 2]])` |
 | `{ args: 'as-is' }` | `()`   | `(1)`   | `(1, 2)`   | `([1])`   | `([1, 2])`   |
 
-For more detailed information, see [Argument behavior in detail](arguments.md).
+For more detailed information,
+see [Argument behavior in detail](markdown/arguments.md).
 
 ### Methods
 
-For short explanations on available methods, see [Methods](methods.md).
+For short explanations on available methods,
+see [Methods](markdown/methods.md).
 
 For the code documentation,
 see [Documentation](https://axaptional.github.io/electron-ipc/).
