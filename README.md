@@ -22,6 +22,14 @@ The following means of asynchronous communication are currently supported:
 - native Promises (ES2015+)
 - custom Promises (like `bluebird`)
 
+## Installation
+
+_This package is not available on npm yet._
+
+```bash
+$ npm install @axaptional/electron-ipc
+```
+
 ### Extensions
 
 #### Cancelable Promises
@@ -52,14 +60,6 @@ This package will add `$`-postfix counterparts to most methods,
 e.g. `post$(...)`.
 Keep in mind that you will need to adjust your imports when switching from
 electron-ipc.
-
-## Installation
-
-_This package is not available on npm yet._
-
-```bash
-$ npm install @axaptional/electron-ipc
-```
 
 ## Usage
 
@@ -105,14 +105,14 @@ This transformation is made because Promises can only resolve to _one_ value.
 _Argument behavior customization has not been fully implemented yet._
 
 Refer to the following table to see which input arguments are transformed to
-which output arguments.
+which output arguments with the respective `args` option.
 Keep in mind that `{ args: 'as-is' }` is only available for listeners.
 
-| Options             | `()`   | `(1)`   | `(1, 2)`   | `([1])`   | `([1, 2])`   |
-|---------------------|--------|---------|------------|-----------|--------------|
-| `{}`                | `()`   | `(1)`   | `([1, 2])` | `([1])`   | `([1, 2])`   |
-| `{ args: 'array' }` | `([])` | `([1])` | `([1, 2])` | `([[1]])` | `([[1, 2]])` |
-| `{ args: 'as-is' }` | `()`   | `(1)`   | `(1, 2)`   | `([1])`   | `([1, 2])`   |
+| Options             | `()`   | `(1)`   | `(1, 2)`   | `([1])`   | `([1, 2])`   | `([1], 2)`   |
+|---------------------|--------|---------|------------|-----------|--------------|--------------|
+| `{}`                | `()`   | `(1)`   | `([1, 2])` | `([1])`   | `([1, 2])`   | `([[1], 2])` |
+| `{ args: 'array' }` | `([])` | `([1])` | `([1, 2])` | `([[1]])` | `([[1, 2]])` | `([[1], 2])` |
+| `{ args: 'as-is' }` | `()`   | `(1)`   | `(1, 2)`   | `([1])`   | `([1, 2])`   | `([1], 2)`   |
 
 For more detailed information,
 see [Argument behavior in detail](markdown/arguments.md).
