@@ -2,6 +2,7 @@
 
 [![MIT license](https://img.shields.io/github/license/axaptional/electron-ipc.svg)](LICENSE)
 [![Issues](https://img.shields.io/github/issues/axaptional/electron-ipc.svg)](https://github.com/axaptional/electron-ipc/issues)
+[![NPM Version](https://img.shields.io/npm/v/axaptional/electron-ipc.svg)]()
 [![Documentation Coverage](docs/images/coverage-badge-documentation.svg)](https://axaptional.github.io/electron-ipc/)
 
 An easy-to-use symmetric wrapper around Electron's IPC API
@@ -23,8 +24,6 @@ The following means of asynchronous communication are currently supported:
 - custom Promises (like `bluebird`)
 
 ## Installation
-
-_This package is not available on npm yet._
 
 ```bash
 $ npm install @axaptional/electron-ipc
@@ -102,7 +101,6 @@ server.on('message', message => {
 By default, arguments will be atomized, making them fit into a single object.
 This transformation is made because Promises can only resolve to _one_ value.
 
-_Argument behavior customization has not been fully implemented yet._
 
 Refer to the following table to see which input arguments are transformed to
 which output arguments with the respective `args` option.
