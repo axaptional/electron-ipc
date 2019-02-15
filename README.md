@@ -101,6 +101,7 @@ server.on('message', message => {
 By default, arguments will be atomized, making them fit into a single object.
 This transformation is made because Promises can only resolve to _one_ value.
 
+This behavior applies to messages sent with `post` and received by `on`/`once`.
 
 Refer to the following table to see which input arguments are transformed to
 which output arguments with the respective `args` option.

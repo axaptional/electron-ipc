@@ -31,6 +31,8 @@ Due to this behavior, calling `post` with `post(1, 2)` actually yields the same
 result as calling `post` with `post([1, 2])`, since the array is treated as a
 single value that does not need to be encapsulated.
 
+This behavior applies to messages sent with `post` and received by `on`/`once`.
+
 ## Objects
 
 Since objects are treated as single values,
