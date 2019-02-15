@@ -1,6 +1,6 @@
 {
   "name": "@axaptional/electron-ipc",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "An easy-to-use wrapper around Electron's inter-process communication API",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

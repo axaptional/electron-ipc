@@ -40,13 +40,6 @@
 <p><strong>Note:</strong>
 This package is still a <strong>work in progress</strong> and should not be used in any
 projects yet, let alone any applications in production.</p>
-<h2 id="todo">TODO</h2>
-<ul>
-<li><input disabled="" type="checkbox"> Implement main functionality</li>
-<li><input disabled="" type="checkbox"> Implement responses for Promises</li>
-<li><input disabled="" type="checkbox"> Implement cancellation</li>
-<li><input disabled="" type="checkbox"> Add tests</li>
-</ul>
 <h2 id="features">Features</h2>
 <p>This package allows you to use a normalized, symmetric API for IPC.
 This means that both the client and server APIs can be used as if they were
@@ -58,7 +51,6 @@ exactly the same.</p>
 <li>custom Promises (like <code>bluebird</code>)</li>
 </ul>
 <h2 id="installation">Installation</h2>
-<p><em>This package is not available on npm yet.</em></p>
 <div><pre class="line-numbers"><code class="language-bash">$ npm install &#64;axaptional/electron-ipc</code></pre></div><h3 id="extensions">Extensions</h3>
 <h4 id="cancelable-promises">Cancelable Promises</h4>
 <p>If you want to use cancelable Promises, install a Promise library like
@@ -105,16 +97,7 @@ server.on(&#39;message&#39;, message =&gt; {
 });</code></pre></div><h3 id="argument-behavior">Argument behavior</h3>
 <p>By default, arguments will be atomized, making them fit into a single object.
 This transformation is made because Promises can only resolve to <em>one</em> value.</p>
-<p>This behavior applies to both</p>
-<ul>
-<li><p>messages sent with <code>post</code> received by <code>on</code>/<code>once</code>
-(set options in <code>on</code>/<code>once</code>)</p>
-</li>
-<li><p>responses sent with <code>on</code>/<code>once</code> received by <code>post</code>
-(set options in <code>post</code>)</p>
-</li>
-</ul>
-<p><em>Argument behavior customization has not been fully implemented yet.</em></p>
+<p>This behavior applies to messages sent with <code>post</code> and received by <code>on</code>/<code>once</code>.</p>
 <p>Refer to the following table to see which input arguments are transformed to
 which output arguments with the respective <code>args</code> option.
 Keep in mind that <code>{ args: &#39;as-is&#39; }</code> is only available for listeners.</p>
