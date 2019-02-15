@@ -5,11 +5,11 @@ export interface CommunicationChannels {
   /**
    * The channel to send requests to.
    */
-  requestChannel: string;
+  requestChannel: string
   /**
    * The channel to receive responses from.
    */
-  responseChannel: string;
+  responseChannel: string
 }
 
 /**
@@ -20,34 +20,34 @@ export class Channels {
    * Returns the channel to send requests to for the given origin.
    * @param origin The origin/Electron channel name
    */
-  public static getRequestChannel(origin: string): string {
-    return `${origin}-request`;
+  public static getRequestChannel (origin: string): string {
+    return `${origin}-request`
   }
 
   /**
    * Returns whether the given channel name belongs to a request channel.
    * @param channel
    */
-  public static isRequestChannel(channel: string): boolean {
-    return channel.endsWith('-request');
+  public static isRequestChannel (channel: string): boolean {
+    return channel.endsWith('-request')
   }
 
   /**
    * Returns the channel to receive responses from for the given origin.
    * @param origin The origin/Electron channel name
    */
-  public static getResponseChannel(origin: string): string {
-    return `${origin}-response`;
+  public static getResponseChannel (origin: string): string {
+    return `${origin}-response`
   }
 
   /**
    * Returns a pair of communication channels for the given origin.
    * @param origin The origin/Electron channel name
    */
-  public static getCommunicationChannels(origin: string): CommunicationChannels {
+  public static getCommunicationChannels (origin: string): CommunicationChannels {
     return {
       requestChannel: this.getRequestChannel(origin),
-      responseChannel: this.getResponseChannel(origin),
-    };
+      responseChannel: this.getResponseChannel(origin)
+    }
   }
 }

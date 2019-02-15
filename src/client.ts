@@ -1,5 +1,5 @@
-import { Agent } from './agent';
-import { IpcRenderer, IpcRendererEvent } from './aliases';
+import { Agent } from './agent'
+import { IpcRenderer, IpcRendererEvent } from './aliases'
 
 /**
  * Represents an API wrapper around Electron's ipcRenderer.
@@ -8,8 +8,8 @@ export class Client extends Agent<IpcRenderer> {
   /**
    * Initializes a new IPC Client.
    */
-  constructor() {
-    super(require('electron').ipcRenderer);
+  constructor () {
+    super(require('electron').ipcRenderer)
   }
 
   /**
@@ -17,8 +17,8 @@ export class Client extends Agent<IpcRenderer> {
    * @param requestChannel The channel to use for sending the request
    * @param data The request data
    */
-  protected send(requestChannel: string, ...data: any[]): void {
-    this.ipcService.send(requestChannel, ...data);
+  protected send (requestChannel: string, ...data: any[]): void {
+    this.ipcService.send(requestChannel, ...data)
   }
 
   /**
@@ -27,7 +27,7 @@ export class Client extends Agent<IpcRenderer> {
    * @param responseChannel The channel to use for sending the response
    * @param data The response data
    */
-  protected respond(event: IpcRendererEvent, responseChannel: string, ...data: any[]): void {
-    this.ipcService.sendTo(event.senderId, responseChannel, ...data);
+  protected respond (event: IpcRendererEvent, responseChannel: string, ...data: any[]): void {
+    this.ipcService.sendTo(event.senderId, responseChannel, ...data)
   }
 }

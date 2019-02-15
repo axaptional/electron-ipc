@@ -1,4 +1,4 @@
-import { IpcService } from "./aliases";
+import { IpcService } from './aliases'
 
 /**
  * Represents a process that can be aborted.
@@ -7,7 +7,7 @@ export interface Cancelable {
   /**
    * Cancels the process.
    */
-  cancel(): void;
+  cancel (): void
 }
 
 /**
@@ -20,12 +20,12 @@ export class Canceler implements Cancelable {
    * @param channel The channel to unsubscribe from
    * @param handler The listener to unsubscribe
    */
-  constructor(private ipcService: IpcService, public channel: string, private handler: Function) {}
+  constructor (private ipcService: IpcService, public channel: string, private handler: Function) {}
 
   /**
    * Unsubscribes the listener, meaning it will no longer be called when a message is received.
    */
-  public cancel(): void {
-    this.ipcService.removeListener(this.channel, this.handler);
+  public cancel (): void {
+    this.ipcService.removeListener(this.channel, this.handler)
   }
 }
