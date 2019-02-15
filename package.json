@@ -7,7 +7,6 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc",
-    "format": "prettier --write src/**/*.ts src/**/*.js",
     "lint": "tslint -p tsconfig.json",
     "docs:build": "compodoc -d docs -p tsconfig.json --theme readthedocs",
     "docs:serve": "compodoc -d docs -r 4201 -s -o",
@@ -15,7 +14,7 @@
     "prepare": "npm run build",
     "prepublishOnly": "npm run lint",
     "preversion": "npm run lint",
-    "version": "npm run format && npm run docs:build && git add -A src docs",
+    "version": "npm run docs:build && git add -A src docs",
     "postversion": "git push && git push --tags"
   },
   "keywords": [
@@ -34,9 +33,7 @@
   ],
   "devDependencies": {
     "@compodoc/compodoc": "^1.1.8",
-    "prettier": "^1.16.4",
     "tslint": "^5.12.1",
-    "tslint-config-prettier": "^1.18.0",
     "tslint-config-standard": "^8.0.1",
     "typescript": "^3.3.3"
   },
