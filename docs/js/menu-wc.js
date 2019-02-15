@@ -35,6 +35,11 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                             </a>
                         </li>
                         <li class="link">
+                            <a href="changelog.html"  data-type="chapter-link">
+                                <span class="icon ion-ios-paper"></span>CHANGELOG
+                            </a>
+                        </li>
+                        <li class="link">
                             <a href="license.html"  data-type="chapter-link">
                                 <span class="icon ion-ios-paper"></span>LICENSE
                             </a>
@@ -80,13 +85,16 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                         </div>
                         <ul class="links collapse" ${ isNormalMode ? ' id="interfaces-links"' : 'id="xs-interfaces-links"' }>
                             <li class="link">
+                                <a href="interfaces/Cancelable.html" data-type="entity-link">Cancelable</a>
+                            </li>
+                            <li class="link">
                                 <a href="interfaces/CommunicationChannels.html" data-type="entity-link">CommunicationChannels</a>
                             </li>
                             <li class="link">
                                 <a href="interfaces/IpcRendererEvent.html" data-type="entity-link">IpcRendererEvent</a>
                             </li>
                             <li class="link">
-                                <a href="interfaces/ListenerOptions.html" data-type="entity-link">ListenerOptions</a>
+                                <a href="interfaces/Options.html" data-type="entity-link">Options</a>
                             </li>
                         </ul>
                     </li>

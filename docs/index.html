@@ -32,48 +32,144 @@
                    <div class="content-data">
 
 <h1 id="electron-ipc">electron-ipc</h1>
-<p><img src="https://img.shields.io/badge/license-MIT-green.svg" alt="MIT license" class="img-responsive"></p>
-<p>An easy-to-use wrapper around Electron&#39;s inter-process communication API</p>
-<p>This package is still a <strong>work in progress</strong>. As always, constructive feedback
-and issue reports are appreciated. However, please refrain from reporting
-missing features (including missing method overloads) if they are already on
-the features list!</p>
-<h2 id="features">Features</h2>
-<p>This package supports the following means of asynchronous communication:</p>
+<p><a href="LICENSE"><img src="https://img.shields.io/github/license/axaptional/electron-ipc.svg" alt="MIT license" class="img-responsive"></a>
+<a href="https://github.com/axaptional/electron-ipc/issues"><img src="https://img.shields.io/github/issues/axaptional/electron-ipc.svg" alt="Issues" class="img-responsive"></a>
+<a href=""><img src="https://img.shields.io/npm/v/axaptional/electron-ipc.svg" alt="NPM Version" class="img-responsive"></a>
+<a href="https://axaptional.github.io/electron-ipc/"><img src="docs/images/coverage-badge-documentation.svg" alt="Documentation Coverage" class="img-responsive"></a></p>
+<p>An easy-to-use symmetric wrapper around Electron&#39;s IPC API</p>
+<p><strong>Note:</strong>
+This package is still a <strong>work in progress</strong> and should not be used in any
+projects yet, let alone any applications in production.</p>
+<h2 id="todo">TODO</h2>
 <ul>
-<li>Listeners</li>
-<li>Native Promises</li>
-<li>Custom Promises (like <code>bluebird</code>)</li>
+<li><input disabled="" type="checkbox"> Implement main functionality</li>
+<li><input disabled="" type="checkbox"> Implement responses for Promises</li>
+<li><input disabled="" type="checkbox"> Implement cancellation</li>
+<li><input disabled="" type="checkbox"> Add tests</li>
 </ul>
-<h3 id="extensions">Extensions</h3>
-<p><strong>Cancelable Promises</strong></p>
-<p>If you want to use cancelable Promises, just install a Promise library like
-<a href="https://github.com/petkaantonov/bluebird">bluebird</a> supporting this feature,
-then register your Promise constructor with <code>any-promise</code> like this:</p>
-<div><pre class="line-numbers"><code class="language-js">require(&#39;any-promise/register/bluebird&#39;)</code></pre></div><p><code>any-promise</code> is automatically installed through a dependency of this package.
-For more information, see
-<a href="https://github.com/kevinbeaty/any-promise">any-promise</a>.</p>
-<p><strong>Observables</strong></p>
-<p>If you want to use Observables, just install <code>@axaptional/electron-ipc-rx</code>,
-which will add <code>$</code>-postfix counterparts to most methods, e.g. <code>post$(...)</code>.
-For more information, see
-<a href="https://github.com/axaptional/electron-ipc-rx">electron-ipc-rx</a>.</p>
+<h2 id="features">Features</h2>
+<p>This package allows you to use a normalized, symmetric API for IPC.
+This means that both the client and server APIs can be used as if they were
+exactly the same.</p>
+<p>The following means of asynchronous communication are currently supported:</p>
+<ul>
+<li>listeners / callbacks</li>
+<li>native Promises (ES2015+)</li>
+<li>custom Promises (like <code>bluebird</code>)</li>
+</ul>
 <h2 id="installation">Installation</h2>
+<p><em>This package is not available on npm yet.</em></p>
+<div><pre class="line-numbers"><code class="language-bash">$ npm install &#64;axaptional/electron-ipc</code></pre></div><h3 id="extensions">Extensions</h3>
+<h4 id="cancelable-promises">Cancelable Promises</h4>
+<p>If you want to use cancelable Promises, install a Promise library like
+<a href="https://github.com/petkaantonov/bluebird"><code>bluebird</code></a> supporting this feature,
+then register your Promise constructor with
+<a href="https://github.com/kevinbeaty/any-promise"><code>any-promise</code></a> like this:</p>
+<div><pre class="line-numbers"><code class="language-js">require(&#39;any-promise/register/bluebird&#39;);
+// or
+import &#39;any-promise/register/bluebird&#39;;</code></pre></div><p>You will need to register your custom Promise constructor in both the main and
+the renderer process in order to use canceling in both.
+<code>any-promise</code> is automatically installed since it is a dependency of this
+package.</p>
+<h4 id="observables">Observables</h4>
+<p><em>The extension package for Observable support is not available yet.</em></p>
+<p>If you want to use Observables, install
+<a href="https://github.com/axaptional/electron-ipc-rx"><code>@axaptional/electron-ipc-rx</code></a>.
+This package will add <code>$</code>-postfix counterparts to most methods,
+e.g. <code>post$(...)</code>.
+Keep in mind that you will need to adjust your imports when switching from
+electron-ipc.</p>
 <h2 id="usage">Usage</h2>
-<h3 id="post-messages-and-receive-data">Post messages and receive data</h3>
-<div><pre class="line-numbers"><code class="language-js">// Renderer Process
-import { Client } from &#39;&#64;axaptional/electron-ipc&#39;
+<h3 id="post-messages-and-receive-responses">Post messages and receive responses</h3>
+<p>Probably one of the most prominent use cases is that you want to initiate a
+main process function from the renderer process and do something with the
+result of that function in the renderer process.</p>
+<p><strong>Renderer Process</strong></p>
+<div><pre class="line-numbers"><code class="language-js">import { Client } from &#39;&#64;axaptional/electron-ipc&#39;;
 
-const client = new Client()
-client.post(&#39;message&#39;, &quot;This is my message&quot;).then(response =&gt; {
-  console.log(response) // Prints &quot;And here&#39;s the reply&quot;
-})</code></pre></div><div><pre class="line-numbers"><code class="language-js">// Main Process
-import { Server } from &#39;&#64;axaptional/electron-ipc&#39;
+const client = new Client();
 
-const server = new Server(window.webContents)
-server.once(&#39;message&#39;, message =&gt; {
-  return &quot;And here&#39;s the reply&quot;
-})</code></pre></div>
+client.post(&#39;message&#39;, &#39;this&#39;).then(response =&gt; {
+  console.log(response); // Prints &quot;And here is the reply to this&quot;
+});</code></pre></div><p><strong>Main Process</strong></p>
+<div><pre class="line-numbers"><code class="language-js">import { BrowserWindow } from &#39;electron&#39;;
+import { Server } from &#39;&#64;axaptional/electron-ipc&#39;;
+
+const myWindow = new BrowserWindow();
+// ...
+
+const server = new Server(myWindow.webContents);
+
+server.on(&#39;message&#39;, message =&gt; {
+  return `And here is the reply to ${message}`;
+});</code></pre></div><h3 id="argument-behavior">Argument behavior</h3>
+<p>By default, arguments will be atomized, making them fit into a single object.
+This transformation is made because Promises can only resolve to <em>one</em> value.</p>
+<p>This behavior applies to both</p>
+<ul>
+<li><p>messages sent with <code>post</code> received by <code>on</code>/<code>once</code>
+(set options in <code>on</code>/<code>once</code>)</p>
+</li>
+<li><p>responses sent with <code>on</code>/<code>once</code> received by <code>post</code>
+(set options in <code>post</code>)</p>
+</li>
+</ul>
+<p><em>Argument behavior customization has not been fully implemented yet.</em></p>
+<p>Refer to the following table to see which input arguments are transformed to
+which output arguments with the respective <code>args</code> option.
+Keep in mind that <code>{ args: &#39;as-is&#39; }</code> is only available for listeners.</p>
+<table class="table table-bordered compodoc-table">
+<thead>
+<tr>
+<th>Options</th>
+<th><code>()</code></th>
+<th><code>(1)</code></th>
+<th><code>(1, 2)</code></th>
+<th><code>([1])</code></th>
+<th><code>([1, 2])</code></th>
+<th><code>([1], 2)</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>{}</code></td>
+<td><code>()</code></td>
+<td><code>(1)</code></td>
+<td><code>([1, 2])</code></td>
+<td><code>([1])</code></td>
+<td><code>([1, 2])</code></td>
+<td><code>([[1], 2])</code></td>
+</tr>
+<tr>
+<td><code>{ args: &#39;array&#39; }</code></td>
+<td><code>([])</code></td>
+<td><code>([1])</code></td>
+<td><code>([1, 2])</code></td>
+<td><code>([[1]])</code></td>
+<td><code>([[1, 2]])</code></td>
+<td><code>([[1], 2])</code></td>
+</tr>
+<tr>
+<td><code>{ args: &#39;as-is&#39; }</code></td>
+<td><code>()</code></td>
+<td><code>(1)</code></td>
+<td><code>(1, 2)</code></td>
+<td><code>([1])</code></td>
+<td><code>([1, 2])</code></td>
+<td><code>([1], 2)</code></td>
+</tr>
+</tbody>
+</table>
+<p>For more detailed information,
+see <a href="markdown/arguments.md">Argument behavior in detail</a>.</p>
+<h3 id="methods">Methods</h3>
+<p>For short explanations on available methods,
+see <a href="markdown/methods.md">Methods</a>.</p>
+<p>For the code documentation,
+see <a href="https://axaptional.github.io/electron-ipc/">Documentation</a>.</p>
+<h2 id="license">License</h2>
+<p>This package is available under the <a href="LICENSE">MIT license</a>.</p>
+
 
 
 

@@ -44,7 +44,7 @@
 
 <ol class="breadcrumb">
   <li>Interfaces</li>
-  <li>IpcRendererEvent</li>
+  <li>Cancelable</li>
 </ol>
 
 <ul class="nav nav-tabs" role="tablist">
@@ -62,14 +62,14 @@
             <h3>File</h3>
         </p>
         <p class="comment">
-            <code>src/aliases.ts</code>
+            <code>src/canceler.ts</code>
         </p>
 
             <p class="comment">
                 <h3>Description</h3>
             </p>
             <p class="comment">
-                <p>Represents an Electron event as received when listening with ipcRenderer.</p>
+                <p>Represents a process that can be aborted.</p>
 
             </p>
 
@@ -80,14 +80,14 @@
                 <tbody>
                     <tr>
                         <td class="col-md-4">
-                            <h6><b>Properties</b></h6>
+                            <h6><b>Methods</b></h6>
                         </td>
                     </tr>
                     <tr>
                         <td class="col-md-4">
                             <ul class="index-list">
                                 <li>
-                                        <a href="#senderId">senderId</a>
+                                    <a href="#cancel">cancel</a>
                                 </li>
                             </ul>
                         </td>
@@ -96,68 +96,89 @@
             </table>
         </section>
 
-
-
             <section>
-                <h3 id="inputs">Properties</h3>
-                    <table class="table table-sm table-bordered">
-                        <tbody>
-                                <tr>
-                                    <td class="col-md-4">
-                                        <a name="senderId"></a>
-                                        <span class="name"><b>senderId</b><a href="#senderId"><span class="icon ion-ios-link"></span></a></span>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="col-md-4">
-                                        <code>senderId:     <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
-</code>
-                                    </td>
-                                </tr>
+    
+        <h3 id="methods">
+            Methods
+        </h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="cancel"></a>
+                        <span class="name">
+                            <b>
+                            cancel
+                            </b>
+                            <a href="#cancel"><span class="icon ion-ios-link"></span></a>
+                        </span>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+<code>cancel()</code>
+                    </td>
+                </tr>
 
 
-                                    <tr>
-                                        <td class="col-md-4">
-                                            <i>Type : </i>    <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
-
-                                        </td>
-                                    </tr>
-
+                        <tr>
+                            <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="10" class="link-to-prism">src/canceler.ts:10</a></div>
+                            </td>
+                        </tr>
 
 
-
-
-                            <tr>
-                                <td class="col-md-4">
-                                    <div class="io-description"><p>The Electron WebContents ID of the renderer view in the main process.</p>
+                <tr>
+                    <td class="col-md-4">
+                            <div class="io-description"><p>Cancels the process.</p>
 </div>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-            </section>
+
+                            <div class="io-description">
+                                <b>Returns : </b>    <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                            </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+</section>
+
+
     </div>
 
 
     <div class="tab-pane fade  tab-source-code" id="c-source">
-        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">export type IpcMain &#x3D; Electron.IpcMain
-export type IpcRenderer &#x3D; Electron.IpcRenderer
-export type WebContents &#x3D; Electron.WebContents
-
-export type IpcMainEvent &#x3D; Electron.Event
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { IpcService } from &#x27;./aliases&#x27;
 
 /**
- * Represents an Electron event as received when listening with ipcRenderer.
+ * Represents a process that can be aborted.
  */
-export interface IpcRendererEvent {
+export interface Cancelable {
   /**
-   * The Electron WebContents ID of the renderer view in the main process.
+   * Cancels the process.
    */
-  senderId: number
+  cancel (): void
 }
 
-export type IpcService &#x3D; IpcMain | IpcRenderer
-export type IpcEvent &#x3D; IpcMainEvent | IpcRendererEvent
+/**
+ * Represents a helper to unsubscribe a listener function from a channel.
+ */
+export class Canceler implements Cancelable {
+  /**
+   * Initializes a new Canceler.
+   * @param ipcService The IPC service to use for unsubscribing
+   * @param channel The channel to unsubscribe from
+   * @param handler The listener to unsubscribe
+   */
+  constructor (private ipcService: IpcService, public channel: string, private handler: Function) {}
+
+  /**
+   * Unsubscribes the listener, meaning it will no longer be called when a message is received.
+   */
+  public cancel (): void {
+    this.ipcService.removeListener(this.channel, this.handler)
+  }
+}
 </code></pre>
     </div>
 </div>
@@ -184,7 +205,7 @@ export type IpcEvent &#x3D; IpcMainEvent | IpcRendererEvent
        <script>
             var COMPODOC_CURRENT_PAGE_DEPTH = 1;
             var COMPODOC_CURRENT_PAGE_CONTEXT = 'interface';
-            var COMPODOC_CURRENT_PAGE_URL = 'IpcRendererEvent.html';
+            var COMPODOC_CURRENT_PAGE_URL = 'Cancelable.html';
        </script>
 
        <script src="../js/libs/custom-elements.min.js"></script>

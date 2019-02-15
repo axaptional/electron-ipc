@@ -44,7 +44,7 @@
 
 <ol class="breadcrumb">
   <li>Interfaces</li>
-  <li>ListenerOptions</li>
+  <li>Options</li>
 </ol>
 
 <ul class="nav nav-tabs" role="tablist">
@@ -87,7 +87,7 @@
                         <td class="col-md-4">
                             <ul class="index-list">
                                 <li>
-                                        <a href="#spread">spread</a>
+                                        <a href="#args">args</a>
                                 </li>
                             </ul>
                         </td>
@@ -104,13 +104,13 @@
                         <tbody>
                                 <tr>
                                     <td class="col-md-4">
-                                        <a name="spread"></a>
-                                        <span class="name"><b>spread</b><a href="#spread"><span class="icon ion-ios-link"></span></a></span>
+                                        <a name="args"></a>
+                                        <span class="name"><b>args</b><a href="#args"><span class="icon ion-ios-link"></span></a></span>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td class="col-md-4">
-                                        <code>spread:     <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+                                        <code>args:     <code>&quot;atomize&quot; | &quot;array&quot; | &quot;as-is&quot;</code>
 </code>
                                     </td>
                                 </tr>
@@ -118,7 +118,7 @@
 
                                     <tr>
                                         <td class="col-md-4">
-                                            <i>Type : </i>    <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+                                            <i>Type : </i>    <code>&quot;atomize&quot; | &quot;array&quot; | &quot;as-is&quot;</code>
 
                                         </td>
                                     </tr>
@@ -129,7 +129,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-description"><p>Whether the listener should be called with spread arguments (true) or an arguments array (false, default).</p>
+                                    <div class="io-description"><p>Determines how argument transformation is handled when being passed to a listener or Promise.</p>
 </div>
                                 </td>
                             </tr>
@@ -140,58 +140,47 @@
 
 
     <div class="tab-pane fade  tab-source-code" id="c-source">
-        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Observable, Subscriber } from &#x27;rxjs&#x27;;
-import { Channels, CommunicationChannels } from &#x27;./channels&#x27;;
-import { IpcEvent, IpcService } from &#x27;./aliases&#x27;;
-import Promise from &#x27;any-promise&#x27;;
-
-/**
- * Represents a helper to unsubscribe a listener function from a channel.
- */
-export class Canceler {
-  /**
-   * Initializes a new Canceler.
-   * @param ipcService The IPC service to use for unsubscribing
-   * @param channel The channel to unsubscribe from
-   * @param handler The listener to unsubscribe
-   */
-  constructor(private ipcService: IpcService, public channel: string, private handler: Function) {}
-
-  /**
-   * Unsubscribes the listener, meaning it will no longer be called when a message is received.
-   */
-  public cancel(): void {
-    this.ipcService.removeListener(this.channel, this.handler);
-  }
-}
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import Promise from &#x27;any-promise&#x27;
+import { Channels, CommunicationChannels } from &#x27;./channels&#x27;
+import { IpcEvent, IpcService } from &#x27;./aliases&#x27;
+import { Canceler } from &#x27;./canceler&#x27;
 
 /**
  * Represents a set of options for handling listener arguments and return values.
  */
-export interface ListenerOptions {
+export interface Options {
   /**
-   * Whether the listener should be called with spread arguments (true) or an arguments array (false, default).
+   * Determines how argument transformation is handled when being passed to a listener or Promise.
    */
-  spread: boolean;
+  args: &#x27;atomize&#x27; | &#x27;array&#x27; | &#x27;as-is&#x27;
 }
 
 // TODO: Replies
+// TODO: De/serialize values separately (with Date support)
 /**
  * Represents an IPC communicator through which messages can be posted and received.
  */
 export abstract class Agent&lt;T extends IpcService&gt; {
   /**
+   * The set of options used by all instances by default.
+   */
+  private static fallbackOptions: Options &#x3D; {
+    args: &#x27;atomize&#x27;
+  }
+
+  /**
    * Initializes a new Agent for the given Electron IPC service.
    * @param ipcService Either the ipcMain or the ipcRenderer service from Electron
+   * @param defaultOptions A set of options to use by default for all message handlers
    */
-  protected constructor(protected ipcService: T) {}
+  protected constructor (protected ipcService: T, private defaultOptions: Partial&lt;Options&gt; &#x3D; {}) {}
 
   /**
    * Sends a message to the other service.
    * @param requestChannel The channel to use for sending the request
    * @param data The request data
    */
-  protected abstract send(requestChannel: string, ...data: any[]): void;
+  protected abstract send (requestChannel: string, ...data: any[]): void
 
   /**
    * Responds to a given event from the other process.
@@ -199,26 +188,78 @@ export abstract class Agent&lt;T extends IpcService&gt; {
    * @param responseChannel The channel to use for sending the response
    * @param data The response data
    */
-  protected abstract respond(event: IpcEvent, responseChannel: string, ...data: any[]): void;
+  protected abstract respond (event: IpcEvent, responseChannel: string, ...data: any[]): void
 
-  // TODO: Mention at post$() that the message will only be sent ONCE the Observable is subscribed.
+  /**
+   * Returns an atomized value for the given array.
+   * If the array has length 0, the return value will be undefined.
+   * If the array has length 1, the return value will be the first and only array item.
+   * If the array has a length of 2 or above, the return value will be the input array.
+   * @param args The arguments to atomize
+   */
+  protected static atomize&lt;T&gt; (args: T[]): T | T[] {
+    return args.length &gt; 1 ? args : args[0]
+  }
+
+  /**
+   * Overrides the default settings of this IPC communicator instance.
+   * Settings not specified in the options argument will retain their values by default.
+   * @param options A set of options with settings you want to override
+   * @param replace If true, settings not specified in the options argument will be unset
+   */
+  public configure (options: Partial&lt;Options&gt;, replace: boolean &#x3D; false): void {
+    if (replace) {
+      this.defaultOptions &#x3D; options
+      return
+    }
+    Object.assign(this.defaultOptions, options)
+  }
+
+  /**
+   * Calls the given handler with the given arguments transformed according to the given style.
+   * @param handler The function to call
+   * @param args The arguments to pass
+   * @param style A string specifying how to pass the arguments
+   */
+  protected static applyWithStyle (handler: Function, args: any[], style: &#x27;atomize&#x27; | &#x27;array&#x27; | &#x27;as-is&#x27;): any {
+    switch (style) {
+      default:
+      case &#x27;atomize&#x27;:
+        return handler(Agent.atomize(args))
+      case &#x27;array&#x27;:
+        return handler(args)
+      case &#x27;as-is&#x27;:
+        return handler(...args)
+    }
+  }
+
+  /**
+   * Returns a set of options according to this instance&#x27;s default options and the given overrides.
+   * @param overrides A set of options with settings that should override default values
+   */
+  protected getOptions (overrides?: Partial&lt;Options&gt;): Options {
+    return Object.assign(Agent.fallbackOptions, this.defaultOptions, overrides)
+  }
+
   // TODO: The Promise should be rejected if an uncaught error occurred at the listening endpoint.
+  // TODO: post with listener
+  // TODO: Change Options to Request/ResponseOptions and let it turn off atomize for listeners AND Promises
   /**
    * Posts a message to the given channel.
    * The Promise resolves either when a response is received or when the listening endpoint terminates.
    * @param channel The channel to post to
    * @param data The message to post
    */
-  public post(channel: string, ...data: any[]): Promise&lt;any&gt; {
-    const { requestChannel, responseChannel } &#x3D; Channels.getCommunicationChannels(channel);
+  public post (channel: string, ...data: any[]): Promise&lt;any&gt; {
+    const { requestChannel, responseChannel } &#x3D; Channels.getCommunicationChannels(channel)
     const response &#x3D; new Promise((resolve, reject) &#x3D;&gt; {
-      const handler &#x3D; (event: IpcEvent, ...args: any[]) &#x3D;&gt; {
-        resolve(args);
-      };
-      this.ipcService.once(responseChannel, handler);
-    });
-    this.send(requestChannel, ...data);
-    return response;
+      const handler &#x3D; (event: IpcEvent, response: any) &#x3D;&gt; {
+        resolve(response)
+      }
+      this.ipcService.once(responseChannel, handler)
+    })
+    this.send(requestChannel, ...data)
+    return response
   }
 
   /**
@@ -227,45 +268,22 @@ export abstract class Agent&lt;T extends IpcService&gt; {
    * To stop listening, just call cancel() on the return value of this method.
    * @param channel The channel to listen to
    * @param listener The listener to call for each received message
-   * @param options Options specifying how to treat the listener function
+   * @param options A set of options to override the default options for this call only
    */
-  public on(channel: string, listener: Function, options: ListenerOptions): Canceler {
-    const { requestChannel, responseChannel } &#x3D; Channels.getCommunicationChannels(channel);
-    const params &#x3D; Object.assign(
-      {
-        spread: false,
-      },
-      options,
-    );
+  public on (channel: string, listener: Function, options?: Partial&lt;Options&gt;): Canceler {
+    const { requestChannel, responseChannel } &#x3D; Channels.getCommunicationChannels(channel)
+    const params &#x3D; this.getOptions(options)
     const handler &#x3D; (event: IpcEvent, ...args: any[]) &#x3D;&gt; {
-      const respond &#x3D; (...data: any[]) &#x3D;&gt; this.respond(event, responseChannel, ...data);
-      const response: any &#x3D; params.spread ? listener(...args) : listener(args);
+      const respond &#x3D; (response: any) &#x3D;&gt; this.respond(event, responseChannel, response)
+      const response: any &#x3D; Agent.applyWithStyle(listener, args, params.args)
       if (response instanceof Promise) {
-        response.then(respond);
+        response.then(respond)
       } else {
-        respond(response);
+        respond(response)
       }
-    };
-    this.ipcService.on(requestChannel, handler);
-    return new Canceler(this.ipcService, requestChannel, handler);
-  }
-
-  /**
-   * Listens for messages on the given channel and emits them when received.
-   * Responses using Observables are currently not supported, use on() instead if you need to respond.
-   * @param channel The channel to listen to
-   */
-  public on$(channel: string): Observable&lt;any&gt; {
-    const { requestChannel, responseChannel } &#x3D; Channels.getCommunicationChannels(channel);
-    return new Observable((subscriber: Subscriber&lt;any&gt;) &#x3D;&gt; {
-      const listener &#x3D; (event: IpcEvent, ...args: any[]) &#x3D;&gt; {
-        subscriber.next(Agent.transformObservableArgs(args));
-        const response: any &#x3D; undefined;
-        this.respond(event, responseChannel, response);
-      };
-      this.ipcService.on(requestChannel, listener);
-      return () &#x3D;&gt; this.ipcService.removeListener(requestChannel, listener);
-    });
+    }
+    this.ipcService.on(requestChannel, handler)
+    return new Canceler(this.ipcService, requestChannel, handler)
   }
 
   /**
@@ -273,17 +291,18 @@ export abstract class Agent&lt;T extends IpcService&gt; {
    * Canceling is only possible through the use of an additional library like Bluebird, not with native Promises.
    * Responses using Promises are currently not supported. If you need to respond, use a listener instead.
    * @param channel The channel to listen to
+   * @param options A set of options to override the default options for this call only
    */
-  public once(channel: string): Promise&lt;any&gt;;
+  public once (channel: string, options?: Partial&lt;Options&gt;): Promise&lt;any&gt;
   /**
    * Listens for a message on the given channel and calls the given listener when it is received.
    * To send a response, simply have the listener function return a value or a Promise.
    * To stop listening, just call cancel() on the return value of this method.
    * @param channel The channel to listen to
    * @param listener The listener to call once the message was received
-   * @param options Options specifying how to treat the listener function
+   * @param options A set of options to override the default options for this call only
    */
-  public once(channel: string, listener: Function, options?: ListenerOptions): Canceler;
+  public once (channel: string, listener: Function, options?: Partial&lt;Options&gt;): Canceler
   /**
    * Listens for a message on the given channel and calls the given listener when it is received.
    * If no listener is specified, this method returns a Promise that resolves once the message is received instead.
@@ -292,115 +311,76 @@ export abstract class Agent&lt;T extends IpcService&gt; {
    * Canceling a Promise is only possible through the use of an additional library like Bluebird, not natively.
    * Responses using Promises are currently not supported. If you need to respond, use a listener instead.
    * @param channel The channel to listen to
-   * @param listener The listener to call once the message was received (or nothing to use Promises instead)
-   * @param options Options specifying how to treat the listener function (ignored when using Promises)
+   * @param listenerOrOptions The listener to call once the message was received or an Options object
+   * @param options A set of options to override the default options for this call only
    */
-  public once(channel: string, listener?: Function, options?: ListenerOptions) {
-    const comChannels &#x3D; Channels.getCommunicationChannels(channel);
-    if (typeof listener &#x3D;&#x3D;&#x3D; &#x27;undefined&#x27;) {
-      return this.oncePromise(comChannels);
+  public once (channel: string, listenerOrOptions?: Function | Partial&lt;Options&gt;, options?: Partial&lt;Options&gt;) {
+    const comChannels &#x3D; Channels.getCommunicationChannels(channel)
+    if (typeof listenerOrOptions !&#x3D;&#x3D; &#x27;function&#x27;) {
+      return this.oncePromise(comChannels, listenerOrOptions)
     } else {
-      return this.onceListener(comChannels, listener, options);
+      return this.onceListener(comChannels, listenerOrOptions, options)
     }
   }
 
   /**
    * Listens for a message. The Promise resolves once a message was received.
    * @param comChannels The communication channels to use for sending and receiving messages
+   * @param options A set of options to override the default options for this call only
    */
-  private oncePromise(comChannels: CommunicationChannels): Promise&lt;any&gt; {
-    const { requestChannel, responseChannel } &#x3D; comChannels;
+  private oncePromise (comChannels: CommunicationChannels, options?: Partial&lt;Options&gt;): Promise&lt;any&gt; {
+    const { requestChannel, responseChannel } &#x3D; comChannels
+    const params &#x3D; this.getOptions(options)
     return new Promise((resolve, reject) &#x3D;&gt; {
       const handler &#x3D; (event: IpcEvent, ...args: any[]) &#x3D;&gt; {
-        resolve(args);
-        const response: any &#x3D; undefined;
-        this.respond(event, responseChannel, response);
-      };
-      this.ipcService.once(requestChannel, handler);
-    });
+        Agent.applyWithStyle(resolve, args, params.args)
+        const response: any &#x3D; undefined
+        this.respond(event, responseChannel, response)
+      }
+      this.ipcService.once(requestChannel, handler)
+    })
   }
 
   /**
    * Listens for a message and calls the given listener when it is received.
    * @param comChannels The communication channels to use for sending and receiving messages
    * @param listener The listener to call once the message was received
-   * @param options Options specifying how to treat the listener function
+   * @param options A set of options to override the default options for this call only
    */
-  private onceListener(comChannels: CommunicationChannels, listener: Function, options?: ListenerOptions): Canceler {
-    const { requestChannel, responseChannel } &#x3D; comChannels;
-    const params &#x3D; Object.assign(
-      {
-        spread: false,
-      },
-      options,
-    );
+  private onceListener (comChannels: CommunicationChannels, listener: Function, options?: Partial&lt;Options&gt;): Canceler {
+    const { requestChannel, responseChannel } &#x3D; comChannels
+    const params &#x3D; this.getOptions(options)
     const handler &#x3D; (event: IpcEvent, ...args: any[]) &#x3D;&gt; {
-      const respond &#x3D; (...data: any[]) &#x3D;&gt; this.respond(event, responseChannel, ...data);
-      const response: any &#x3D; params.spread ? listener(...args) : listener(args);
+      const respond &#x3D; (response: any) &#x3D;&gt; this.respond(event, responseChannel, response)
+      const response: any &#x3D; Agent.applyWithStyle(listener, args, params.args)
       if (response instanceof Promise) {
-        response.then(respond);
+        response.then(respond)
       } else {
-        respond(response);
+        respond(response)
       }
-    };
-    this.ipcService.once(requestChannel, handler);
-    return new Canceler(this.ipcService, requestChannel, handler);
+    }
+    this.ipcService.once(requestChannel, handler)
+    return new Canceler(this.ipcService, requestChannel, handler)
   }
 
-  /**
-   * Transform data to fit into a single argument.
-   * Arrays with length 0 will yield undefined.
-   * Arrays with length 1 will yield the object at index 0.
-   * Arrays with length 2 or above will yield the input array.
-   * @param args The arguments to transform
-   */
-  protected static transformObservableArgs(args: any[]): any | any[] {
-    const type &#x3D; Math.min(args.length, 2);
-    return type &lt; 2 ? args[0] : args;
-  }
-
-  /**
-   * Listens for a message on the given channel, emits it when received and completes afterwards.
-   * Responses using Observables are currently not supported, use once() instead if you need to respond.
-   * @param channel The channel to listen to
-   */
-  public once$(channel: string): Observable&lt;any&gt; {
-    const { requestChannel, responseChannel } &#x3D; Channels.getCommunicationChannels(channel);
-    return new Observable(subscriber &#x3D;&gt; {
-      const listener &#x3D; (event: IpcEvent, ...args: any[]) &#x3D;&gt; {
-        subscriber.next(Agent.transformObservableArgs(args));
-        subscriber.complete();
-        const response: any &#x3D; undefined;
-        this.respond(event, responseChannel, response);
-      };
-      this.ipcService.once(requestChannel, listener);
-      return () &#x3D;&gt; this.ipcService.removeListener(requestChannel, listener);
-    });
-  }
-
-  // TODO: Request Promises and Observables should be rejected when removeAllListeners() is called.
+  // TODO: Request Promises should be canceled/rejected when removeAllListeners() is called.
   /**
    * Unsubscribes all listeners from all channels.
    */
-  public removeAllListeners(): void;
-  /**
-   * Unsubscribes all listeners from the given channel.
-   * @param channel The channel to unsubscribe from
-   */
-  public removeAllListeners(channel: string): void;
+  public removeAllListeners (): void
   /**
    * Unsubscribes all listeners from the given channel. Omit the channel to unsubscribe from all channels.
    * @param channel The channel to unsubscribe from (or nothing)
    */
-  public removeAllListeners(channel?: string): void {
-    const channels &#x3D; [];
+  public removeAllListeners (channel?: string): void {
+    const channels &#x3D; []
     if (typeof channel !&#x3D;&#x3D; &#x27;undefined&#x27;) {
-      channels.push(Channels.getRequestChannel(channel));
+      channels.push(Channels.getRequestChannel(channel))
     } else {
-      channels.push(...this.ipcService.eventNames().filter(Channels.isRequestChannel));
+      channels.push(...this.ipcService.eventNames().filter(Channels.isRequestChannel))
     }
     for (let channel of channels) {
-      this.ipcService.removeAllListeners(channel);
+      this.ipcService.removeAllListeners(channel)
     }
   }
 }
@@ -430,7 +410,7 @@ export abstract class Agent&lt;T extends IpcService&gt; {
        <script>
             var COMPODOC_CURRENT_PAGE_DEPTH = 1;
             var COMPODOC_CURRENT_PAGE_CONTEXT = 'interface';
-            var COMPODOC_CURRENT_PAGE_URL = 'ListenerOptions.html';
+            var COMPODOC_CURRENT_PAGE_URL = 'Options.html';
        </script>
 
        <script src="../js/libs/custom-elements.min.js"></script>

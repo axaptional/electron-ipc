@@ -85,6 +85,22 @@
     <h3 id="index">Index</h3>
     <table class="table table-sm table-bordered index-table">
         <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Properties</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                    <span class="modifier">Private</span>
+                                    <span class="modifier">Static</span>
+                                <a href="#fallbackOptions">fallbackOptions</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
 
                 <tr>
                     <td class="col-md-4">
@@ -103,15 +119,29 @@
                                 <a href="#send">send</a>
                             </li>
                             <li>
+                                    <span class="modifier">Protected</span>
+                                    <span class="modifier">Static</span>
+                                <a href="#applyWithStyle">applyWithStyle</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Protected</span>
+                                    <span class="modifier">Static</span>
+                                <a href="#atomize">atomize</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Public</span>
+                                <a href="#configure">configure</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Protected</span>
+                                <a href="#getOptions">getOptions</a>
+                            </li>
+                            <li>
                                     <span class="modifier">Public</span>
                                 <a href="#on">on</a>
                             </li>
                             <li>
                                     <span class="modifier">Public</span>
-                                <a href="#on$">on$</a>
-                            </li>
-                            <li>
-                                    <span class="modifier">Public</span>
                                 <a href="#once">once</a>
                             </li>
                             <li>
@@ -121,10 +151,6 @@
                             <li>
                                     <span class="modifier">Public</span>
                                 <a href="#once">once</a>
-                            </li>
-                            <li>
-                                    <span class="modifier">Public</span>
-                                <a href="#once$">once$</a>
                             </li>
                             <li>
                                     <span class="modifier">Private</span>
@@ -147,10 +173,6 @@
                                 <a href="#removeAllListeners">removeAllListeners</a>
                             </li>
                             <li>
-                                    <span class="modifier">Public</span>
-                                <a href="#removeAllListeners">removeAllListeners</a>
-                            </li>
-                            <li>
                                     <span class="modifier">Protected</span>
                                     <span class="modifier">Abstract</span>
                                 <a href="#respond">respond</a>
@@ -159,11 +181,6 @@
                                     <span class="modifier">Protected</span>
                                     <span class="modifier">Abstract</span>
                                 <a href="#send">send</a>
-                            </li>
-                            <li>
-                                    <span class="modifier">Protected</span>
-                                    <span class="modifier">Static</span>
-                                <a href="#transformObservableArgs">transformObservableArgs</a>
                             </li>
                         </ul>
                     </td>
@@ -188,7 +205,7 @@
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="9" class="link-to-prism">src/client.ts:9</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="7" class="link-to-prism">src/client.ts:7</a></div>
                             </td>
                         </tr>
 
@@ -202,6 +219,60 @@
         </table>
 </section>
 
+            <section>
+    
+        <h3 id="inputs">
+            Properties
+        </h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="fallbackOptions"></a>
+                        <span class="name">
+                            <b>
+                                <span class="modifier">Private</span>
+                                <span class="modifier">Static</span>
+                            fallbackOptions</b>
+                            <a href="#fallbackOptions"><span class="icon ion-ios-link"></span></a>
+                        </span>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <i>Type : </i>    <code><a href="../interfaces/Options.html" target="_self" >Options</a></code>
+
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <i>Default value : </i><code>{
+    args: &#x27;atomize&#x27;
+  }</code>
+                        </td>
+                    </tr>
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-line">Inherited from     <code><a href="../classes/Agent.html" target="_self" >Agent</a></code>
+</div>
+                                </td>
+                            </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                    <div class="io-line">Defined in Agent:25</div>
+                            </td>
+                        </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <div class="io-description"><p>The set of options used by all instances by default.</p>
+</div>
+                    </td>
+                </tr>
+
+            </tbody>
+        </table>
+</section>
 
             <section>
     
@@ -232,7 +303,7 @@
 
                         <tr>
                             <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="32" class="link-to-prism">src/client.ts:32</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="30" class="link-to-prism">src/client.ts:30</a></div>
                             </td>
                         </tr>
 
@@ -342,7 +413,7 @@
 
                         <tr>
                             <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="22" class="link-to-prism">src/client.ts:22</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="20" class="link-to-prism">src/client.ts:20</a></div>
                             </td>
                         </tr>
 
@@ -416,6 +487,410 @@
             <tbody>
                 <tr>
                     <td class="col-md-4">
+                        <a name="applyWithStyle"></a>
+                        <span class="name">
+                            <b>
+                                <span class="modifier">Protected</span>
+                                <span class="modifier">Static</span>
+                            applyWithStyle
+                            </b>
+                            <a href="#applyWithStyle"><span class="icon ion-ios-link"></span></a>
+                        </span>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                            <span class="modifier-icon icon ion-ios-reset"></span>
+                        <code>applyWithStyle(handler: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function" target="_blank">Function</a>, args: any[], style: "atomize" | "array" | "as-is")</code>
+                    </td>
+                </tr>
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-line">Inherited from     <code><a href="../classes/Agent.html" target="_self" >Agent</a></code>
+</div>
+                                </td>
+                            </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                    <div class="io-line">Defined in Agent:82</div>
+                            </td>
+                        </tr>
+
+
+                <tr>
+                    <td class="col-md-4">
+                            <div class="io-description"><p>Calls the given handler with the given arguments transformed according to the given style.</p>
+</div>
+
+                            <div class="io-description">
+                                    <b>Parameters :</b>
+                                    <table class="params">
+                                        <thead>
+                                            <tr>
+                                                <td>Name</td>
+                                                    <td>Type</td>
+                                                <td>Optional</td>
+                                                    <td>Description</td>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                                <tr>
+                                                        <td>handler</td>
+                                                        <td>
+                                                                    <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function" target="_blank" >Function</a></code>
+                                                        </td>
+                                                    
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+
+                                                        <td>
+                                                                <p>The function to call</p>
+
+                                                        </td>
+                                                </tr>
+                                                <tr>
+                                                        <td>args</td>
+                                                        <td>
+                                                                    <code>any[]</code>
+                                                        </td>
+                                                    
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+
+                                                        <td>
+                                                                <p>The arguments to pass</p>
+
+                                                        </td>
+                                                </tr>
+                                                <tr>
+                                                        <td>style</td>
+                                                        <td>
+                                                                    <code>&quot;atomize&quot; | &quot;array&quot; | &quot;as-is&quot;</code>
+                                                        </td>
+                                                    
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+
+                                                        <td>
+                                                                <p>A string specifying how to pass the arguments</p>
+
+                                                        </td>
+                                                </tr>
+                                        </tbody>
+                                    </table>
+                            </div>
+                            <div>
+                            </div>
+                            <div class="io-description">
+                                <b>Returns : </b>    <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+
+                            </div>
+                                <div class="io-description">
+                                    
+                                </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="atomize"></a>
+                        <span class="name">
+                            <b>
+                                <span class="modifier">Protected</span>
+                                <span class="modifier">Static</span>
+                            atomize
+                            </b>
+                            <a href="#atomize"><span class="icon ion-ios-link"></span></a>
+                        </span>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                            <span class="modifier-icon icon ion-ios-reset"></span>
+                        <code>atomize(args: T[])</code>
+                    </td>
+                </tr>
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-line">Inherited from     <code><a href="../classes/Agent.html" target="_self" >Agent</a></code>
+</div>
+                                </td>
+                            </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                    <div class="io-line">Defined in Agent:58</div>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td class="col-md-4">
+                                <b>Type parameters :</b>
+                                <ul class="type-parameters">
+                                        <li>T</li>
+                                </ul>
+                            </td>
+                        </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                            <div class="io-description"><p>Returns an atomized value for the given array.
+If the array has length 0, the return value will be undefined.
+If the array has length 1, the return value will be the first and only array item.
+If the array has a length of 2 or above, the return value will be the input array.</p>
+</div>
+
+                            <div class="io-description">
+                                    <b>Parameters :</b>
+                                    <table class="params">
+                                        <thead>
+                                            <tr>
+                                                <td>Name</td>
+                                                    <td>Type</td>
+                                                <td>Optional</td>
+                                                    <td>Description</td>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                                <tr>
+                                                        <td>args</td>
+                                                        <td>
+                                                                    <code>T[]</code>
+                                                        </td>
+                                                    
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+
+                                                        <td>
+                                                                <p>The arguments to atomize</p>
+
+                                                        </td>
+                                                </tr>
+                                        </tbody>
+                                    </table>
+                            </div>
+                            <div>
+                            </div>
+                            <div class="io-description">
+                                <b>Returns : </b>    <code>T | []</code>
+
+                            </div>
+                                <div class="io-description">
+                                    
+                                </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="configure"></a>
+                        <span class="name">
+                            <b>
+                                <span class="modifier">Public</span>
+                            configure
+                            </b>
+                            <a href="#configure"><span class="icon ion-ios-link"></span></a>
+                        </span>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                            <span class="modifier-icon icon ion-ios-reset"></span>
+                        <code>configure(options: <a href="../interfaces/Options.html">Partial<Options></a>, replace: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank">boolean</a>)</code>
+                    </td>
+                </tr>
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-line">Inherited from     <code><a href="../classes/Agent.html" target="_self" >Agent</a></code>
+</div>
+                                </td>
+                            </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                    <div class="io-line">Defined in Agent:68</div>
+                            </td>
+                        </tr>
+
+
+                <tr>
+                    <td class="col-md-4">
+                            <div class="io-description"><p>Overrides the default settings of this IPC communicator instance.
+Settings not specified in the options argument will retain their values by default.</p>
+</div>
+
+                            <div class="io-description">
+                                    <b>Parameters :</b>
+                                    <table class="params">
+                                        <thead>
+                                            <tr>
+                                                <td>Name</td>
+                                                    <td>Type</td>
+                                                <td>Optional</td>
+                                                    <td>Default value</td>
+                                                    <td>Description</td>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                                <tr>
+                                                        <td>options</td>
+                                                        <td>
+                                                                    <code><a href="../interfaces/Options.html" target="_self" >Partial&lt;Options&gt;</a></code>
+                                                        </td>
+                                                    
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                        <td>
+                                                        </td>
+
+                                                        <td>
+                                                                <p>A set of options with settings you want to override</p>
+
+                                                        </td>
+                                                </tr>
+                                                <tr>
+                                                        <td>replace</td>
+                                                        <td>
+                                                                    <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+                                                        </td>
+                                                    
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                        <td>
+                                                                <code>false</code>
+                                                        </td>
+
+                                                        <td>
+                                                                <p>If true, settings not specified in the options argument will be unset</p>
+
+                                                        </td>
+                                                </tr>
+                                        </tbody>
+                                    </table>
+                            </div>
+                            <div>
+                            </div>
+                            <div class="io-description">
+                                <b>Returns : </b>    <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                            </div>
+                                <div class="io-description">
+                                    
+                                </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="getOptions"></a>
+                        <span class="name">
+                            <b>
+                                <span class="modifier">Protected</span>
+                            getOptions
+                            </b>
+                            <a href="#getOptions"><span class="icon ion-ios-link"></span></a>
+                        </span>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                            <span class="modifier-icon icon ion-ios-reset"></span>
+                        <code>getOptions(overrides?: <a href="../interfaces/Options.html">Partial<Options></a>)</code>
+                    </td>
+                </tr>
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-line">Inherited from     <code><a href="../classes/Agent.html" target="_self" >Agent</a></code>
+</div>
+                                </td>
+                            </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                    <div class="io-line">Defined in Agent:98</div>
+                            </td>
+                        </tr>
+
+
+                <tr>
+                    <td class="col-md-4">
+                            <div class="io-description"><p>Returns a set of options according to this instance&#39;s default options and the given overrides.</p>
+</div>
+
+                            <div class="io-description">
+                                    <b>Parameters :</b>
+                                    <table class="params">
+                                        <thead>
+                                            <tr>
+                                                <td>Name</td>
+                                                    <td>Type</td>
+                                                <td>Optional</td>
+                                                    <td>Description</td>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                                <tr>
+                                                        <td>overrides</td>
+                                                        <td>
+                                                                    <code><a href="../interfaces/Options.html" target="_self" >Partial&lt;Options&gt;</a></code>
+                                                        </td>
+                                                    
+                                                    <td>
+                                                            Yes
+                                                    </td>
+                                                    
+
+                                                        <td>
+                                                                <p>A set of options with settings that should override default values</p>
+
+                                                        </td>
+                                                </tr>
+                                        </tbody>
+                                    </table>
+                            </div>
+                            <div>
+                            </div>
+                            <div class="io-description">
+                                <b>Returns : </b>    <code><a href="../interfaces/Options.html" target="_self" >Options</a></code>
+
+                            </div>
+                                <div class="io-description">
+                                    
+                                </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
                         <a name="on"></a>
                         <span class="name">
                             <b>
@@ -429,7 +904,7 @@
                 <tr>
                     <td class="col-md-4">
                             <span class="modifier-icon icon ion-ios-reset"></span>
-                        <code>on(channel: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, listener: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function" target="_blank">Function</a>, options: <a href="../interfaces/ListenerOptions.html">ListenerOptions</a>)</code>
+                        <code>on(channel: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, listener: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function" target="_blank">Function</a>, options?: <a href="../interfaces/Options.html">Partial<Options></a>)</code>
                     </td>
                 </tr>
 
@@ -442,7 +917,7 @@
                             </tr>
                         <tr>
                             <td class="col-md-4">
-                                    <div class="io-line">Defined in Agent:90</div>
+                                    <div class="io-line">Defined in Agent:131</div>
                             </td>
                         </tr>
 
@@ -501,16 +976,16 @@ To stop listening, just call cancel() on the return value of this method.</p>
                                                 <tr>
                                                         <td>options</td>
                                                         <td>
-                                                                    <code><a href="../interfaces/ListenerOptions.html" target="_self" >ListenerOptions</a></code>
+                                                                    <code><a href="../interfaces/Options.html" target="_self" >Partial&lt;Options&gt;</a></code>
                                                         </td>
                                                     
                                                     <td>
-                                                            No
+                                                            Yes
                                                     </td>
                                                     
 
                                                         <td>
-                                                                <p>Options specifying how to treat the listener function</p>
+                                                                <p>A set of options to override the default options for this call only</p>
 
                                                         </td>
                                                 </tr>
@@ -521,91 +996,6 @@ To stop listening, just call cancel() on the return value of this method.</p>
                             </div>
                             <div class="io-description">
                                 <b>Returns : </b>    <code><a href="../classes/Canceler.html" target="_self" >Canceler</a></code>
-
-                            </div>
-                                <div class="io-description">
-                                    
-                                </div>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-        <table class="table table-sm table-bordered">
-            <tbody>
-                <tr>
-                    <td class="col-md-4">
-                        <a name="on$"></a>
-                        <span class="name">
-                            <b>
-                                <span class="modifier">Public</span>
-                            on$
-                            </b>
-                            <a href="#on$"><span class="icon ion-ios-link"></span></a>
-                        </span>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="col-md-4">
-                            <span class="modifier-icon icon ion-ios-reset"></span>
-                        <code>on$(channel: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
-                    </td>
-                </tr>
-
-
-                            <tr>
-                                <td class="col-md-4">
-                                    <div class="io-line">Inherited from     <code><a href="../classes/Agent.html" target="_self" >Agent</a></code>
-</div>
-                                </td>
-                            </tr>
-                        <tr>
-                            <td class="col-md-4">
-                                    <div class="io-line">Defined in Agent:116</div>
-                            </td>
-                        </tr>
-
-
-                <tr>
-                    <td class="col-md-4">
-                            <div class="io-description"><p>Listens for messages on the given channel and emits them when received.
-Responses using Observables are currently not supported, use on() instead if you need to respond.</p>
-</div>
-
-                            <div class="io-description">
-                                    <b>Parameters :</b>
-                                    <table class="params">
-                                        <thead>
-                                            <tr>
-                                                <td>Name</td>
-                                                    <td>Type</td>
-                                                <td>Optional</td>
-                                                    <td>Description</td>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                                <tr>
-                                                        <td>channel</td>
-                                                        <td>
-                                                                    <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
-                                                        </td>
-                                                    
-                                                    <td>
-                                                            No
-                                                    </td>
-                                                    
-
-                                                        <td>
-                                                                <p>The channel to listen to</p>
-
-                                                        </td>
-                                                </tr>
-                                        </tbody>
-                                    </table>
-                            </div>
-                            <div>
-                            </div>
-                            <div class="io-description">
-                                <b>Returns : </b>    <code>Observable&lt;any&gt;</code>
 
                             </div>
                                 <div class="io-description">
@@ -632,7 +1022,7 @@ Responses using Observables are currently not supported, use on() instead if you
                 <tr>
                     <td class="col-md-4">
                             <span class="modifier-icon icon ion-ios-reset"></span>
-                        <code>once(channel: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                        <code>once(channel: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, options?: <a href="../interfaces/Options.html">Partial<Options></a>)</code>
                     </td>
                 </tr>
 
@@ -645,7 +1035,7 @@ Responses using Observables are currently not supported, use on() instead if you
                             </tr>
                         <tr>
                             <td class="col-md-4">
-                                    <div class="io-line">Defined in Agent:135</div>
+                                    <div class="io-line">Defined in Agent:154</div>
                             </td>
                         </tr>
 
@@ -685,6 +1075,22 @@ Responses using Promises are currently not supported. If you need to respond, us
 
                                                         </td>
                                                 </tr>
+                                                <tr>
+                                                        <td>options</td>
+                                                        <td>
+                                                                    <code><a href="../interfaces/Options.html" target="_self" >Partial&lt;Options&gt;</a></code>
+                                                        </td>
+                                                    
+                                                    <td>
+                                                            Yes
+                                                    </td>
+                                                    
+
+                                                        <td>
+                                                                <p>A set of options to override the default options for this call only</p>
+
+                                                        </td>
+                                                </tr>
                                         </tbody>
                                     </table>
                             </div>
@@ -718,7 +1124,7 @@ Responses using Promises are currently not supported. If you need to respond, us
                 <tr>
                     <td class="col-md-4">
                             <span class="modifier-icon icon ion-ios-reset"></span>
-                        <code>once(channel: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, listener: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function" target="_blank">Function</a>, options?: <a href="../interfaces/ListenerOptions.html">ListenerOptions</a>)</code>
+                        <code>once(channel: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, listener: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function" target="_blank">Function</a>, options?: <a href="../interfaces/Options.html">Partial<Options></a>)</code>
                     </td>
                 </tr>
 
@@ -731,7 +1137,7 @@ Responses using Promises are currently not supported. If you need to respond, us
                             </tr>
                         <tr>
                             <td class="col-md-4">
-                                    <div class="io-line">Defined in Agent:144</div>
+                                    <div class="io-line">Defined in Agent:163</div>
                             </td>
                         </tr>
 
@@ -790,7 +1196,7 @@ To stop listening, just call cancel() on the return value of this method.</p>
                                                 <tr>
                                                         <td>options</td>
                                                         <td>
-                                                                    <code><a href="../interfaces/ListenerOptions.html" target="_self" >ListenerOptions</a></code>
+                                                                    <code><a href="../interfaces/Options.html" target="_self" >Partial&lt;Options&gt;</a></code>
                                                         </td>
                                                     
                                                     <td>
@@ -799,7 +1205,7 @@ To stop listening, just call cancel() on the return value of this method.</p>
                                                     
 
                                                         <td>
-                                                                <p>Options specifying how to treat the listener function</p>
+                                                                <p>A set of options to override the default options for this call only</p>
 
                                                         </td>
                                                 </tr>
@@ -836,7 +1242,7 @@ To stop listening, just call cancel() on the return value of this method.</p>
                 <tr>
                     <td class="col-md-4">
                             <span class="modifier-icon icon ion-ios-reset"></span>
-                        <code>once(channel: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, listener?: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function" target="_blank">Function</a>, options?: <a href="../interfaces/ListenerOptions.html">ListenerOptions</a>)</code>
+                        <code>once(channel: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, listenerOrOptions?: <a href="../interfaces/Options.html">Function | Partial<Options></a>, options?: <a href="../interfaces/Options.html">Partial<Options></a>)</code>
                     </td>
                 </tr>
 
@@ -849,7 +1255,7 @@ To stop listening, just call cancel() on the return value of this method.</p>
                             </tr>
                         <tr>
                             <td class="col-md-4">
-                                    <div class="io-line">Defined in Agent:156</div>
+                                    <div class="io-line">Defined in Agent:175</div>
                             </td>
                         </tr>
 
@@ -893,9 +1299,9 @@ Responses using Promises are currently not supported. If you need to respond, us
                                                         </td>
                                                 </tr>
                                                 <tr>
-                                                        <td>listener</td>
+                                                        <td>listenerOrOptions</td>
                                                         <td>
-                                                                    <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function" target="_blank" >Function</a></code>
+                                                                    <code><a href="../interfaces/Options.html" target="_self" >Function | Partial&lt;Options&gt;</a></code>
                                                         </td>
                                                     
                                                     <td>
@@ -904,14 +1310,14 @@ Responses using Promises are currently not supported. If you need to respond, us
                                                     
 
                                                         <td>
-                                                                <p>The listener to call once the message was received (or nothing to use Promises instead)</p>
+                                                                <p>The listener to call once the message was received or an Options object</p>
 
                                                         </td>
                                                 </tr>
                                                 <tr>
                                                         <td>options</td>
                                                         <td>
-                                                                    <code><a href="../interfaces/ListenerOptions.html" target="_self" >ListenerOptions</a></code>
+                                                                    <code><a href="../interfaces/Options.html" target="_self" >Partial&lt;Options&gt;</a></code>
                                                         </td>
                                                     
                                                     <td>
@@ -920,7 +1326,7 @@ Responses using Promises are currently not supported. If you need to respond, us
                                                     
 
                                                         <td>
-                                                                <p>Options specifying how to treat the listener function (ignored when using Promises)</p>
+                                                                <p>A set of options to override the default options for this call only</p>
 
                                                         </td>
                                                 </tr>
@@ -931,91 +1337,6 @@ Responses using Promises are currently not supported. If you need to respond, us
                             </div>
                             <div class="io-description">
                                 <b>Returns : </b>    <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
-
-                            </div>
-                                <div class="io-description">
-                                    
-                                </div>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-        <table class="table table-sm table-bordered">
-            <tbody>
-                <tr>
-                    <td class="col-md-4">
-                        <a name="once$"></a>
-                        <span class="name">
-                            <b>
-                                <span class="modifier">Public</span>
-                            once$
-                            </b>
-                            <a href="#once$"><span class="icon ion-ios-link"></span></a>
-                        </span>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="col-md-4">
-                            <span class="modifier-icon icon ion-ios-reset"></span>
-                        <code>once$(channel: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
-                    </td>
-                </tr>
-
-
-                            <tr>
-                                <td class="col-md-4">
-                                    <div class="io-line">Inherited from     <code><a href="../classes/Agent.html" target="_self" >Agent</a></code>
-</div>
-                                </td>
-                            </tr>
-                        <tr>
-                            <td class="col-md-4">
-                                    <div class="io-line">Defined in Agent:225</div>
-                            </td>
-                        </tr>
-
-
-                <tr>
-                    <td class="col-md-4">
-                            <div class="io-description"><p>Listens for a message on the given channel, emits it when received and completes afterwards.
-Responses using Observables are currently not supported, use once() instead if you need to respond.</p>
-</div>
-
-                            <div class="io-description">
-                                    <b>Parameters :</b>
-                                    <table class="params">
-                                        <thead>
-                                            <tr>
-                                                <td>Name</td>
-                                                    <td>Type</td>
-                                                <td>Optional</td>
-                                                    <td>Description</td>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                                <tr>
-                                                        <td>channel</td>
-                                                        <td>
-                                                                    <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
-                                                        </td>
-                                                    
-                                                    <td>
-                                                            No
-                                                    </td>
-                                                    
-
-                                                        <td>
-                                                                <p>The channel to listen to</p>
-
-                                                        </td>
-                                                </tr>
-                                        </tbody>
-                                    </table>
-                            </div>
-                            <div>
-                            </div>
-                            <div class="io-description">
-                                <b>Returns : </b>    <code>Observable&lt;any&gt;</code>
 
                             </div>
                                 <div class="io-description">
@@ -1042,7 +1363,7 @@ Responses using Observables are currently not supported, use once() instead if y
                 <tr>
                     <td class="col-md-4">
                             <span class="modifier-icon icon ion-ios-reset"></span>
-                        <code>onceListener(comChannels: <a href="../interfaces/CommunicationChannels.html">CommunicationChannels</a>, listener: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function" target="_blank">Function</a>, options?: <a href="../interfaces/ListenerOptions.html">ListenerOptions</a>)</code>
+                        <code>onceListener(comChannels: <a href="../interfaces/CommunicationChannels.html">CommunicationChannels</a>, listener: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function" target="_blank">Function</a>, options?: <a href="../interfaces/Options.html">Partial<Options></a>)</code>
                     </td>
                 </tr>
 
@@ -1055,7 +1376,7 @@ Responses using Observables are currently not supported, use once() instead if y
                             </tr>
                         <tr>
                             <td class="col-md-4">
-                                    <div class="io-line">Defined in Agent:187</div>
+                                    <div class="io-line">Defined in Agent:208</div>
                             </td>
                         </tr>
 
@@ -1112,7 +1433,7 @@ Responses using Observables are currently not supported, use once() instead if y
                                                 <tr>
                                                         <td>options</td>
                                                         <td>
-                                                                    <code><a href="../interfaces/ListenerOptions.html" target="_self" >ListenerOptions</a></code>
+                                                                    <code><a href="../interfaces/Options.html" target="_self" >Partial&lt;Options&gt;</a></code>
                                                         </td>
                                                     
                                                     <td>
@@ -1121,7 +1442,7 @@ Responses using Observables are currently not supported, use once() instead if y
                                                     
 
                                                         <td>
-                                                                <p>Options specifying how to treat the listener function</p>
+                                                                <p>A set of options to override the default options for this call only</p>
 
                                                         </td>
                                                 </tr>
@@ -1158,7 +1479,7 @@ Responses using Observables are currently not supported, use once() instead if y
                 <tr>
                     <td class="col-md-4">
                             <span class="modifier-icon icon ion-ios-reset"></span>
-                        <code>oncePromise(comChannels: <a href="../interfaces/CommunicationChannels.html">CommunicationChannels</a>)</code>
+                        <code>oncePromise(comChannels: <a href="../interfaces/CommunicationChannels.html">CommunicationChannels</a>, options?: <a href="../interfaces/Options.html">Partial<Options></a>)</code>
                     </td>
                 </tr>
 
@@ -1171,7 +1492,7 @@ Responses using Observables are currently not supported, use once() instead if y
                             </tr>
                         <tr>
                             <td class="col-md-4">
-                                    <div class="io-line">Defined in Agent:169</div>
+                                    <div class="io-line">Defined in Agent:189</div>
                             </td>
                         </tr>
 
@@ -1206,6 +1527,22 @@ Responses using Observables are currently not supported, use once() instead if y
 
                                                         <td>
                                                                 <p>The communication channels to use for sending and receiving messages</p>
+
+                                                        </td>
+                                                </tr>
+                                                <tr>
+                                                        <td>options</td>
+                                                        <td>
+                                                                    <code><a href="../interfaces/Options.html" target="_self" >Partial&lt;Options&gt;</a></code>
+                                                        </td>
+                                                    
+                                                    <td>
+                                                            Yes
+                                                    </td>
+                                                    
+
+                                                        <td>
+                                                                <p>A set of options to override the default options for this call only</p>
 
                                                         </td>
                                                 </tr>
@@ -1255,7 +1592,7 @@ Responses using Observables are currently not supported, use once() instead if y
                             </tr>
                         <tr>
                             <td class="col-md-4">
-                                    <div class="io-line">Defined in Agent:70</div>
+                                    <div class="io-line">Defined in Agent:111</div>
                             </td>
                         </tr>
 
@@ -1356,7 +1693,7 @@ The Promise resolves either when a response is received or when the listening en
                             </tr>
                         <tr>
                             <td class="col-md-4">
-                                    <div class="io-line">Defined in Agent:243</div>
+                                    <div class="io-line">Defined in Agent:228</div>
                             </td>
                         </tr>
 
@@ -1391,90 +1728,6 @@ The Promise resolves either when a response is received or when the listening en
                 <tr>
                     <td class="col-md-4">
                             <span class="modifier-icon icon ion-ios-reset"></span>
-                        <code>removeAllListeners(channel: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
-                    </td>
-                </tr>
-
-
-                            <tr>
-                                <td class="col-md-4">
-                                    <div class="io-line">Inherited from     <code><a href="../classes/Agent.html" target="_self" >Agent</a></code>
-</div>
-                                </td>
-                            </tr>
-                        <tr>
-                            <td class="col-md-4">
-                                    <div class="io-line">Defined in Agent:248</div>
-                            </td>
-                        </tr>
-
-
-                <tr>
-                    <td class="col-md-4">
-                            <div class="io-description"><p>Unsubscribes all listeners from the given channel.</p>
-</div>
-
-                            <div class="io-description">
-                                    <b>Parameters :</b>
-                                    <table class="params">
-                                        <thead>
-                                            <tr>
-                                                <td>Name</td>
-                                                    <td>Type</td>
-                                                <td>Optional</td>
-                                                    <td>Description</td>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                                <tr>
-                                                        <td>channel</td>
-                                                        <td>
-                                                                    <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
-                                                        </td>
-                                                    
-                                                    <td>
-                                                            No
-                                                    </td>
-                                                    
-
-                                                        <td>
-                                                                <p>The channel to unsubscribe from</p>
-
-                                                        </td>
-                                                </tr>
-                                        </tbody>
-                                    </table>
-                            </div>
-                            <div>
-                            </div>
-                            <div class="io-description">
-                                <b>Returns : </b>    <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
-
-                            </div>
-                                <div class="io-description">
-                                    
-                                </div>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-        <table class="table table-sm table-bordered">
-            <tbody>
-                <tr>
-                    <td class="col-md-4">
-                        <a name="removeAllListeners"></a>
-                        <span class="name">
-                            <b>
-                                <span class="modifier">Public</span>
-                            removeAllListeners
-                            </b>
-                            <a href="#removeAllListeners"><span class="icon ion-ios-link"></span></a>
-                        </span>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="col-md-4">
-                            <span class="modifier-icon icon ion-ios-reset"></span>
                         <code>removeAllListeners(channel?: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
                     </td>
                 </tr>
@@ -1488,7 +1741,7 @@ The Promise resolves either when a response is received or when the listening en
                             </tr>
                         <tr>
                             <td class="col-md-4">
-                                    <div class="io-line">Defined in Agent:253</div>
+                                    <div class="io-line">Defined in Agent:233</div>
                             </td>
                         </tr>
 
@@ -1573,7 +1826,7 @@ The Promise resolves either when a response is received or when the listening en
                             </tr>
                         <tr>
                             <td class="col-md-4">
-                                    <div class="io-line">Defined in Agent:60</div>
+                                    <div class="io-line">Defined in Agent:49</div>
                             </td>
                         </tr>
 
@@ -1690,7 +1943,7 @@ The Promise resolves either when a response is received or when the listening en
                             </tr>
                         <tr>
                             <td class="col-md-4">
-                                    <div class="io-line">Defined in Agent:52</div>
+                                    <div class="io-line">Defined in Agent:41</div>
                             </td>
                         </tr>
 
@@ -1760,94 +2013,6 @@ The Promise resolves either when a response is received or when the listening en
                 </tr>
             </tbody>
         </table>
-        <table class="table table-sm table-bordered">
-            <tbody>
-                <tr>
-                    <td class="col-md-4">
-                        <a name="transformObservableArgs"></a>
-                        <span class="name">
-                            <b>
-                                <span class="modifier">Protected</span>
-                                <span class="modifier">Static</span>
-                            transformObservableArgs
-                            </b>
-                            <a href="#transformObservableArgs"><span class="icon ion-ios-link"></span></a>
-                        </span>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="col-md-4">
-                            <span class="modifier-icon icon ion-ios-reset"></span>
-                        <code>transformObservableArgs(args: any[])</code>
-                    </td>
-                </tr>
-
-
-                            <tr>
-                                <td class="col-md-4">
-                                    <div class="io-line">Inherited from     <code><a href="../classes/Agent.html" target="_self" >Agent</a></code>
-</div>
-                                </td>
-                            </tr>
-                        <tr>
-                            <td class="col-md-4">
-                                    <div class="io-line">Defined in Agent:215</div>
-                            </td>
-                        </tr>
-
-
-                <tr>
-                    <td class="col-md-4">
-                            <div class="io-description"><p>Transform data to fit into a single argument.
-Arrays with length 0 will yield undefined.
-Arrays with length 1 will yield the object at index 0.
-Arrays with length 2 or above will yield the input array.</p>
-</div>
-
-                            <div class="io-description">
-                                    <b>Parameters :</b>
-                                    <table class="params">
-                                        <thead>
-                                            <tr>
-                                                <td>Name</td>
-                                                    <td>Type</td>
-                                                <td>Optional</td>
-                                                    <td>Description</td>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                                <tr>
-                                                        <td>args</td>
-                                                        <td>
-                                                                    <code>any[]</code>
-                                                        </td>
-                                                    
-                                                    <td>
-                                                            No
-                                                    </td>
-                                                    
-
-                                                        <td>
-                                                                <p>The arguments to transform</p>
-
-                                                        </td>
-                                                </tr>
-                                        </tbody>
-                                    </table>
-                            </div>
-                            <div>
-                            </div>
-                            <div class="io-description">
-                                <b>Returns : </b>    <code>any | []</code>
-
-                            </div>
-                                <div class="io-description">
-                                    
-                                </div>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
 </section>
 
 
@@ -1859,10 +2024,8 @@ Arrays with length 2 or above will yield the input array.</p>
 
 
     <div class="tab-pane fade  tab-source-code" id="c-source">
-        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Agent } from &#x27;./agent&#x27;;
-import { ipcRenderer } from &#x27;electron&#x27;;
-import { IpcRendererEvent } from &#x27;./aliases&#x27;;
-import IpcRenderer &#x3D; Electron.IpcRenderer;
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Agent } from &#x27;./agent&#x27;
+import { IpcRenderer, IpcRendererEvent } from &#x27;./aliases&#x27;
 
 /**
  * Represents an API wrapper around Electron&#x27;s ipcRenderer.
@@ -1871,8 +2034,8 @@ export class Client extends Agent&lt;IpcRenderer&gt; {
   /**
    * Initializes a new IPC Client.
    */
-  constructor() {
-    super(ipcRenderer);
+  constructor () {
+    super(require(&#x27;electron&#x27;).ipcRenderer)
   }
 
   /**
@@ -1880,8 +2043,8 @@ export class Client extends Agent&lt;IpcRenderer&gt; {
    * @param requestChannel The channel to use for sending the request
    * @param data The request data
    */
-  protected send(requestChannel: string, ...data: any[]): void {
-    this.ipcService.send(requestChannel, ...data);
+  protected send (requestChannel: string, ...data: any[]): void {
+    this.ipcService.send(requestChannel, ...data)
   }
 
   /**
@@ -1890,8 +2053,8 @@ export class Client extends Agent&lt;IpcRenderer&gt; {
    * @param responseChannel The channel to use for sending the response
    * @param data The response data
    */
-  protected respond(event: IpcRendererEvent, responseChannel: string, ...data: any[]): void {
-    this.ipcService.sendTo(event.senderId, responseChannel, ...data);
+  protected respond (event: IpcRendererEvent, responseChannel: string, ...data: any[]): void {
+    this.ipcService.sendTo(event.senderId, responseChannel, ...data)
   }
 }
 </code></pre>
