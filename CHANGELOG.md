@@ -10,6 +10,9 @@ and this project adheres to [Semantic Versioning][SEMVER].
 ### Added
 - Details on main-to-renderer communication in README.md
 
+### Removed
+- `@types/electron` dependency
+
 ### Fixed
 - Links in README.md
 - Links in CHANGELOG.md
