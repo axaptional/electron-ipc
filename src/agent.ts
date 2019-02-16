@@ -34,21 +34,6 @@ export abstract class Agent<T extends IpcService> {
   protected constructor (protected ipcService: T, private defaultOptions: Partial<Options> = {}) {}
 
   /**
-   * Sends a message to the other service.
-   * @param requestChannel The channel to use for sending the request
-   * @param data The request data
-   */
-  protected abstract send (requestChannel: string, ...data: any[]): void
-
-  /**
-   * Responds to a given event from the other process.
-   * @param event The event to respond to
-   * @param responseChannel The channel to use for sending the response
-   * @param data The response data
-   */
-  protected abstract respond (event: IpcEvent, responseChannel: string, ...data: any[]): void
-
-  /**
    * Returns an atomized value for the given array.
    * If the array has length 0, the return value will be undefined.
    * If the array has length 1, the return value will be the first and only array item.
@@ -57,20 +42,6 @@ export abstract class Agent<T extends IpcService> {
    */
   protected static atomize<T> (args: T[]): T | T[] {
     return args.length > 1 ? args : args[0]
-  }
-
-  /**
-   * Overrides the default settings of this IPC communicator instance.
-   * Settings not specified in the options argument will retain their values by default.
-   * @param options A set of options with settings you want to override
-   * @param replace If true, settings not specified in the options argument will be unset
-   */
-  public configure (options: Partial<Options>, replace: boolean = false): void {
-    if (replace) {
-      this.defaultOptions = options
-      return
-    }
-    Object.assign(this.defaultOptions, options)
   }
 
   /**
@@ -92,11 +63,17 @@ export abstract class Agent<T extends IpcService> {
   }
 
   /**
-   * Returns a set of options according to this instance's default options and the given overrides.
-   * @param overrides A set of options with settings that should override default values
+   * Overrides the default settings of this IPC communicator instance.
+   * Settings not specified in the options argument will retain their values by default.
+   * @param options A set of options with settings you want to override
+   * @param replace If true, settings not specified in the options argument will be unset
    */
-  protected getOptions (overrides?: Partial<Options>): Options {
-    return Object.assign(Agent.fallbackOptions, this.defaultOptions, overrides)
+  public configure (options: Partial<Options>, replace: boolean = false): void {
+    if (replace) {
+      this.defaultOptions = options
+      return
+    }
+    Object.assign(this.defaultOptions, options)
   }
 
   // TODO: The Promise should be rejected if an uncaught error occurred at the listening endpoint.
@@ -181,6 +158,50 @@ export abstract class Agent<T extends IpcService> {
     }
   }
 
+  // TODO: Request Promises should be canceled/rejected when removeAllListeners() is called.
+  /**
+   * Unsubscribes all listeners from all channels.
+   */
+  public removeAllListeners (): void
+  /**
+   * Unsubscribes all listeners from the given channel. Omit the channel to unsubscribe from all channels.
+   * @param channel The channel to unsubscribe from (or nothing)
+   */
+  public removeAllListeners (channel?: string): void {
+    const channels = []
+    if (typeof channel !== 'undefined') {
+      channels.push(Channels.getRequestChannel(channel))
+    } else {
+      channels.push(...this.ipcService.eventNames().filter(Channels.isRequestChannel))
+    }
+    for (let channel of channels) {
+      this.ipcService.removeAllListeners(channel)
+    }
+  }
+
+  /**
+   * Sends a message to the other service.
+   * @param requestChannel The channel to use for sending the request
+   * @param data The request data
+   */
+  protected abstract send (requestChannel: string, ...data: any[]): void
+
+  /**
+   * Responds to a given event from the other process.
+   * @param event The event to respond to
+   * @param responseChannel The channel to use for sending the response
+   * @param data The response data
+   */
+  protected abstract respond (event: IpcEvent, responseChannel: string, ...data: any[]): void
+
+  /**
+   * Returns a set of options according to this instance's default options and the given overrides.
+   * @param overrides A set of options with settings that should override default values
+   */
+  protected getOptions (overrides?: Partial<Options>): Options {
+    return Object.assign(Agent.fallbackOptions, this.defaultOptions, overrides)
+  }
+
   /**
    * Listens for a message. The Promise resolves once a message was received.
    * @param comChannels The communication channels to use for sending and receiving messages
@@ -219,26 +240,5 @@ export abstract class Agent<T extends IpcService> {
     }
     this.ipcService.once(requestChannel, handler)
     return new Canceler(this.ipcService, requestChannel, handler)
-  }
-
-  // TODO: Request Promises should be canceled/rejected when removeAllListeners() is called.
-  /**
-   * Unsubscribes all listeners from all channels.
-   */
-  public removeAllListeners (): void
-  /**
-   * Unsubscribes all listeners from the given channel. Omit the channel to unsubscribe from all channels.
-   * @param channel The channel to unsubscribe from (or nothing)
-   */
-  public removeAllListeners (channel?: string): void {
-    const channels = []
-    if (typeof channel !== 'undefined') {
-      channels.push(Channels.getRequestChannel(channel))
-    } else {
-      channels.push(...this.ipcService.eventNames().filter(Channels.isRequestChannel))
-    }
-    for (let channel of channels) {
-      this.ipcService.removeAllListeners(channel)
-    }
   }
 }

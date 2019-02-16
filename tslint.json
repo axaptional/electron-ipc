@@ -1,6 +1,9 @@
 {
   "rules": {
-    "no-floating-promises": false // Floating promises are necessary for Promise responses
+    "no-floating-promises": false, // Floating promises are necessary for Promise responses
+    "member-ordering": [true, {
+      "order": "fields-first"
+    }]
   },
   "extends": [
     "tslint-config-standard"

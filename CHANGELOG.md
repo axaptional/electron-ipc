@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning][SEMVER].
 ### Fixed
 - Links in README.md
 - Links in CHANGELOG.md
+- Member ordering in source files
 
 ## [0.2.0] - 2019-02-15
 
