@@ -1,3 +1,4 @@
+import { Listener } from './agent'
 import { IpcService } from './aliases'
 
 /**
@@ -18,14 +19,14 @@ export class Canceler implements Cancelable {
    * Initializes a new Canceler.
    * @param ipcService The IPC service to use for unsubscribing
    * @param channel The channel to unsubscribe from
-   * @param handler The listener to unsubscribe
+   * @param listener The listener to unsubscribe
    */
-  constructor (private ipcService: IpcService, public channel: string, private handler: Function) {}
+  constructor (private ipcService: IpcService, public channel: string, private listener: Listener) {}
 
   /**
    * Unsubscribes the listener, meaning it will no longer be called when a message is received.
    */
   public cancel (): void {
-    this.ipcService.removeListener(this.channel, this.handler)
+    this.ipcService.removeListener(this.channel, this.listener)
   }
 }

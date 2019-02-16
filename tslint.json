@@ -3,9 +3,11 @@
     "no-floating-promises": false, // Floating promises are necessary for Promise responses
     "member-ordering": [true, {
       "order": "fields-first"
-    }]
+    }],
+    "interface-name": [true, "never-prefix"]
   },
   "extends": [
+    "tslint:recommended",
     "tslint-config-standard"
   ]
 }

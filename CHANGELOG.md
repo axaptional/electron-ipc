@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning][SEMVER].
 - Meta information in `package.json`
 - Details on main-to-renderer communication in README.md
 
+### Changed
+- Adherence to `tslint:recommended` code style (mostly)
+  - [Interfaces will not be prefixed with `I`][no-interface-prefix]
+
 ### Removed
 - `@types/electron` dependency
 
@@ -40,6 +44,7 @@ and this project adheres to [Semantic Versioning][SEMVER].
 <!-- General references -->
 [KEEP-A-CHANGELOG]: https://keepachangelog.com/en/1.0.0/
 [SEMVER]: https://semver.org/spec/v2.0.0.html
+[no-interface-prefix]: https://stackoverflow.com/questions/31876947/confused-about-the-interface-and-class-coding-guidelines-for-typescript/41967120#41967120
 
 <!-- Versions -->
 [Unreleased]: https://github.com/axaptional/electron-ipc/compare/v0.2.0...HEAD
