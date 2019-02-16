@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning][SEMVER].
 ## [Unreleased]
 
 ### Added
+- Meta information in `package.json`
 - Details on main-to-renderer communication in README.md
 
 ### Removed

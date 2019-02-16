@@ -8,6 +8,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc",
     "lint": "tslint -p tsconfig.json",
+    "lint:fix": "tslint -p tsconfig.json --fix",
     "docs:build": "compodoc -d docs -p tsconfig.json --theme readthedocs",
     "docs:serve": "compodoc -d docs -r 4201 -s -o",
     "docs:review": "npm run doc:build && npm run doc:serve",
@@ -23,14 +24,25 @@
     "process",
     "communication"
   ],
-  "author": "André Mategka <12amdeveloper@gmail.com>",
+  "author": {
+    "name": "André Mategka",
+    "email": "12amdeveloper@gmail.com"
+  },
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/axaptional/electron-ipc.git"
+  },
   "files": [
     "dist/**/*",
     "LICENSE",
     "README.md",
     "package.json"
   ],
+  "directories": {
+    "lib": "dist",
+    "doc": "docs"
+  },
   "devDependencies": {
     "@compodoc/compodoc": "^1.1.8",
     "tslint": "^5.12.1",
