@@ -123,7 +123,7 @@
 
                         <tr>
                             <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="10" class="link-to-prism">src/canceler.ts:10</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="11" class="link-to-prism">src/canceler.ts:11</a></div>
                             </td>
                         </tr>
 
@@ -148,7 +148,8 @@
 
 
     <div class="tab-pane fade  tab-source-code" id="c-source">
-        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { IpcService } from &#x27;./aliases&#x27;
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Listener } from &#x27;./agent&#x27;
+import { IpcService } from &#x27;./aliases&#x27;
 
 /**
  * Represents a process that can be aborted.
@@ -168,15 +169,15 @@ export class Canceler implements Cancelable {
    * Initializes a new Canceler.
    * @param ipcService The IPC service to use for unsubscribing
    * @param channel The channel to unsubscribe from
-   * @param handler The listener to unsubscribe
+   * @param listener The listener to unsubscribe
    */
-  constructor (private ipcService: IpcService, public channel: string, private handler: Function) {}
+  constructor (private ipcService: IpcService, public channel: string, private listener: Listener) {}
 
   /**
    * Unsubscribes the listener, meaning it will no longer be called when a message is received.
    */
   public cancel (): void {
-    this.ipcService.removeListener(this.channel, this.handler)
+    this.ipcService.removeListener(this.channel, this.listener)
   }
 }
 </code></pre>

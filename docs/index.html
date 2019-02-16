@@ -32,14 +32,15 @@
                    <div class="content-data">
 
 <h1 id="electron-ipc">electron-ipc</h1>
-<p><a href="LICENSE"><img src="https://img.shields.io/github/license/axaptional/electron-ipc.svg" alt="MIT license" class="img-responsive"></a>
+<p><a href="https://github.com/axaptional/electron-ipc/blob/v0.2.1/LICENSE"><img src="https://img.shields.io/github/license/axaptional/electron-ipc.svg" alt="MIT license" class="img-responsive"></a>
 <a href="https://github.com/axaptional/electron-ipc/issues"><img src="https://img.shields.io/github/issues/axaptional/electron-ipc.svg" alt="Issues" class="img-responsive"></a>
-<a href=""><img src="https://img.shields.io/npm/v/axaptional/electron-ipc.svg" alt="NPM Version" class="img-responsive"></a>
-<a href="https://axaptional.github.io/electron-ipc/"><img src="docs/images/coverage-badge-documentation.svg" alt="Documentation Coverage" class="img-responsive"></a></p>
+<a href="https://www.npmjs.com/package/@axaptional/electron-ipc"><img src="https://img.shields.io/npm/v/@axaptional/electron-ipc.svg" alt="NPM Version" class="img-responsive"></a>
+<a href="https://standardjs.com"><img src="https://img.shields.io/badge/code_style-standard-brightgreen.svg" alt="JavaScript Style Guide" class="img-responsive"></a>
+<a href="https://axaptional.github.io/electron-ipc/"><img src="https://raw.githubusercontent.com/axaptional/electron-ipc/v0.2.1/docs/images/coverage-badge-documentation.svg?sanitize=true" alt="Documentation Coverage" class="img-responsive"></a></p>
 <p>An easy-to-use symmetric wrapper around Electron&#39;s IPC API</p>
 <p><strong>Note:</strong>
 This package is still a <strong>work in progress</strong> and should not be used in any
-projects yet, let alone any applications in production.</p>
+projects yet, let alone any production environments.</p>
 <h2 id="features">Features</h2>
 <p>This package allows you to use a normalized, symmetric API for IPC.
 This means that both the client and server APIs can be used as if they were
@@ -51,6 +52,7 @@ exactly the same.</p>
 <li>custom Promises (like <code>bluebird</code>)</li>
 </ul>
 <h2 id="installation">Installation</h2>
+<p>Use <code>npm</code> to install <a href="https://www.npmjs.com/package/@axaptional/electron-ipc"><code>@axaptional/electron-ipc</code></a>:</p>
 <div><pre class="line-numbers"><code class="language-bash">$ npm install &#64;axaptional/electron-ipc</code></pre></div><h3 id="extensions">Extensions</h3>
 <h4 id="cancelable-promises">Cancelable Promises</h4>
 <p>If you want to use cancelable Promises, install a Promise library like
@@ -94,7 +96,14 @@ const server = new Server(myWindow.webContents);
 
 server.on(&#39;message&#39;, message =&gt; {
   return `And here is the reply to ${message}`;
-});</code></pre></div><h3 id="argument-behavior">Argument behavior</h3>
+});</code></pre></div><h3 id="posting-from-main-and-responding-from-renderer">Posting from main and responding from renderer</h3>
+<p>If you want to use IPC in the other direction, <em>you can</em>:</p>
+<p>The APIs for <code>Client</code> and <code>Server</code> are exactly the same.
+For example, you can also <code>post</code> a message from the main process to the
+renderer process, then use <code>on</code>/<code>once</code> to respond back.
+In the above code, you could just swap all lines after the
+<code>Client</code> and <code>Server</code> initializations to do just that.</p>
+<h3 id="argument-behavior">Argument behavior</h3>
 <p>By default, arguments will be atomized, making them fit into a single object.
 This transformation is made because Promises can only resolve to <em>one</em> value.</p>
 <p>This behavior applies to messages sent with <code>post</code> and received by <code>on</code>/<code>once</code>.</p>
@@ -143,15 +152,16 @@ Keep in mind that <code>{ args: &#39;as-is&#39; }</code> is only available for l
 </tr>
 </tbody>
 </table>
-<p>For more detailed information,
-see <a href="markdown/arguments.md">Argument behavior in detail</a>.</p>
+<p>For more detailed information, see <a href="https://github.com/axaptional/electron-ipc/blob/v0.2.1/markdown/arguments.md">Argument behavior in detail</a>.</p>
 <h3 id="methods">Methods</h3>
-<p>For short explanations on available methods,
-see <a href="markdown/methods.md">Methods</a>.</p>
-<p>For the code documentation,
-see <a href="https://axaptional.github.io/electron-ipc/">Documentation</a>.</p>
+<p>For short explanations on available methods, see <a href="https://github.com/axaptional/electron-ipc/blob/v0.2.1/markdown/methods.md">Methods</a>.</p>
+<p>For the code documentation, see <a href="https://axaptional.github.io/electron-ipc/">Documentation</a>.</p>
 <h2 id="license">License</h2>
-<p>This package is available under the <a href="LICENSE">MIT license</a>.</p>
+<p>This package is available under the <a href="https://github.com/axaptional/electron-ipc/blob/v0.2.1/LICENSE">MIT license</a>.</p>
+<!-- Important references -->
+<!-- Badges -->
+<!-- Help -->
+<!-- General references -->
 
 
 

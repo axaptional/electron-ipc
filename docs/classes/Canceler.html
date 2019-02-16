@@ -131,12 +131,12 @@
             <tbody>
                 <tr>
                     <td class="col-md-4">
-<code>constructor(ipcService: <a href="../undefineds/IpcService.html">IpcService</a>, channel: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, handler: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function" target="_blank">Function</a>)</code>
+<code>constructor(ipcService: <a href="../undefineds/IpcService.html">IpcService</a>, channel: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, listener: <a href="../undefineds/Listener.html">Listener</a>)</code>
                     </td>
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="16" class="link-to-prism">src/canceler.ts:16</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="17" class="link-to-prism">src/canceler.ts:17</a></div>
                             </td>
                         </tr>
 
@@ -189,10 +189,10 @@
                                                         </td>
                                                 </tr>
                                                 <tr>
-                                                        <td>handler</td>
+                                                        <td>listener</td>
                                                   
                                                         <td>
-                                                                    <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function" target="_blank" >Function</a></code>
+                                                                    <code><a href="../miscellaneous/typealiases.html#Listener" target="_self" >Listener</a></code>
                                                         </td>
                                                   
                                                     <td>
@@ -239,7 +239,7 @@
                     </tr>
                         <tr>
                             <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="23" class="link-to-prism">src/canceler.ts:23</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="24" class="link-to-prism">src/canceler.ts:24</a></div>
                             </td>
                         </tr>
 
@@ -282,7 +282,7 @@
 
                         <tr>
                             <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="28" class="link-to-prism">src/canceler.ts:28</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="29" class="link-to-prism">src/canceler.ts:29</a></div>
                             </td>
                         </tr>
 
@@ -311,7 +311,8 @@
 
 
     <div class="tab-pane fade  tab-source-code" id="c-source">
-        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { IpcService } from &#x27;./aliases&#x27;
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Listener } from &#x27;./agent&#x27;
+import { IpcService } from &#x27;./aliases&#x27;
 
 /**
  * Represents a process that can be aborted.
@@ -331,15 +332,15 @@ export class Canceler implements Cancelable {
    * Initializes a new Canceler.
    * @param ipcService The IPC service to use for unsubscribing
    * @param channel The channel to unsubscribe from
-   * @param handler The listener to unsubscribe
+   * @param listener The listener to unsubscribe
    */
-  constructor (private ipcService: IpcService, public channel: string, private handler: Function) {}
+  constructor (private ipcService: IpcService, public channel: string, private listener: Listener) {}
 
   /**
    * Unsubscribes the listener, meaning it will no longer be called when a message is received.
    */
   public cancel (): void {
-    this.ipcService.removeListener(this.channel, this.handler)
+    this.ipcService.removeListener(this.channel, this.listener)
   }
 }
 </code></pre>

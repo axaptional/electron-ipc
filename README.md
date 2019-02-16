@@ -139,7 +139,7 @@ For the code documentation, see [Documentation][PAGES].
 This package is available under the [MIT license][LICENSE].
 
 <!-- Important references -->
-[LICENSE]: https://github.com/axaptional/electron-ipc/blob/v0.2.0/LICENSE
+[LICENSE]: https://github.com/axaptional/electron-ipc/blob/v0.2.1/LICENSE
 [ISSUES]: https://github.com/axaptional/electron-ipc/issues
 [NPM]: https://www.npmjs.com/package/@axaptional/electron-ipc
 [PAGES]: https://axaptional.github.io/electron-ipc/
@@ -150,11 +150,11 @@ This package is available under the [MIT license][LICENSE].
 [BADGE-ISSUES]: https://img.shields.io/github/issues/axaptional/electron-ipc.svg
 [BADGE-NPM]: https://img.shields.io/npm/v/@axaptional/electron-ipc.svg
 [BADGE-STANDARD]: https://img.shields.io/badge/code_style-standard-brightgreen.svg
-[BADGE-COVERAGE]: https://raw.githubusercontent.com/axaptional/electron-ipc/v0.2.0/docs/images/coverage-badge-documentation.svg?sanitize=true
+[BADGE-COVERAGE]: https://raw.githubusercontent.com/axaptional/electron-ipc/v0.2.1/docs/images/coverage-badge-documentation.svg?sanitize=true
 
 <!-- Help -->
-[arguments]: https://github.com/axaptional/electron-ipc/blob/v0.2.0/markdown/arguments.md
-[methods]: https://github.com/axaptional/electron-ipc/blob/v0.2.0/markdown/methods.md
+[arguments]: https://github.com/axaptional/electron-ipc/blob/v0.2.1/markdown/arguments.md
+[methods]: https://github.com/axaptional/electron-ipc/blob/v0.2.1/markdown/methods.md
 
 <!-- General references -->
 [electron-ipc-rx]: https://github.com/axaptional/electron-ipc-rx

@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning][SEMVER].
 
 ## [Unreleased]
 
+## [0.2.1] - 2019-02-16
+
 ### Added
 - Meta information in `package.json`
 - Details on main-to-renderer communication in README.md
@@ -47,5 +49,6 @@ and this project adheres to [Semantic Versioning][SEMVER].
 [no-interface-prefix]: https://stackoverflow.com/questions/31876947/confused-about-the-interface-and-class-coding-guidelines-for-typescript/41967120#41967120
 
 <!-- Versions -->
-[Unreleased]: https://github.com/axaptional/electron-ipc/compare/v0.2.0...HEAD
+[Unreleased]: https://github.com/axaptional/electron-ipc/compare/v0.2.1...HEAD
+[0.2.1]: https://github.com/axaptional/electron-ipc/releases/tag/v0.2.1
 [0.2.0]: https://github.com/axaptional/electron-ipc/releases/tag/v0.2.0

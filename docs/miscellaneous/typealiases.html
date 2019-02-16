@@ -58,6 +58,9 @@
                 <td class="col-md-4">
                     <ul class="index-list">
                         <li>
+                            <a href="#ArgumentsStyle" title="src/agent.ts"><b>ArgumentsStyle</b>&nbsp;&nbsp;&nbsp;(src/.../agent.ts)</a>
+                        </li>
+                        <li>
                             <a href="#IpcEvent" title="src/aliases.ts"><b>IpcEvent</b>&nbsp;&nbsp;&nbsp;(src/.../aliases.ts)</a>
                         </li>
                         <li>
@@ -73,6 +76,12 @@
                             <a href="#IpcService" title="src/aliases.ts"><b>IpcService</b>&nbsp;&nbsp;&nbsp;(src/.../aliases.ts)</a>
                         </li>
                         <li>
+                            <a href="#Listener" title="src/agent.ts"><b>Listener</b>&nbsp;&nbsp;&nbsp;(src/.../agent.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#ResponseSource" title="src/agent.ts"><b>ResponseSource</b>&nbsp;&nbsp;&nbsp;(src/.../agent.ts)</a>
+                        </li>
+                        <li>
                             <a href="#WebContents" title="src/aliases.ts"><b>WebContents</b>&nbsp;&nbsp;&nbsp;(src/.../aliases.ts)</a>
                         </li>
                     </ul>
@@ -82,7 +91,81 @@
     </table>
 </section>
 
-    <h3>src/aliases.ts</h3>
+    <h3>src/agent.ts</h3>
+    <section>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ArgumentsStyle"></a>
+                    <span class="name"><b>ArgumentsStyle</b><a href="#ArgumentsStyle"><span class="icon ion-ios-link"></span></a></span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Represents an arguments transformation method.
+&#39;atomize&#39; reduces the arguments to one object only if necessary.
+&#39;array&#39; always keeps arguments wrapped in an array.
+&#39;as-is&#39; spreads the arguments array for calls.</p>
+</div>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <code>    <code>&quot;atomize&quot; | &quot;array&quot; | &quot;as-is&quot;</code>
+</code>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="Listener"></a>
+                    <span class="name"><b>Listener</b><a href="#Listener"><span class="icon ion-ios-link"></span></a></span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Represents a listener function.
+Argument behavior depends on the options of the calling instance.
+Responses may be emitted as return values.</p>
+</div>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <code>    <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/function" target="_blank" >function</a></code>
+</code>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ResponseSource"></a>
+                    <span class="name"><b>ResponseSource</b><a href="#ResponseSource"><span class="icon ion-ios-link"></span></a></span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Represents a source of a response.
+The actual response can be resolved synchronously or asynchronously.</p>
+</div>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <code>    <code>any | Promise&lt;any&gt;</code>
+</code>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>    <h3>src/aliases.ts</h3>
     <section>
     <table class="table table-sm table-bordered">
         <tbody>

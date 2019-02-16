@@ -259,7 +259,7 @@
                             </tr>
                         <tr>
                             <td class="col-md-4">
-                                    <div class="io-line">Defined in Agent:25</div>
+                                    <div class="io-line">Defined in Agent:46</div>
                             </td>
                         </tr>
 
@@ -501,7 +501,7 @@
                 <tr>
                     <td class="col-md-4">
                             <span class="modifier-icon icon ion-ios-reset"></span>
-                        <code>applyWithStyle(handler: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function" target="_blank">Function</a>, args: any[], style: "atomize" | "array" | "as-is")</code>
+                        <code>applyWithStyle(listener: <a href="../undefineds/Listener.html">Listener</a>, args: any[], style: <a href="../undefineds/ArgumentsStyle.html">ArgumentsStyle</a>)</code>
                     </td>
                 </tr>
 
@@ -514,14 +514,14 @@
                             </tr>
                         <tr>
                             <td class="col-md-4">
-                                    <div class="io-line">Defined in Agent:82</div>
+                                    <div class="io-line">Defined in Agent:74</div>
                             </td>
                         </tr>
 
 
                 <tr>
                     <td class="col-md-4">
-                            <div class="io-description"><p>Calls the given handler with the given arguments transformed according to the given style.</p>
+                            <div class="io-description"><p>Calls the given listener with the given arguments transformed according to the given style.</p>
 </div>
 
                             <div class="io-description">
@@ -537,9 +537,9 @@
                                         </thead>
                                         <tbody>
                                                 <tr>
-                                                        <td>handler</td>
+                                                        <td>listener</td>
                                                         <td>
-                                                                    <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function" target="_blank" >Function</a></code>
+                                                                    <code><a href="../miscellaneous/typealiases.html#Listener" target="_self" >Listener</a></code>
                                                         </td>
                                                     
                                                     <td>
@@ -571,7 +571,7 @@
                                                 <tr>
                                                         <td>style</td>
                                                         <td>
-                                                                    <code>&quot;atomize&quot; | &quot;array&quot; | &quot;as-is&quot;</code>
+                                                                    <code><a href="../miscellaneous/typealiases.html#ArgumentsStyle" target="_self" >ArgumentsStyle</a></code>
                                                         </td>
                                                     
                                                     <td>
@@ -631,7 +631,7 @@
                             </tr>
                         <tr>
                             <td class="col-md-4">
-                                    <div class="io-line">Defined in Agent:58</div>
+                                    <div class="io-line">Defined in Agent:64</div>
                             </td>
                         </tr>
 
@@ -726,7 +726,7 @@ If the array has a length of 2 or above, the return value will be the input arra
                             </tr>
                         <tr>
                             <td class="col-md-4">
-                                    <div class="io-line">Defined in Agent:68</div>
+                                    <div class="io-line">Defined in Agent:92</div>
                             </td>
                         </tr>
 
@@ -833,7 +833,7 @@ Settings not specified in the options argument will retain their values by defau
                             </tr>
                         <tr>
                             <td class="col-md-4">
-                                    <div class="io-line">Defined in Agent:98</div>
+                                    <div class="io-line">Defined in Agent:221</div>
                             </td>
                         </tr>
 
@@ -904,7 +904,7 @@ Settings not specified in the options argument will retain their values by defau
                 <tr>
                     <td class="col-md-4">
                             <span class="modifier-icon icon ion-ios-reset"></span>
-                        <code>on(channel: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, listener: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function" target="_blank">Function</a>, options?: <a href="../interfaces/Options.html">Partial<Options></a>)</code>
+                        <code>on(channel: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, listener: <a href="../undefineds/Listener.html">Listener</a>, options?: <a href="../interfaces/Options.html">Partial<Options></a>)</code>
                     </td>
                 </tr>
 
@@ -917,7 +917,7 @@ Settings not specified in the options argument will retain their values by defau
                             </tr>
                         <tr>
                             <td class="col-md-4">
-                                    <div class="io-line">Defined in Agent:131</div>
+                                    <div class="io-line">Defined in Agent:128</div>
                             </td>
                         </tr>
 
@@ -960,7 +960,7 @@ To stop listening, just call cancel() on the return value of this method.</p>
                                                 <tr>
                                                         <td>listener</td>
                                                         <td>
-                                                                    <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function" target="_blank" >Function</a></code>
+                                                                    <code><a href="../miscellaneous/typealiases.html#Listener" target="_self" >Listener</a></code>
                                                         </td>
                                                     
                                                     <td>
@@ -1035,7 +1035,7 @@ To stop listening, just call cancel() on the return value of this method.</p>
                             </tr>
                         <tr>
                             <td class="col-md-4">
-                                    <div class="io-line">Defined in Agent:154</div>
+                                    <div class="io-line">Defined in Agent:151</div>
                             </td>
                         </tr>
 
@@ -1124,7 +1124,7 @@ Responses using Promises are currently not supported. If you need to respond, us
                 <tr>
                     <td class="col-md-4">
                             <span class="modifier-icon icon ion-ios-reset"></span>
-                        <code>once(channel: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, listener: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function" target="_blank">Function</a>, options?: <a href="../interfaces/Options.html">Partial<Options></a>)</code>
+                        <code>once(channel: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, listener: <a href="../undefineds/Listener.html">Listener</a>, options?: <a href="../interfaces/Options.html">Partial<Options></a>)</code>
                     </td>
                 </tr>
 
@@ -1137,7 +1137,7 @@ Responses using Promises are currently not supported. If you need to respond, us
                             </tr>
                         <tr>
                             <td class="col-md-4">
-                                    <div class="io-line">Defined in Agent:163</div>
+                                    <div class="io-line">Defined in Agent:160</div>
                             </td>
                         </tr>
 
@@ -1180,7 +1180,7 @@ To stop listening, just call cancel() on the return value of this method.</p>
                                                 <tr>
                                                         <td>listener</td>
                                                         <td>
-                                                                    <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function" target="_blank" >Function</a></code>
+                                                                    <code><a href="../miscellaneous/typealiases.html#Listener" target="_self" >Listener</a></code>
                                                         </td>
                                                     
                                                     <td>
@@ -1242,7 +1242,7 @@ To stop listening, just call cancel() on the return value of this method.</p>
                 <tr>
                     <td class="col-md-4">
                             <span class="modifier-icon icon ion-ios-reset"></span>
-                        <code>once(channel: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, listenerOrOptions?: <a href="../interfaces/Options.html">Function | Partial<Options></a>, options?: <a href="../interfaces/Options.html">Partial<Options></a>)</code>
+                        <code>once(channel: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, listenerOrOptions?: <a href="../interfaces/Options.html">Listener | Partial<Options></a>, options?: <a href="../interfaces/Options.html">Partial<Options></a>)</code>
                     </td>
                 </tr>
 
@@ -1255,7 +1255,7 @@ To stop listening, just call cancel() on the return value of this method.</p>
                             </tr>
                         <tr>
                             <td class="col-md-4">
-                                    <div class="io-line">Defined in Agent:175</div>
+                                    <div class="io-line">Defined in Agent:172</div>
                             </td>
                         </tr>
 
@@ -1301,7 +1301,7 @@ Responses using Promises are currently not supported. If you need to respond, us
                                                 <tr>
                                                         <td>listenerOrOptions</td>
                                                         <td>
-                                                                    <code><a href="../interfaces/Options.html" target="_self" >Function | Partial&lt;Options&gt;</a></code>
+                                                                    <code><a href="../interfaces/Options.html" target="_self" >Listener | Partial&lt;Options&gt;</a></code>
                                                         </td>
                                                     
                                                     <td>
@@ -1363,7 +1363,7 @@ Responses using Promises are currently not supported. If you need to respond, us
                 <tr>
                     <td class="col-md-4">
                             <span class="modifier-icon icon ion-ios-reset"></span>
-                        <code>onceListener(comChannels: <a href="../interfaces/CommunicationChannels.html">CommunicationChannels</a>, listener: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function" target="_blank">Function</a>, options?: <a href="../interfaces/Options.html">Partial<Options></a>)</code>
+                        <code>onceListener(comChannels: <a href="../interfaces/CommunicationChannels.html">CommunicationChannels</a>, listener: <a href="../undefineds/Listener.html">Listener</a>, options?: <a href="../interfaces/Options.html">Partial<Options></a>)</code>
                     </td>
                 </tr>
 
@@ -1376,7 +1376,7 @@ Responses using Promises are currently not supported. If you need to respond, us
                             </tr>
                         <tr>
                             <td class="col-md-4">
-                                    <div class="io-line">Defined in Agent:208</div>
+                                    <div class="io-line">Defined in Agent:249</div>
                             </td>
                         </tr>
 
@@ -1417,7 +1417,7 @@ Responses using Promises are currently not supported. If you need to respond, us
                                                 <tr>
                                                         <td>listener</td>
                                                         <td>
-                                                                    <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function" target="_blank" >Function</a></code>
+                                                                    <code><a href="../miscellaneous/typealiases.html#Listener" target="_self" >Listener</a></code>
                                                         </td>
                                                     
                                                     <td>
@@ -1492,7 +1492,7 @@ Responses using Promises are currently not supported. If you need to respond, us
                             </tr>
                         <tr>
                             <td class="col-md-4">
-                                    <div class="io-line">Defined in Agent:189</div>
+                                    <div class="io-line">Defined in Agent:230</div>
                             </td>
                         </tr>
 
@@ -1592,7 +1592,7 @@ Responses using Promises are currently not supported. If you need to respond, us
                             </tr>
                         <tr>
                             <td class="col-md-4">
-                                    <div class="io-line">Defined in Agent:111</div>
+                                    <div class="io-line">Defined in Agent:108</div>
                             </td>
                         </tr>
 
@@ -1693,7 +1693,7 @@ The Promise resolves either when a response is received or when the listening en
                             </tr>
                         <tr>
                             <td class="col-md-4">
-                                    <div class="io-line">Defined in Agent:228</div>
+                                    <div class="io-line">Defined in Agent:185</div>
                             </td>
                         </tr>
 
@@ -1741,7 +1741,7 @@ The Promise resolves either when a response is received or when the listening en
                             </tr>
                         <tr>
                             <td class="col-md-4">
-                                    <div class="io-line">Defined in Agent:233</div>
+                                    <div class="io-line">Defined in Agent:190</div>
                             </td>
                         </tr>
 
@@ -1826,7 +1826,7 @@ The Promise resolves either when a response is received or when the listening en
                             </tr>
                         <tr>
                             <td class="col-md-4">
-                                    <div class="io-line">Defined in Agent:49</div>
+                                    <div class="io-line">Defined in Agent:215</div>
                             </td>
                         </tr>
 
@@ -1943,7 +1943,7 @@ The Promise resolves either when a response is received or when the listening en
                             </tr>
                         <tr>
                             <td class="col-md-4">
-                                    <div class="io-line">Defined in Agent:41</div>
+                                    <div class="io-line">Defined in Agent:207</div>
                             </td>
                         </tr>
 

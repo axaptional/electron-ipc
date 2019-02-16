@@ -1,6 +1,6 @@
 {
   "name": "@axaptional/electron-ipc",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "An easy-to-use wrapper around Electron's inter-process communication API",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -15,7 +15,7 @@
     "prepare": "npm run build",
     "prepublishOnly": "npm run lint",
     "preversion": "npm run lint",
-    "version": "npm run docs:build && git add -A src docs",
+    "version": "git add -A src docs",
     "postversion": "git push && git push --tags"
   },
   "keywords": [
