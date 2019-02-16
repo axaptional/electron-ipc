@@ -1,10 +1,10 @@
 # electron-ipc
 
-[![MIT license](https://img.shields.io/github/license/axaptional/electron-ipc.svg)][LICENSE]
-[![Issues](https://img.shields.io/github/issues/axaptional/electron-ipc.svg)][ISSUES]
-[![NPM Version](https://img.shields.io/npm/v/@axaptional/electron-ipc.svg)][NPM]
-[![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)][STANDARD]
-[![Documentation Coverage](docs/images/coverage-badge-documentation.svg)][PAGES]
+[![MIT license][BADGE-LICENSE]][LICENSE]
+[![Issues][BADGE-ISSUES]][ISSUES]
+[![NPM Version][BADGE-NPM]][NPM]
+[![JavaScript Style Guide][BADGE-STANDARD]][STANDARD]
+[![Documentation Coverage][BADGE-COVERAGE]][PAGES]
 
 An easy-to-use symmetric wrapper around Electron's IPC API
 
@@ -138,17 +138,25 @@ For the code documentation, see [Documentation][PAGES].
 
 This package is available under the [MIT license][LICENSE].
 
-<!-- References -->
+<!-- Important references -->
 [LICENSE]: https://github.com/axaptional/electron-ipc/blob/v0.2.0/LICENSE
 [ISSUES]: https://github.com/axaptional/electron-ipc/issues
 [NPM]: https://www.npmjs.com/package/@axaptional/electron-ipc
 [PAGES]: https://axaptional.github.io/electron-ipc/
 [STANDARD]: https://standardjs.com
 
+<!-- Badges -->
+[BADGE-LICENSE]: https://img.shields.io/github/license/axaptional/electron-ipc.svg
+[BADGE-ISSUES]: https://img.shields.io/github/issues/axaptional/electron-ipc.svg
+[BADGE-NPM]: https://img.shields.io/npm/v/@axaptional/electron-ipc.svg
+[BADGE-STANDARD]: https://img.shields.io/badge/code_style-standard-brightgreen.svg
+[BADGE-COVERAGE]: https://raw.githubusercontent.com/axaptional/electron-ipc/v0.2.0/docs/images/coverage-badge-documentation.svg?sanitize=true
+
+<!-- Help -->
 [arguments]: https://github.com/axaptional/electron-ipc/blob/v0.2.0/markdown/arguments.md
 [methods]: https://github.com/axaptional/electron-ipc/blob/v0.2.0/markdown/methods.md
 
+<!-- General references -->
 [electron-ipc-rx]: https://github.com/axaptional/electron-ipc-rx
-
 [bluebird]: https://github.com/petkaantonov/bluebird
 [any-promise]: https://github.com/kevinbeaty/any-promise
