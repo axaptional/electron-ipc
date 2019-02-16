@@ -3,13 +3,14 @@
 [![MIT license](https://img.shields.io/github/license/axaptional/electron-ipc.svg)][LICENSE]
 [![Issues](https://img.shields.io/github/issues/axaptional/electron-ipc.svg)][ISSUES]
 [![NPM Version](https://img.shields.io/npm/v/@axaptional/electron-ipc.svg)][NPM]
+[![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)][STANDARD]
 [![Documentation Coverage](docs/images/coverage-badge-documentation.svg)][PAGES]
 
 An easy-to-use symmetric wrapper around Electron's IPC API
 
 **Note:**
 This package is still a **work in progress** and should not be used in any
-projects yet, let alone any applications in production.
+projects yet, let alone any production environments.
 
 ## Features
 
@@ -24,6 +25,8 @@ The following means of asynchronous communication are currently supported:
 - custom Promises (like `bluebird`)
 
 ## Installation
+
+Use `npm` to install [`@axaptional/electron-ipc`][NPM]:
 
 ```bash
 $ npm install @axaptional/electron-ipc
@@ -96,6 +99,16 @@ server.on('message', message => {
 });
 ```
 
+### Posting from main and responding from renderer
+
+If you want to use IPC in the other direction, _you can_:
+
+The APIs for `Client` and `Server` are exactly the same.
+For example, you can also `post` a message from the main process to the
+renderer process, then use `on`/`once` to respond back.
+In the above code, you could just swap all lines after the
+`Client` and `Server` initializations to do just that.
+
 ### Argument behavior
 
 By default, arguments will be atomized, making them fit into a single object.
@@ -130,6 +143,7 @@ This package is available under the [MIT license][LICENSE].
 [ISSUES]: https://github.com/axaptional/electron-ipc/issues
 [NPM]: https://www.npmjs.com/package/@axaptional/electron-ipc
 [PAGES]: https://axaptional.github.io/electron-ipc/
+[STANDARD]: https://standardjs.com
 
 [arguments]: https://github.com/axaptional/electron-ipc/blob/v0.2.0/markdown/arguments.md
 [methods]: https://github.com/axaptional/electron-ipc/blob/v0.2.0/markdown/methods.md

@@ -7,9 +7,12 @@ and this project adheres to [Semantic Versioning][SEMVER].
 
 ## [Unreleased]
 
+### Added
+- Details on main-to-renderer communication in README.md
+
 ### Fixed
-- README links
-- CHANGELOG links
+- Links in README.md
+- Links in CHANGELOG.md
 
 ## [0.2.0] - 2019-02-15
 
