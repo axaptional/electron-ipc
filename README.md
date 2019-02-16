@@ -1,9 +1,9 @@
 # electron-ipc
 
-[![MIT license](https://img.shields.io/github/license/axaptional/electron-ipc.svg)](LICENSE)
-[![Issues](https://img.shields.io/github/issues/axaptional/electron-ipc.svg)](https://github.com/axaptional/electron-ipc/issues)
-[![NPM Version](https://img.shields.io/npm/v/axaptional/electron-ipc.svg)]()
-[![Documentation Coverage](docs/images/coverage-badge-documentation.svg)](https://axaptional.github.io/electron-ipc/)
+[![MIT license](https://img.shields.io/github/license/axaptional/electron-ipc.svg)][LICENSE]
+[![Issues](https://img.shields.io/github/issues/axaptional/electron-ipc.svg)][ISSUES]
+[![NPM Version](https://img.shields.io/npm/v/@axaptional/electron-ipc.svg)][NPM]
+[![Documentation Coverage](docs/images/coverage-badge-documentation.svg)][PAGES]
 
 An easy-to-use symmetric wrapper around Electron's IPC API
 
@@ -34,9 +34,9 @@ $ npm install @axaptional/electron-ipc
 #### Cancelable Promises
 
 If you want to use cancelable Promises, install a Promise library like
-[`bluebird`](https://github.com/petkaantonov/bluebird) supporting this feature,
+[`bluebird`][bluebird] supporting this feature,
 then register your Promise constructor with
-[`any-promise`](https://github.com/kevinbeaty/any-promise) like this:
+[`any-promise`][any-promise] like this:
 
 ```js
 require('any-promise/register/bluebird');
@@ -54,7 +54,7 @@ package.
 _The extension package for Observable support is not available yet._
 
 If you want to use Observables, install
-[`@axaptional/electron-ipc-rx`](https://github.com/axaptional/electron-ipc-rx).
+[`@axaptional/electron-ipc-rx`][electron-ipc-rx].
 This package will add `$`-postfix counterparts to most methods,
 e.g. `post$(...)`.
 Keep in mind that you will need to adjust your imports when switching from
@@ -113,17 +113,28 @@ Keep in mind that `{ args: 'as-is' }` is only available for listeners.
 | `{ args: 'array' }` | `([])` | `([1])` | `([1, 2])` | `([[1]])` | `([[1, 2]])` | `([[1], 2])` |
 | `{ args: 'as-is' }` | `()`   | `(1)`   | `(1, 2)`   | `([1])`   | `([1, 2])`   | `([1], 2)`   |
 
-For more detailed information,
-see [Argument behavior in detail](markdown/arguments.md).
+For more detailed information, see [Argument behavior in detail][arguments].
 
 ### Methods
 
-For short explanations on available methods,
-see [Methods](markdown/methods.md).
+For short explanations on available methods, see [Methods][methods].
 
-For the code documentation,
-see [Documentation](https://axaptional.github.io/electron-ipc/).
+For the code documentation, see [Documentation][PAGES].
 
 ## License
 
-This package is available under the [MIT license](LICENSE).
+This package is available under the [MIT license][LICENSE].
+
+<!-- References -->
+[LICENSE]: https://github.com/axaptional/electron-ipc/blob/v0.2.0/LICENSE
+[ISSUES]: https://github.com/axaptional/electron-ipc/issues
+[NPM]: https://www.npmjs.com/package/@axaptional/electron-ipc
+[PAGES]: https://axaptional.github.io/electron-ipc/
+
+[arguments]: https://github.com/axaptional/electron-ipc/blob/v0.2.0/markdown/arguments.md
+[methods]: https://github.com/axaptional/electron-ipc/blob/v0.2.0/markdown/methods.md
+
+[electron-ipc-rx]: https://github.com/axaptional/electron-ipc-rx
+
+[bluebird]: https://github.com/petkaantonov/bluebird
+[any-promise]: https://github.com/kevinbeaty/any-promise

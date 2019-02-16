@@ -2,8 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
-The format is based on [Keep a Changelog],
-and this project adheres to [Semantic Versioning].
+The format is based on [Keep a Changelog][KEEP-A-CHANGELOG],
+and this project adheres to [Semantic Versioning][SEMVER].
+
+## [Unreleased]
+
+### Fixed
+- README links
+- CHANGELOG links
 
 ## [0.2.0] - 2019-02-15
 
@@ -24,8 +30,9 @@ and this project adheres to [Semantic Versioning].
 - Package exports
 
 <!-- General references -->
-[Keep a Changelog]: https://keepachangelog.com/en/1.0.0/
-[Semantic Versioning]: https://semver.org/spec/v2.0.0.html
+[KEEP-A-CHANGELOG]: https://keepachangelog.com/en/1.0.0/
+[SEMVER]: https://semver.org/spec/v2.0.0.html
 
 <!-- Versions -->
-[0.2.0]: https://github.com/axaptional/electron-ipc/releases/tag/0.2.0
+[Unreleased]: https://github.com/axaptional/electron-ipc/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/axaptional/electron-ipc/releases/tag/v0.2.0
