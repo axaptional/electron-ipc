@@ -39,8 +39,7 @@ export interface Options {
   args: ArgumentsStyle
 }
 
-// TODO: Replies
-// TODO: De/serialize values separately (with Date support)
+// TODO: Replies with Promises
 /**
  * Represents an IPC communicator through which messages can be posted and received.
  */
@@ -48,7 +47,7 @@ export abstract class Agent<T extends IpcService> {
   /**
    * The set of options used by all instances by default.
    */
-  private static fallbackOptions: Options = {
+  private static readonly fallbackOptions: Options = {
     args: 'atomize'
   }
 
@@ -57,7 +56,7 @@ export abstract class Agent<T extends IpcService> {
    * @param ipcService Either the ipcMain or the ipcRenderer service from Electron
    * @param defaultOptions A set of options to use by default for all message handlers
    */
-  protected constructor (protected ipcService: T, private defaultOptions: Partial<Options> = {}) {}
+  protected constructor (protected ipcService: T, protected defaultOptions: Partial<Options> = {}) {}
 
   /**
    * Returns an atomized value for the given array.
@@ -176,10 +175,10 @@ export abstract class Agent<T extends IpcService> {
    */
   public once (channel: string, listenerOrOptions?: Listener | Partial<Options>, options?: Partial<Options>) {
     const comChannels = Channels.getCommunicationChannels(channel)
-    if (typeof listenerOrOptions !== 'function') {
-      return this.oncePromise(comChannels, listenerOrOptions)
-    } else {
+    if (typeof listenerOrOptions === 'function') {
       return this.onceListener(comChannels, listenerOrOptions, options)
+    } else {
+      return this.oncePromise(comChannels, listenerOrOptions)
     }
   }
 
