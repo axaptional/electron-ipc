@@ -10,19 +10,15 @@ import { Channels, CommunicationChannels } from './channels'
 export type ResponseSource<T> = Promise.Thenable<T> | T
 
 /**
- * Represents an arguments transformation method.
- * 'atomize' reduces the arguments to one object only if necessary.
- * 'array' always keeps arguments wrapped in an array.
- * 'as-is' spreads the arguments array for calls.
- */
-export type ArgumentsStyle = 'atomize' | 'array' | 'as-is'
-
-/**
  * Represents a listener function.
- * Argument behavior depends on the options of the calling instance.
  * Responses may be emitted as return values.
  */
-export type Listener = (...data: any[]) => ResponseSource<any> | void
+export type Listener = (data: any) => ResponseSource<any>
+
+/**
+ * Represents a handler for an Electron IPC service event.
+ */
+export type Handler = (event: IpcEvent, data: any) => void
 
 /**
  * Represents a proxy handler for responses.
@@ -33,10 +29,7 @@ export type ResponseHandler = (response: any) => void
  * Represents a set of options for handling listener arguments and return values.
  */
 export interface Options {
-  /**
-   * Determines how argument transformation is handled when being passed to a listener or Promise.
-   */
-  args: ArgumentsStyle
+  noop: any
 }
 
 // TODO: Replies with Promises
@@ -48,7 +41,7 @@ export abstract class Agent<T extends IpcService> {
    * The set of options used by all instances by default.
    */
   private static readonly fallbackOptions: Options = {
-    args: 'atomize'
+    noop: true
   }
 
   /**
@@ -57,35 +50,6 @@ export abstract class Agent<T extends IpcService> {
    * @param defaultOptions A set of options to use by default for all message handlers
    */
   protected constructor (protected ipcService: T, protected defaultOptions: Partial<Options> = {}) {}
-
-  /**
-   * Returns an atomized value for the given array.
-   * If the array has length 0, the return value will be undefined.
-   * If the array has length 1, the return value will be the first and only array item.
-   * If the array has a length of 2 or above, the return value will be the input array.
-   * @param args The arguments to atomize
-   */
-  protected static atomize<T> (args: T[]): T | T[] {
-    return args.length > 1 ? args : args[0]
-  }
-
-  /**
-   * Calls the given listener with the given arguments transformed according to the given style.
-   * @param listener The function to call
-   * @param args The arguments to pass
-   * @param style A string specifying how to pass the arguments
-   */
-  protected static applyWithStyle (listener: Listener, args: any[], style: ArgumentsStyle): any {
-    switch (style) {
-      default:
-      case 'atomize':
-        return listener(Agent.atomize(args))
-      case 'array':
-        return listener(args)
-      case 'as-is':
-        return listener(...args)
-    }
-  }
 
   /**
    * Overrides the default settings of this IPC communicator instance.
@@ -107,7 +71,7 @@ export abstract class Agent<T extends IpcService> {
    * @param channel The channel to post to
    * @param data The message to post
    */
-  public post (channel: string, ...data: any[]): Promise<any>
+  public post (channel: string, data: any): Promise<any>
 
   /**
    * Posts a message to the given channel.
@@ -116,7 +80,7 @@ export abstract class Agent<T extends IpcService> {
    * @param listener The listener to call once the response was received
    * @param data The message to post
    */
-  public post (channel: string, listener: Listener, ...data: any[]): Canceler
+  public post (channel: string, listener: Listener, data: any): Canceler
 
   // TODO: The Promise should be rejected if an uncaught error occurred at the listening endpoint.
   /**
@@ -124,15 +88,15 @@ export abstract class Agent<T extends IpcService> {
    * If no response is given, the listener will be called with null as the response instead.
    * If no listener is given, a Promise is returned instead.
    * @param channel The channel to post to
-   * @param data The message to post
+   * @param listenerOrData The listener to call once the response was received OR the message to post (Promise variant)
+   * @param data The message to post (Listener variant)
    */
-  public post (channel: string, ...data: any[]): Promise<any> | Canceler {
+  public post (channel: string, listenerOrData: Listener | any, data?: any): Promise<any> | Canceler {
     const comChannels = Channels.getCommunicationChannels(channel)
-    if (typeof data[0] === 'function') {
-      const listener: Listener = data.splice(0, 1)[0]
-      return this.postListener(comChannels, listener, data)
+    if (typeof listenerOrData === 'function') {
+      return this.postListener(comChannels, listenerOrData, data)
     } else {
-      return this.postPromise(comChannels, data)
+      return this.postPromise(comChannels, listenerOrData)
     }
   }
 
@@ -147,9 +111,9 @@ export abstract class Agent<T extends IpcService> {
   public on (channel: string, listener: Listener, options?: Partial<Options>): Canceler {
     const { requestChannel, responseChannel } = Channels.getCommunicationChannels(channel)
     const params = this.getOptions(options)
-    const handler = (event: IpcEvent, ...args: any[]) => {
+    const handler: Handler = (event: IpcEvent, data: any) => {
       const respond: ResponseHandler = (response: any) => this.send(responseChannel, response)
-      const responseSource: ResponseSource<any> = Agent.applyWithStyle(listener, args, params.args)
+      const responseSource: ResponseSource<any> = listener(data)
       if (responseSource instanceof Promise) {
         responseSource.then(respond)
       } else {
@@ -187,8 +151,8 @@ export abstract class Agent<T extends IpcService> {
    * Canceling a Promise is only possible through the use of an additional library like Bluebird, not natively.
    * Responses using Promises are currently not supported. If you need to respond, use a listener instead.
    * @param channel The channel to listen to
-   * @param listenerOrOptions The listener to call once the message was received or an Options object
-   * @param options A set of options to override the default options for this call only
+   * @param listenerOrOptions The listener to call once the message was received OR an Options object (Promise variant)
+   * @param options A set of options to override the default options for this call only (Listener variant)
    */
   public once (channel: string, listenerOrOptions?: Listener | Partial<Options>, options?: Partial<Options>) {
     const comChannels = Channels.getCommunicationChannels(channel)
@@ -204,6 +168,7 @@ export abstract class Agent<T extends IpcService> {
    * Unsubscribes all listeners from all channels.
    */
   public removeAllListeners (): void
+
   /**
    * Unsubscribes all listeners from the given channel. Omit the channel to unsubscribe from all channels.
    * @param channel The channel to unsubscribe from (or nothing)
@@ -222,10 +187,10 @@ export abstract class Agent<T extends IpcService> {
 
   /**
    * Sends a message to the other service.
-   * @param channel The channel to use for sending the request
-   * @param data The request data
+   * @param channel The channel to use for sending the data
+   * @param data The data to send
    */
-  protected abstract send (channel: string, ...data: any[]): void
+  protected abstract send (channel: string, data: any): void
 
   /**
    * Returns a set of options according to this instance's default options and the given overrides.
@@ -241,15 +206,15 @@ export abstract class Agent<T extends IpcService> {
    * @param comChannels The communication channels to use for sending and receiving messages
    * @param data The message to post
    */
-  private postPromise (comChannels: CommunicationChannels, data: any[]): Promise<any> {
+  private postPromise (comChannels: CommunicationChannels, data: any): Promise<any> {
     const { requestChannel, responseChannel } = comChannels
     const responsePromise = new Promise((resolve) => {
-      const handler = (event: IpcEvent, response: any) => {
+      const handler: Handler = (event: IpcEvent, response: any) => {
         resolve(response)
       }
       this.ipcService.once(responseChannel, handler)
     })
-    this.send(requestChannel, ...data)
+    this.send(requestChannel, data)
     return responsePromise
   }
 
@@ -259,13 +224,13 @@ export abstract class Agent<T extends IpcService> {
    * @param listener The listener to call once the response was received
    * @param data The message to post
    */
-  private postListener (comChannels: CommunicationChannels, listener: Listener, data: any[]): Canceler {
+  private postListener (comChannels: CommunicationChannels, listener: Listener, data: any): Canceler {
     const { requestChannel, responseChannel } = comChannels
-    const handler = (event: IpcEvent, response: any) => {
+    const handler: Handler = (event: IpcEvent, response: any) => {
       listener(response)
     }
     this.ipcService.once(responseChannel, handler)
-    this.send(requestChannel, ...data)
+    this.send(requestChannel, data)
     return new Canceler(this.ipcService, responseChannel, handler)
   }
 
@@ -278,8 +243,8 @@ export abstract class Agent<T extends IpcService> {
     const { requestChannel, responseChannel } = comChannels
     const params = this.getOptions(options)
     return new Promise((resolve) => {
-      const handler = (event: IpcEvent, ...args: any[]) => {
-        Agent.applyWithStyle(resolve, args, params.args)
+      const handler: Handler = (event: IpcEvent, data: any) => {
+        resolve(data)
         const response: ResponseSource<any> = undefined
         this.send(responseChannel, response)
       }
@@ -296,9 +261,9 @@ export abstract class Agent<T extends IpcService> {
   private onceListener (comChannels: CommunicationChannels, listener: Listener, options?: Partial<Options>): Canceler {
     const { requestChannel, responseChannel } = comChannels
     const params = this.getOptions(options)
-    const handler = (event: IpcEvent, ...args: any[]) => {
+    const handler: Handler = (event: IpcEvent, data: any) => {
       const respond: ResponseHandler = (response: any) => this.send(responseChannel, response)
-      const responseSource: ResponseSource<any> = Agent.applyWithStyle(listener, args, params.args)
+      const responseSource: ResponseSource<any> = listener(data)
       if (responseSource instanceof Promise) {
         responseSource.then(respond)
       } else {

@@ -10,6 +10,12 @@ and this project adheres to [Semantic Versioning][SEMVER].
 ### Added
 - `post` variant for use with listeners
 
+### Changed
+- Only single-object data is allowed for message posts
+
+### Removed
+- Support for message atomization
+
 ### Fixed
 - Responses now work as intended
 

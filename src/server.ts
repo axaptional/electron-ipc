@@ -1,5 +1,5 @@
 import { Agent } from './agent'
-import { IpcMain, IpcMainEvent, WebContents } from './aliases'
+import { IpcMain, WebContents } from './aliases'
 
 /**
  * Represents an API wrapper around Electron's ipcMain.
@@ -15,10 +15,10 @@ export class Server extends Agent<IpcMain> {
 
   /**
    * Sends a message to the renderer process.
-   * @param channel The channel to use for sending the request
-   * @param data The request data
+   * @param channel The channel to use for sending the data
+   * @param data The data to send
    */
-  protected send (channel: string, ...data: any[]): void {
-    this.webContents.send(channel, ...data)
+  protected send (channel: string, data: any): void {
+    this.webContents.send(channel, data)
   }
 }

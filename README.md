@@ -109,24 +109,29 @@ renderer process, then use `on`/`once` to respond back.
 In the above code, you could just swap all lines after the
 `Client` and `Server` initializations to do just that.
 
-### Argument behavior
+### Serialization
 
-By default, arguments will be atomized, making them fit into a single object.
-This transformation is made because Promises can only resolve to _one_ value.
+Since Promises can only resolve to _one_ value and to keep consistency,
+only single-object messages can be posted and received.
 
-This behavior applies to messages sent with `post` and received by `on`/`once`.
+However, you may wrap your data in an array or object literal to
+post multiple values, then use parameter destructuring on the receiving end,
+like so:
 
-Refer to the following table to see which input arguments are transformed to
-which output arguments with the respective `args` option.
-Keep in mind that `{ args: 'as-is' }` is only available for listeners.
+```js
+client.post('message', ['one', 'two']).then(({ success, text }) => {
+  if (success) {
+    console.log(text);
+  }
+});
+```
 
-| Options             | `()`   | `(1)`   | `(1, 2)`   | `([1])`   | `([1, 2])`   | `([1], 2)`   |
-|---------------------|--------|---------|------------|-----------|--------------|--------------|
-| `{}`                | `()`   | `(1)`   | `([1, 2])` | `([1])`   | `([1, 2])`   | `([[1], 2])` |
-| `{ args: 'array' }` | `([])` | `([1])` | `([1, 2])` | `([[1]])` | `([[1, 2]])` | `([[1], 2])` |
-| `{ args: 'as-is' }` | `()`   | `(1)`   | `(1, 2)`   | `([1])`   | `([1, 2])`   | `([1], 2)`   |
+Keep in mind that any data passed will automatically be serialized to JSON
+by Electron.
+This means that values such as functions and classes cannot be passed.
 
-For more detailed information, see [Argument behavior in detail][arguments].
+Also be aware that objects received by responses via `post` or through channels
+via `on` or `once` will have all class prototype information stripped.
 
 ### Methods
 
