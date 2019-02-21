@@ -8,7 +8,7 @@ export type IpcMainEvent = Electron.Event
 /**
  * Represents an Electron event as received when listening with ipcRenderer.
  */
-export interface IpcRendererEvent {
+export interface IpcRendererEvent extends IpcMainEvent {
   /**
    * The Electron WebContents ID of the renderer view in the main process.
    */

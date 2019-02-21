@@ -7,7 +7,7 @@ import { Channels, CommunicationChannels } from './channels'
  * Represents a source of a response.
  * The actual response can be resolved synchronously or asynchronously.
  */
-export type ResponseSource = any | Promise<any>
+export type ResponseSource<T> = Promise.Thenable<T> | T
 
 /**
  * Represents an arguments transformation method.
@@ -22,7 +22,12 @@ export type ArgumentsStyle = 'atomize' | 'array' | 'as-is'
  * Argument behavior depends on the options of the calling instance.
  * Responses may be emitted as return values.
  */
-export type Listener = (...data: any[]) => void | ResponseSource
+export type Listener = (...data: any[]) => ResponseSource<any> | void
+
+/**
+ * Represents a proxy handler for responses.
+ */
+export type ResponseHandler = (response: any) => void
 
 /**
  * Represents a set of options for handling listener arguments and return values.
@@ -129,8 +134,8 @@ export abstract class Agent<T extends IpcService> {
     const { requestChannel, responseChannel } = Channels.getCommunicationChannels(channel)
     const params = this.getOptions(options)
     const handler = (event: IpcEvent, ...args: any[]) => {
-      const respond = (response: any) => this.respond(event, responseChannel, response)
-      const responseSource: ResponseSource = Agent.applyWithStyle(listener, args, params.args)
+      const respond: ResponseHandler = (response: any) => this.send(responseChannel, response)
+      const responseSource: ResponseSource<any> = Agent.applyWithStyle(listener, args, params.args)
       if (responseSource instanceof Promise) {
         responseSource.then(respond)
       } else {
@@ -201,18 +206,10 @@ export abstract class Agent<T extends IpcService> {
 
   /**
    * Sends a message to the other service.
-   * @param requestChannel The channel to use for sending the request
+   * @param channel The channel to use for sending the request
    * @param data The request data
    */
-  protected abstract send (requestChannel: string, ...data: any[]): void
-
-  /**
-   * Responds to a given event from the other process.
-   * @param event The event to respond to
-   * @param responseChannel The channel to use for sending the response
-   * @param data The response data
-   */
-  protected abstract respond (event: IpcEvent, responseChannel: string, ...data: any[]): void
+  protected abstract send (channel: string, ...data: any[]): void
 
   /**
    * Returns a set of options according to this instance's default options and the given overrides.
@@ -233,8 +230,8 @@ export abstract class Agent<T extends IpcService> {
     return new Promise((resolve) => {
       const handler = (event: IpcEvent, ...args: any[]) => {
         Agent.applyWithStyle(resolve, args, params.args)
-        const response: ResponseSource = undefined
-        this.respond(event, responseChannel, response)
+        const response: ResponseSource<any> = undefined
+        this.send(responseChannel, response)
       }
       this.ipcService.once(requestChannel, handler)
     })
@@ -250,8 +247,8 @@ export abstract class Agent<T extends IpcService> {
     const { requestChannel, responseChannel } = comChannels
     const params = this.getOptions(options)
     const handler = (event: IpcEvent, ...args: any[]) => {
-      const respond = (response: any) => this.respond(event, responseChannel, response)
-      const responseSource: ResponseSource = Agent.applyWithStyle(listener, args, params.args)
+      const respond: ResponseHandler = (response: any) => this.send(responseChannel, response)
+      const responseSource: ResponseSource<any> = Agent.applyWithStyle(listener, args, params.args)
       if (responseSource instanceof Promise) {
         responseSource.then(respond)
       } else {

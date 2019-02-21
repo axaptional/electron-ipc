@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning][SEMVER].
 
 ## [Unreleased]
 
+### Fixed
+- Responses now work as intended
 ## [0.2.1] - 2019-02-16
 
 ### Added
