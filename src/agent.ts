@@ -101,12 +101,28 @@ export abstract class Agent<T extends IpcService> {
     Object.assign(this.defaultOptions, options)
   }
 
-  // TODO: The Promise should be rejected if an uncaught error occurred at the listening endpoint.
-  public post (channel: string, ...data: any[]): Promise<any>
-  public post (channel: string, listener: Listener, ...data: any[]): Canceler
   /**
    * Posts a message to the given channel.
    * The Promise resolves either when a response is received or when the listening endpoint terminates.
+   * @param channel The channel to post to
+   * @param data The message to post
+   */
+  public post (channel: string, ...data: any[]): Promise<any>
+
+  /**
+   * Posts a message to the given channel.
+   * The listener is called either when a response is received or when the listening endpoint terminates.
+   * @param channel The channel to post to
+   * @param listener The listener to call once the response was received
+   * @param data The message to post
+   */
+  public post (channel: string, listener: Listener, ...data: any[]): Canceler
+
+  // TODO: The Promise should be rejected if an uncaught error occurred at the listening endpoint.
+  /**
+   * Posts a message to the given channel and calls the listener when a response is received.
+   * If no response is given, the listener will be called with null as the response instead.
+   * If no listener is given, a Promise is returned instead.
    * @param channel The channel to post to
    * @param data The message to post
    */
@@ -152,6 +168,7 @@ export abstract class Agent<T extends IpcService> {
    * @param options A set of options to override the default options for this call only
    */
   public once (channel: string, options?: Partial<Options>): Promise<any>
+
   /**
    * Listens for a message on the given channel and calls the given listener when it is received.
    * To send a response, simply have the listener function return a value or a Promise.
@@ -161,6 +178,7 @@ export abstract class Agent<T extends IpcService> {
    * @param options A set of options to override the default options for this call only
    */
   public once (channel: string, listener: Listener, options?: Partial<Options>): Canceler
+
   /**
    * Listens for a message on the given channel and calls the given listener when it is received.
    * If no listener is specified, this method returns a Promise that resolves once the message is received instead.
@@ -217,6 +235,12 @@ export abstract class Agent<T extends IpcService> {
     return Object.assign(Agent.fallbackOptions, this.defaultOptions, overrides)
   }
 
+  /**
+   * Posts a message to the given channel.
+   * The Promise resolves either when a response is received or when the listening endpoint terminates.
+   * @param comChannels The communication channels to use for sending and receiving messages
+   * @param data The message to post
+   */
   private postPromise (comChannels: CommunicationChannels, data: any[]): Promise<any> {
     const { requestChannel, responseChannel } = comChannels
     const responsePromise = new Promise((resolve) => {
@@ -229,6 +253,12 @@ export abstract class Agent<T extends IpcService> {
     return responsePromise
   }
 
+  /**
+   * Posts a message to the given channel.
+   * @param comChannels The communication channels to use for sending and receiving messages
+   * @param listener The listener to call once the response was received
+   * @param data The message to post
+   */
   private postListener (comChannels: CommunicationChannels, listener: Listener, data: any[]): Canceler {
     const { requestChannel, responseChannel } = comChannels
     const handler = (event: IpcEvent, response: any) => {

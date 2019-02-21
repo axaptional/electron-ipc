@@ -25,7 +25,7 @@ For synchronous behavior, use `await` to wait for the Promise to resolve.
 Please be aware that the returned Promise will not be resolved unless a handler
 is attached on the other side with `on` or `once`.
 If a listener _is_ attached on the other side, the Promise will always resolve,
-even if no response is returned (the response will simply be `undefined`).
+even if no response is returned (the response will simply be `null`).
 
 To settle the promise and not wait for a response, cancel it.
 For more information on Promise canceling,

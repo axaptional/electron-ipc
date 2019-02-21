@@ -19,7 +19,7 @@ This means that any `...args: any[]` will be adjusted according to the
 following rules before being passed to listeners or Promise handlers:
 
 - `post() -> ()`  
-  If no data is passed, the argument is undefined ("no arguments")
+  If no data is passed, the argument is `null` ("no arguments")
 
 - `post(1) -> (1)`  
   If a single value is passed, the argument is that value
