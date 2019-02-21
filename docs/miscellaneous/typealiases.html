@@ -58,7 +58,7 @@
                 <td class="col-md-4">
                     <ul class="index-list">
                         <li>
-                            <a href="#ArgumentsStyle" title="src/agent.ts"><b>ArgumentsStyle</b>&nbsp;&nbsp;&nbsp;(src/.../agent.ts)</a>
+                            <a href="#Handler" title="src/agent.ts"><b>Handler</b>&nbsp;&nbsp;&nbsp;(src/.../agent.ts)</a>
                         </li>
                         <li>
                             <a href="#IpcEvent" title="src/aliases.ts"><b>IpcEvent</b>&nbsp;&nbsp;&nbsp;(src/.../aliases.ts)</a>
@@ -79,6 +79,9 @@
                             <a href="#Listener" title="src/agent.ts"><b>Listener</b>&nbsp;&nbsp;&nbsp;(src/.../agent.ts)</a>
                         </li>
                         <li>
+                            <a href="#ResponseHandler" title="src/agent.ts"><b>ResponseHandler</b>&nbsp;&nbsp;&nbsp;(src/.../agent.ts)</a>
+                        </li>
+                        <li>
                             <a href="#ResponseSource" title="src/agent.ts"><b>ResponseSource</b>&nbsp;&nbsp;&nbsp;(src/.../agent.ts)</a>
                         </li>
                         <li>
@@ -97,22 +100,19 @@
         <tbody>
             <tr>
                 <td class="col-md-4">
-                    <a name="ArgumentsStyle"></a>
-                    <span class="name"><b>ArgumentsStyle</b><a href="#ArgumentsStyle"><span class="icon ion-ios-link"></span></a></span>
+                    <a name="Handler"></a>
+                    <span class="name"><b>Handler</b><a href="#Handler"><span class="icon ion-ios-link"></span></a></span>
                 </td>
             </tr>
             <tr>
                 <td class="col-md-4">
-                    <div class="io-description"><p>Represents an arguments transformation method.
-&#39;atomize&#39; reduces the arguments to one object only if necessary.
-&#39;array&#39; always keeps arguments wrapped in an array.
-&#39;as-is&#39; spreads the arguments array for calls.</p>
+                    <div class="io-description"><p>Represents a handler for an Electron IPC service event.</p>
 </div>
                 </td>
             </tr>
             <tr>
                 <td class="col-md-4">
-                    <code>    <code>&quot;atomize&quot; | &quot;array&quot; | &quot;as-is&quot;</code>
+                    <code>    <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/function" target="_blank" >function</a></code>
 </code>
                 </td>
             </tr>
@@ -129,8 +129,29 @@
             <tr>
                 <td class="col-md-4">
                     <div class="io-description"><p>Represents a listener function.
-Argument behavior depends on the options of the calling instance.
 Responses may be emitted as return values.</p>
+</div>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <code>    <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/function" target="_blank" >function</a></code>
+</code>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ResponseHandler"></a>
+                    <span class="name"><b>ResponseHandler</b><a href="#ResponseHandler"><span class="icon ion-ios-link"></span></a></span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Represents a proxy handler for responses.</p>
 </div>
                 </td>
             </tr>
@@ -159,7 +180,7 @@ The actual response can be resolved synchronously or asynchronously.</p>
             </tr>
             <tr>
                 <td class="col-md-4">
-                    <code>    <code>any | Promise&lt;any&gt;</code>
+                    <code>    <code>Promise.Thenable&lt;T&gt; | T</code>
 </code>
                 </td>
             </tr>

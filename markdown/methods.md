@@ -7,20 +7,14 @@ Here are short explanations on most visible methods.
 Since the APIs for `Client` and `Server` are symmetric,
 all listed methods are available in both classes.
 
-Be aware that the signature for listeners may vary depending
-on your argument options.
-For more information, see [Argument behavior in detail](arguments.md).
-
-### post(channel, options?, ...data): Promise
+### post(channel, data): Promise
 
 channel: `string`  
-options: `Options`  
-data: `any[]`
+data: `any`
 
 Posts a message with the given data on the given channel.
 
 The Promise is resolved with the response (`any`) from the other side.
-For synchronous behavior, use `await` to wait for the Promise to resolve.
 
 Please be aware that the returned Promise will not be resolved unless a handler
 is attached on the other side with `on` or `once`.
@@ -31,12 +25,11 @@ To settle the promise and not wait for a response, cancel it.
 For more information on Promise canceling,
 see [Cancelable Promises](../README.md#cancelable-promises).
 
-### post(channel, listener, options?, ...data): Canceler
+### post(channel, listener, data): Canceler
 
 channel: `string`  
 listener: `(response: any) => void`  
-options: `Options` (Optional)  
-data: `any[]` (Optional)
+data: `any`
 
 Posts a message like the above but uses a listener instead.
 
@@ -87,7 +80,8 @@ If a Promise is returned, the resolved value will be used for the response.
 To stop listening, call `cancel()` on the return value of this method.
 
 **Note**:
-Since Promises can only resolve _once_, `on` has no Promise counterpart.
+Since Promises can only resolve _once_,
+`on` currently has no Promise counterpart.
 
 ### removeAllListeners(): void
 
@@ -98,6 +92,9 @@ canceling is available.
 **Note**:
 This method only affects message listeners attached via `on` or `once`.
 Response listeners attached via `post` will not be removed or canceled.
+
+_Promises are currently neither rejected nor canceled when
+this method is called._
 
 ### removeAllListeners(channel): void
 

@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning][SEMVER].
 
 ## [Unreleased]
 
+## [0.3.0] - 2019-02-21
+
 ### Added
 - `post` variant for use with listeners
 
@@ -17,7 +19,7 @@ and this project adheres to [Semantic Versioning][SEMVER].
 - Support for message atomization
 
 ### Fixed
-- Responses now work as intended
+- Responses should now work as intended
 
 ## [0.2.1] - 2019-02-16
 
@@ -66,7 +68,8 @@ and this project adheres to [Semantic Versioning][SEMVER].
 [no-interface-prefix]: https://stackoverflow.com/questions/31876947/confused-about-the-interface-and-class-coding-guidelines-for-typescript/41967120#41967120
 
 <!-- Versions -->
-[Unreleased]: https://github.com/axaptional/electron-ipc/compare/v0.2.1...HEAD
+[Unreleased]: https://github.com/axaptional/electron-ipc/compare/v0.3.0...HEAD
+[0.3.0]: https://github.com/axaptional/electron-ipc/compare/v0.2.1...v0.3.0
 [0.2.1]: https://github.com/axaptional/electron-ipc/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/axaptional/electron-ipc/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/axaptional/electron-ipc/releases/tag/v0.1.0

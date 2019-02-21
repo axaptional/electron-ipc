@@ -131,12 +131,12 @@
             <tbody>
                 <tr>
                     <td class="col-md-4">
-<code>constructor(ipcService: <a href="../undefineds/IpcService.html">IpcService</a>, channel: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, listener: <a href="../undefineds/Listener.html">Listener</a>)</code>
+<code>constructor(ipcService: <a href="../undefineds/IpcService.html">IpcService</a>, channel: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, handler: <a href="../undefineds/Handler.html">Handler</a>)</code>
                     </td>
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="17" class="link-to-prism">src/canceler.ts:17</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="21" class="link-to-prism">src/canceler.ts:21</a></div>
                             </td>
                         </tr>
 
@@ -189,10 +189,10 @@
                                                         </td>
                                                 </tr>
                                                 <tr>
-                                                        <td>listener</td>
+                                                        <td>handler</td>
                                                   
                                                         <td>
-                                                                    <code><a href="../miscellaneous/typealiases.html#Listener" target="_self" >Listener</a></code>
+                                                                    <code><a href="../miscellaneous/typealiases.html#Handler" target="_self" >Handler</a></code>
                                                         </td>
                                                   
                                                     <td>
@@ -200,7 +200,7 @@
                                                     </td>
                                                     
                                                         <td>
-                                                                <code><p>The listener to unsubscribe</p>
+                                                                <code><p>The handler to unsubscribe</p>
 </code>
                                                         </td>
                                                 </tr>
@@ -239,7 +239,7 @@
                     </tr>
                         <tr>
                             <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="24" class="link-to-prism">src/canceler.ts:24</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="28" class="link-to-prism">src/canceler.ts:28</a></div>
                             </td>
                         </tr>
 
@@ -282,7 +282,7 @@
 
                         <tr>
                             <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="29" class="link-to-prism">src/canceler.ts:29</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="33" class="link-to-prism">src/canceler.ts:33</a></div>
                             </td>
                         </tr>
 
@@ -311,7 +311,7 @@
 
 
     <div class="tab-pane fade  tab-source-code" id="c-source">
-        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Listener } from &#x27;./agent&#x27;
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Handler } from &#x27;./agent&#x27;
 import { IpcService } from &#x27;./aliases&#x27;
 
 /**
@@ -324,6 +324,10 @@ export interface Cancelable {
   cancel (): void
 }
 
+export function isCancelable (object: any): object is Cancelable {
+  return typeof object.cancel &#x3D;&#x3D;&#x3D; &#x27;function&#x27;
+}
+
 /**
  * Represents a helper to unsubscribe a listener function from a channel.
  */
@@ -332,15 +336,15 @@ export class Canceler implements Cancelable {
    * Initializes a new Canceler.
    * @param ipcService The IPC service to use for unsubscribing
    * @param channel The channel to unsubscribe from
-   * @param listener The listener to unsubscribe
+   * @param handler The handler to unsubscribe
    */
-  constructor (private ipcService: IpcService, public channel: string, private listener: Listener) {}
+  constructor (private ipcService: IpcService, public channel: string, private handler: Handler) {}
 
   /**
    * Unsubscribes the listener, meaning it will no longer be called when a message is received.
    */
   public cancel (): void {
-    this.ipcService.removeListener(this.channel, this.listener)
+    this.ipcService.removeListener(this.channel, this.handler)
   }
 }
 </code></pre>

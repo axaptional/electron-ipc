@@ -87,7 +87,7 @@
                         <td class="col-md-4">
                             <ul class="index-list">
                                 <li>
-                                        <a href="#args">args</a>
+                                        <a href="#noop">noop</a>
                                 </li>
                             </ul>
                         </td>
@@ -104,13 +104,13 @@
                         <tbody>
                                 <tr>
                                     <td class="col-md-4">
-                                        <a name="args"></a>
-                                        <span class="name"><b>args</b><a href="#args"><span class="icon ion-ios-link"></span></a></span>
+                                        <a name="noop"></a>
+                                        <span class="name"><b>noop</b><a href="#noop"><span class="icon ion-ios-link"></span></a></span>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td class="col-md-4">
-                                        <code>args:     <code><a href="../miscellaneous/typealiases.html#ArgumentsStyle" target="_self" >ArgumentsStyle</a></code>
+                                        <code>noop:     <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
 </code>
                                     </td>
                                 </tr>
@@ -118,7 +118,7 @@
 
                                     <tr>
                                         <td class="col-md-4">
-                                            <i>Type : </i>    <code><a href="../miscellaneous/typealiases.html#ArgumentsStyle" target="_self" >ArgumentsStyle</a></code>
+                                            <i>Type : </i>    <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
 
                                         </td>
                                     </tr>
@@ -127,12 +127,6 @@
 
 
 
-                            <tr>
-                                <td class="col-md-4">
-                                    <div class="io-description"><p>Determines how argument transformation is handled when being passed to a listener or Promise.</p>
-</div>
-                                </td>
-                            </tr>
                         </tbody>
                     </table>
             </section>
@@ -149,35 +143,61 @@ import { Channels, CommunicationChannels } from &#x27;./channels&#x27;
  * Represents a source of a response.
  * The actual response can be resolved synchronously or asynchronously.
  */
-export type ResponseSource &#x3D; any | Promise&lt;any&gt;
-
-/**
- * Represents an arguments transformation method.
- * &#x27;atomize&#x27; reduces the arguments to one object only if necessary.
- * &#x27;array&#x27; always keeps arguments wrapped in an array.
- * &#x27;as-is&#x27; spreads the arguments array for calls.
- */
-export type ArgumentsStyle &#x3D; &#x27;atomize&#x27; | &#x27;array&#x27; | &#x27;as-is&#x27;
+export type ResponseSource&lt;T&gt; &#x3D; Promise.Thenable&lt;T&gt; | T
 
 /**
  * Represents a listener function.
- * Argument behavior depends on the options of the calling instance.
  * Responses may be emitted as return values.
  */
-export type Listener &#x3D; (...data: any[]) &#x3D;&gt; void | ResponseSource
+export type Listener &#x3D; (data: any) &#x3D;&gt; ResponseSource&lt;any&gt;
+
+/**
+ * Represents a handler for an Electron IPC service event.
+ */
+export type Handler &#x3D; (event: IpcEvent, data: any) &#x3D;&gt; void
+
+/**
+ * Represents a proxy handler for responses.
+ */
+export type ResponseHandler &#x3D; (response: any) &#x3D;&gt; void
+
+/*export interface Listenable&lt;T&gt; {
+  listen (listener: Listener): Promise&lt;T&gt;
+}*/
 
 /**
  * Represents a set of options for handling listener arguments and return values.
  */
 export interface Options {
-  /**
-   * Determines how argument transformation is handled when being passed to a listener or Promise.
-   */
-  args: ArgumentsStyle
+  noop: any
 }
 
-// TODO: Replies
-// TODO: De/serialize values separately (with Date support)
+/*export class ResponsivePromise&lt;R&gt; extends Promise&lt;R&gt; {
+  constructor (private agent: Agent&lt;any&gt;, private responseChannel: string,
+               callback: (resolve: (value?: R | Promise.Thenable&lt;R&gt;) &#x3D;&gt; void, reject: (error?: any) &#x3D;&gt; void) &#x3D;&gt; void) {
+    super(callback)
+  }
+
+  public respond&lt;U&gt; (onFulFilled?: (value: R) &#x3D;&gt; (Promise.Thenable&lt;U&gt; | U),
+                     onRejected?: (error: any) &#x3D;&gt; (Promise.Thenable&lt;U&gt; | U)): Promise&lt;R&gt; {
+    if (typeof onFulFilled &#x3D;&#x3D;&#x3D; &#x27;undefined&#x27;) {
+      return this.then()
+    }
+    const fulfilledHandler &#x3D; (value: R) &#x3D;&gt; {
+      const respond: ResponseHandler &#x3D; (response: any) &#x3D;&gt; this.agent.send(this.responseChannel, response)
+      const responseSource: ResponseSource&lt;U&gt; &#x3D; onFulFilled(value)
+      if (responseSource instanceof Promise) {
+        responseSource.then(respond)
+      } else {
+        respond(responseSource)
+      }
+      return value
+    }
+    return this.then(fulfilledHandler, onRejected)
+  }
+}*/
+
+// TODO: Replies with Promises
 /**
  * Represents an IPC communicator through which messages can be posted and received.
  */
@@ -185,8 +205,8 @@ export abstract class Agent&lt;T extends IpcService&gt; {
   /**
    * The set of options used by all instances by default.
    */
-  private static fallbackOptions: Options &#x3D; {
-    args: &#x27;atomize&#x27;
+  private static readonly fallbackOptions: Options &#x3D; {
+    noop: true
   }
 
   /**
@@ -194,36 +214,7 @@ export abstract class Agent&lt;T extends IpcService&gt; {
    * @param ipcService Either the ipcMain or the ipcRenderer service from Electron
    * @param defaultOptions A set of options to use by default for all message handlers
    */
-  protected constructor (protected ipcService: T, private defaultOptions: Partial&lt;Options&gt; &#x3D; {}) {}
-
-  /**
-   * Returns an atomized value for the given array.
-   * If the array has length 0, the return value will be undefined.
-   * If the array has length 1, the return value will be the first and only array item.
-   * If the array has a length of 2 or above, the return value will be the input array.
-   * @param args The arguments to atomize
-   */
-  protected static atomize&lt;T&gt; (args: T[]): T | T[] {
-    return args.length &gt; 1 ? args : args[0]
-  }
-
-  /**
-   * Calls the given listener with the given arguments transformed according to the given style.
-   * @param listener The function to call
-   * @param args The arguments to pass
-   * @param style A string specifying how to pass the arguments
-   */
-  protected static applyWithStyle (listener: Listener, args: any[], style: ArgumentsStyle): any {
-    switch (style) {
-      default:
-      case &#x27;atomize&#x27;:
-        return listener(Agent.atomize(args))
-      case &#x27;array&#x27;:
-        return listener(args)
-      case &#x27;as-is&#x27;:
-        return listener(...args)
-    }
-  }
+  protected constructor (protected ipcService: T, protected defaultOptions: Partial&lt;Options&gt; &#x3D; {}) {}
 
   /**
    * Overrides the default settings of this IPC communicator instance.
@@ -239,24 +230,39 @@ export abstract class Agent&lt;T extends IpcService&gt; {
     Object.assign(this.defaultOptions, options)
   }
 
-  // TODO: The Promise should be rejected if an uncaught error occurred at the listening endpoint.
-  // TODO: post with listener
   /**
    * Posts a message to the given channel.
    * The Promise resolves either when a response is received or when the listening endpoint terminates.
    * @param channel The channel to post to
    * @param data The message to post
    */
-  public post (channel: string, ...data: any[]): Promise&lt;any&gt; {
-    const { requestChannel, responseChannel } &#x3D; Channels.getCommunicationChannels(channel)
-    const responsePromise &#x3D; new Promise((resolve) &#x3D;&gt; {
-      const handler &#x3D; (event: IpcEvent, response: any) &#x3D;&gt; {
-        resolve(response)
-      }
-      this.ipcService.once(responseChannel, handler)
-    })
-    this.send(requestChannel, ...data)
-    return responsePromise
+  public post (channel: string, data: any): Promise&lt;any&gt;
+
+  /**
+   * Posts a message to the given channel.
+   * The listener is called either when a response is received or when the listening endpoint terminates.
+   * @param channel The channel to post to
+   * @param listener The listener to call once the response was received
+   * @param data The message to post
+   */
+  public post (channel: string, listener: Listener, data: any): Canceler
+
+  // TODO: The Promise should be rejected if an uncaught error occurred at the listening endpoint.
+  /**
+   * Posts a message to the given channel and calls the listener when a response is received.
+   * If no response is given, the listener will be called with null as the response instead.
+   * If no listener is given, a Promise is returned instead.
+   * @param channel The channel to post to
+   * @param listenerOrData The listener to call once the response was received OR the message to post (Promise variant)
+   * @param data The message to post (Listener variant)
+   */
+  public post (channel: string, listenerOrData: Listener | any, data?: any): Promise&lt;any&gt; | Canceler {
+    const comChannels &#x3D; Channels.getCommunicationChannels(channel)
+    if (typeof listenerOrData &#x3D;&#x3D;&#x3D; &#x27;function&#x27;) {
+      return this.postListener(comChannels, listenerOrData, data)
+    } else {
+      return this.postPromise(comChannels, listenerOrData)
+    }
   }
 
   /**
@@ -270,9 +276,9 @@ export abstract class Agent&lt;T extends IpcService&gt; {
   public on (channel: string, listener: Listener, options?: Partial&lt;Options&gt;): Canceler {
     const { requestChannel, responseChannel } &#x3D; Channels.getCommunicationChannels(channel)
     const params &#x3D; this.getOptions(options)
-    const handler &#x3D; (event: IpcEvent, ...args: any[]) &#x3D;&gt; {
-      const respond &#x3D; (response: any) &#x3D;&gt; this.respond(event, responseChannel, response)
-      const responseSource: ResponseSource &#x3D; Agent.applyWithStyle(listener, args, params.args)
+    const handler: Handler &#x3D; (event: IpcEvent, data: any) &#x3D;&gt; {
+      const respond: ResponseHandler &#x3D; (response: any) &#x3D;&gt; this.send(responseChannel, response)
+      const responseSource: ResponseSource&lt;any&gt; &#x3D; listener(data)
       if (responseSource instanceof Promise) {
         responseSource.then(respond)
       } else {
@@ -291,6 +297,7 @@ export abstract class Agent&lt;T extends IpcService&gt; {
    * @param options A set of options to override the default options for this call only
    */
   public once (channel: string, options?: Partial&lt;Options&gt;): Promise&lt;any&gt;
+
   /**
    * Listens for a message on the given channel and calls the given listener when it is received.
    * To send a response, simply have the listener function return a value or a Promise.
@@ -300,6 +307,7 @@ export abstract class Agent&lt;T extends IpcService&gt; {
    * @param options A set of options to override the default options for this call only
    */
   public once (channel: string, listener: Listener, options?: Partial&lt;Options&gt;): Canceler
+
   /**
    * Listens for a message on the given channel and calls the given listener when it is received.
    * If no listener is specified, this method returns a Promise that resolves once the message is received instead.
@@ -308,15 +316,15 @@ export abstract class Agent&lt;T extends IpcService&gt; {
    * Canceling a Promise is only possible through the use of an additional library like Bluebird, not natively.
    * Responses using Promises are currently not supported. If you need to respond, use a listener instead.
    * @param channel The channel to listen to
-   * @param listenerOrOptions The listener to call once the message was received or an Options object
-   * @param options A set of options to override the default options for this call only
+   * @param listenerOrOptions The listener to call once the message was received OR an Options object (Promise variant)
+   * @param options A set of options to override the default options for this call only (Listener variant)
    */
   public once (channel: string, listenerOrOptions?: Listener | Partial&lt;Options&gt;, options?: Partial&lt;Options&gt;) {
     const comChannels &#x3D; Channels.getCommunicationChannels(channel)
-    if (typeof listenerOrOptions !&#x3D;&#x3D; &#x27;function&#x27;) {
-      return this.oncePromise(comChannels, listenerOrOptions)
-    } else {
+    if (typeof listenerOrOptions &#x3D;&#x3D;&#x3D; &#x27;function&#x27;) {
       return this.onceListener(comChannels, listenerOrOptions, options)
+    } else {
+      return this.oncePromise(comChannels, listenerOrOptions)
     }
   }
 
@@ -325,6 +333,7 @@ export abstract class Agent&lt;T extends IpcService&gt; {
    * Unsubscribes all listeners from all channels.
    */
   public removeAllListeners (): void
+
   /**
    * Unsubscribes all listeners from the given channel. Omit the channel to unsubscribe from all channels.
    * @param channel The channel to unsubscribe from (or nothing)
@@ -343,18 +352,10 @@ export abstract class Agent&lt;T extends IpcService&gt; {
 
   /**
    * Sends a message to the other service.
-   * @param requestChannel The channel to use for sending the request
-   * @param data The request data
+   * @param channel The channel to use for sending the data
+   * @param data The data to send
    */
-  protected abstract send (requestChannel: string, ...data: any[]): void
-
-  /**
-   * Responds to a given event from the other process.
-   * @param event The event to respond to
-   * @param responseChannel The channel to use for sending the response
-   * @param data The response data
-   */
-  protected abstract respond (event: IpcEvent, responseChannel: string, ...data: any[]): void
+  protected abstract send (channel: string, data: any): void
 
   /**
    * Returns a set of options according to this instance&#x27;s default options and the given overrides.
@@ -362,6 +363,40 @@ export abstract class Agent&lt;T extends IpcService&gt; {
    */
   protected getOptions (overrides?: Partial&lt;Options&gt;): Options {
     return Object.assign(Agent.fallbackOptions, this.defaultOptions, overrides)
+  }
+
+  /**
+   * Posts a message to the given channel.
+   * The Promise resolves either when a response is received or when the listening endpoint terminates.
+   * @param comChannels The communication channels to use for sending and receiving messages
+   * @param data The message to post
+   */
+  private postPromise (comChannels: CommunicationChannels, data: any): Promise&lt;any&gt; {
+    const { requestChannel, responseChannel } &#x3D; comChannels
+    const responsePromise &#x3D; new Promise((resolve) &#x3D;&gt; {
+      const handler: Handler &#x3D; (event: IpcEvent, response: any) &#x3D;&gt; {
+        resolve(response)
+      }
+      this.ipcService.once(responseChannel, handler)
+    })
+    this.send(requestChannel, data)
+    return responsePromise
+  }
+
+  /**
+   * Posts a message to the given channel.
+   * @param comChannels The communication channels to use for sending and receiving messages
+   * @param listener The listener to call once the response was received
+   * @param data The message to post
+   */
+  private postListener (comChannels: CommunicationChannels, listener: Listener, data: any): Canceler {
+    const { requestChannel, responseChannel } &#x3D; comChannels
+    const handler: Handler &#x3D; (event: IpcEvent, response: any) &#x3D;&gt; {
+      listener(response)
+    }
+    this.ipcService.once(responseChannel, handler)
+    this.send(requestChannel, data)
+    return new Canceler(this.ipcService, responseChannel, handler)
   }
 
   /**
@@ -373,10 +408,10 @@ export abstract class Agent&lt;T extends IpcService&gt; {
     const { requestChannel, responseChannel } &#x3D; comChannels
     const params &#x3D; this.getOptions(options)
     return new Promise((resolve) &#x3D;&gt; {
-      const handler &#x3D; (event: IpcEvent, ...args: any[]) &#x3D;&gt; {
-        Agent.applyWithStyle(resolve, args, params.args)
-        const response: ResponseSource &#x3D; undefined
-        this.respond(event, responseChannel, response)
+      const handler: Handler &#x3D; (event: IpcEvent, data: any) &#x3D;&gt; {
+        resolve(data)
+        const response: ResponseSource&lt;any&gt; &#x3D; undefined
+        this.send(responseChannel, response)
       }
       this.ipcService.once(requestChannel, handler)
     })
@@ -391,9 +426,9 @@ export abstract class Agent&lt;T extends IpcService&gt; {
   private onceListener (comChannels: CommunicationChannels, listener: Listener, options?: Partial&lt;Options&gt;): Canceler {
     const { requestChannel, responseChannel } &#x3D; comChannels
     const params &#x3D; this.getOptions(options)
-    const handler &#x3D; (event: IpcEvent, ...args: any[]) &#x3D;&gt; {
-      const respond &#x3D; (response: any) &#x3D;&gt; this.respond(event, responseChannel, response)
-      const responseSource: ResponseSource &#x3D; Agent.applyWithStyle(listener, args, params.args)
+    const handler: Handler &#x3D; (event: IpcEvent, data: any) &#x3D;&gt; {
+      const respond: ResponseHandler &#x3D; (response: any) &#x3D;&gt; this.send(responseChannel, response)
+      const responseSource: ResponseSource&lt;any&gt; &#x3D; listener(data)
       if (responseSource instanceof Promise) {
         responseSource.then(respond)
       } else {

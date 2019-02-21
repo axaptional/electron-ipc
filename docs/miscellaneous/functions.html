@@ -28,7 +28,7 @@
                    <compodoc-menu mode="normal"></compodoc-menu>
                </div>
                <!-- START CONTENT -->
-               <div class="content interface">
+               <div class="content miscellaneous-functions">
                    <div class="content-data">
 
 
@@ -42,154 +42,98 @@
 
 
 
+
+
+
 <ol class="breadcrumb">
-  <li>Interfaces</li>
-  <li>Cancelable</li>
+  <li>Miscellaneous</li>
+  <li>Functions</li>
 </ol>
 
-<ul class="nav nav-tabs" role="tablist">
-        <li class="active">
-            <a href="#info" role="tab" id="info-tab" data-toggle="tab" data-link="info">Info</a>
-        </li>
-        <li >
-            <a href="#source" role="tab" id="source-tab" data-toggle="tab" data-link="source">Source</a>
-        </li>
-</ul>
+<section>
+    <h3 id="index">Index</h3>
+    <table class="table table-sm table-bordered index-table">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <ul class="index-list">
+                        <li>
+                            <a href="#isCancelable" title="src/canceler.ts"><b>isCancelable</b>&nbsp;&nbsp;&nbsp;(src/.../canceler.ts)</a>
+                        </li>
+                    </ul>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
 
-<div class="tab-content">
-    <div class="tab-pane fade active in" id="c-info">
-        <p class="comment">
-            <h3>File</h3>
-        </p>
-        <p class="comment">
-            <code>src/canceler.ts</code>
-        </p>
-
-            <p class="comment">
-                <h3>Description</h3>
-            </p>
-            <p class="comment">
-                <p>Represents a process that can be aborted.</p>
-
-            </p>
-
-
-        <section>
-            <h3 id="index">Index</h3>
-            <table class="table table-sm table-bordered index-table">
-                <tbody>
-                    <tr>
-                        <td class="col-md-4">
-                            <h6><b>Methods</b></h6>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="col-md-4">
-                            <ul class="index-list">
-                                <li>
-                                    <a href="#cancel">cancel</a>
-                                </li>
-                            </ul>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </section>
-
-            <section>
-    
-        <h3 id="methods">
-            Methods
-        </h3>
-        <table class="table table-sm table-bordered">
+    <h3>src/canceler.ts</h3>
+    <section>
+    <h3></h3>        <table class="table table-sm table-bordered">
             <tbody>
                 <tr>
                     <td class="col-md-4">
-                        <a name="cancel"></a>
+                        <a name="isCancelable"></a>
                         <span class="name">
                             <b>
-                            cancel
+                            isCancelable
                             </b>
-                            <a href="#cancel"><span class="icon ion-ios-link"></span></a>
+                            <a href="#isCancelable"><span class="icon ion-ios-link"></span></a>
                         </span>
                     </td>
                 </tr>
                 <tr>
                     <td class="col-md-4">
-<code>cancel()</code>
+<code>isCancelable(object: <a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank">any</a>)</code>
                     </td>
                 </tr>
 
 
-                        <tr>
-                            <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="11" class="link-to-prism">src/canceler.ts:11</a></div>
-                            </td>
-                        </tr>
 
 
                 <tr>
                     <td class="col-md-4">
-                            <div class="io-description"><p>Cancels the process.</p>
-</div>
 
                             <div class="io-description">
-                                <b>Returns : </b>    <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+                                    <b>Parameters :</b>
+                                    <table class="params">
+                                        <thead>
+                                            <tr>
+                                                <td>Name</td>
+                                                    <td>Type</td>
+                                                <td>Optional</td>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                                <tr>
+                                                        <td>object</td>
+                                                        <td>
+                                                                    <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+                                                        </td>
+                                                    
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+
+                                                </tr>
+                                        </tbody>
+                                    </table>
+                            </div>
+                            <div>
+                            </div>
+                            <div class="io-description">
+                                <b>Returns : </b>    <code><a href="../interfaces/Cancelable.html" target="_self" >Cancelable</a></code>
 
                             </div>
+                                <div class="io-description">
+                                    
+                                </div>
                     </td>
                 </tr>
             </tbody>
         </table>
 </section>
-
-
-    </div>
-
-
-    <div class="tab-pane fade  tab-source-code" id="c-source">
-        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Handler } from &#x27;./agent&#x27;
-import { IpcService } from &#x27;./aliases&#x27;
-
-/**
- * Represents a process that can be aborted.
- */
-export interface Cancelable {
-  /**
-   * Cancels the process.
-   */
-  cancel (): void
-}
-
-export function isCancelable (object: any): object is Cancelable {
-  return typeof object.cancel &#x3D;&#x3D;&#x3D; &#x27;function&#x27;
-}
-
-/**
- * Represents a helper to unsubscribe a listener function from a channel.
- */
-export class Canceler implements Cancelable {
-  /**
-   * Initializes a new Canceler.
-   * @param ipcService The IPC service to use for unsubscribing
-   * @param channel The channel to unsubscribe from
-   * @param handler The handler to unsubscribe
-   */
-  constructor (private ipcService: IpcService, public channel: string, private handler: Handler) {}
-
-  /**
-   * Unsubscribes the listener, meaning it will no longer be called when a message is received.
-   */
-  public cancel (): void {
-    this.ipcService.removeListener(this.channel, this.handler)
-  }
-}
-</code></pre>
-    </div>
-</div>
-
-
-
 
 
 
@@ -209,8 +153,8 @@ export class Canceler implements Cancelable {
 
        <script>
             var COMPODOC_CURRENT_PAGE_DEPTH = 1;
-            var COMPODOC_CURRENT_PAGE_CONTEXT = 'interface';
-            var COMPODOC_CURRENT_PAGE_URL = 'Cancelable.html';
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'miscellaneous-functions';
+            var COMPODOC_CURRENT_PAGE_URL = 'functions.html';
        </script>
 
        <script src="../js/libs/custom-elements.min.js"></script>

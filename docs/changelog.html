@@ -35,8 +35,46 @@
 <p>All notable changes to this project will be documented in this file.</p>
 <p>The format is based on <a href="https://keepachangelog.com/en/1.0.0/">Keep a Changelog</a>,
 and this project adheres to <a href="https://semver.org/spec/v2.0.0.html">Semantic Versioning</a>.</p>
-<h2 id="unreleased"><a href="https://github.com/axaptional/electron-ipc/compare/v0.2.1...HEAD">Unreleased</a></h2>
-<h2 id="0-2-1-2019-02-16"><a href="https://github.com/axaptional/electron-ipc/releases/tag/v0.2.1">0.2.1</a> - 2019-02-16</h2>
+<h2 id="unreleased"><a href="https://github.com/axaptional/electron-ipc/compare/v0.3.0...HEAD">Unreleased</a></h2>
+<h2 id="0-4-0-february-2019"><a href="https://github.com/axaptional/electron-ipc/compare/v0.3.0...v0.4.0">0.4.0</a> - February 2019</h2>
+<h3 id="added">Added</h3>
+<ul>
+<li><code>send</code> method for synchronous posting without response (terminates after sending)</li>
+<li><code>get</code> method for synchronous posting with response (terminates after response)</li>
+<li>Responses with Promises</li>
+<li><code>on</code> handlers with Promises</li>
+<li>Custom (de)serialization support [Separate plugin]</li>
+<li>Promise rejection on error</li>
+<li>Promise rejection/cancellation on unsubscribe</li>
+<li>Documentation generation script</li>
+</ul>
+<h3 id="changed">Changed</h3>
+<ul>
+<li>Sending no response now results in a value of <code>undefined</code> instead of <code>null</code></li>
+<li>Messages are now encapsulated in a (plain) Message object</li>
+</ul>
+<h3 id="fixed">Fixed</h3>
+<ul>
+<li>IPC services are now imported only once</li>
+</ul>
+<h2 id="0-3-0-2019-02-21"><a href="https://github.com/axaptional/electron-ipc/compare/v0.2.1...v0.3.0">0.3.0</a> - 2019-02-21</h2>
+<h3 id="added">Added</h3>
+<ul>
+<li><code>post</code> variant for use with listeners</li>
+</ul>
+<h3 id="changed">Changed</h3>
+<ul>
+<li>Only single-object data is allowed for message posts</li>
+</ul>
+<h3 id="removed">Removed</h3>
+<ul>
+<li>Support for message atomization</li>
+</ul>
+<h3 id="fixed">Fixed</h3>
+<ul>
+<li>Responses should now work as intended</li>
+</ul>
+<h2 id="0-2-1-2019-02-16"><a href="https://github.com/axaptional/electron-ipc/compare/v0.2.0...v0.2.1">0.2.1</a> - 2019-02-16</h2>
 <h3 id="added">Added</h3>
 <ul>
 <li>Meta information in <code>package.json</code></li>
@@ -59,7 +97,7 @@ and this project adheres to <a href="https://semver.org/spec/v2.0.0.html">Semant
 <li>Links in CHANGELOG.md</li>
 <li>Member ordering in source files</li>
 </ul>
-<h2 id="0-2-0-2019-02-15"><a href="https://github.com/axaptional/electron-ipc/releases/tag/v0.2.0">0.2.0</a> - 2019-02-15</h2>
+<h2 id="0-2-0-2019-02-15"><a href="https://github.com/axaptional/electron-ipc/compare/v0.1.0...v0.2.0">0.2.0</a> - 2019-02-15</h2>
 <h3 id="added">Added</h3>
 <ul>
 <li>Code documentation</li>
@@ -79,6 +117,11 @@ and this project adheres to <a href="https://semver.org/spec/v2.0.0.html">Semant
 <h3 id="fixed">Fixed</h3>
 <ul>
 <li>Package exports</li>
+</ul>
+<h2 id="0-1-0-2019-02-10"><a href="https://github.com/axaptional/electron-ipc/releases/tag/v0.1.0">0.1.0</a> - 2019-02-10</h2>
+<h3 id="added">Added</h3>
+<ul>
+<li>Initial project setup</li>
 </ul>
 <!-- General references -->
 <!-- Versions -->
