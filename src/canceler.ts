@@ -11,6 +11,10 @@ export interface Cancelable {
   cancel (): void
 }
 
+export function isCancelable (object: any): object is Cancelable {
+  return typeof object.cancel === 'function'
+}
+
 /**
  * Represents a helper to unsubscribe a listener function from a channel.
  */
