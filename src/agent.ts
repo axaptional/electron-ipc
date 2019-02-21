@@ -102,23 +102,22 @@ export abstract class Agent<T extends IpcService> {
   }
 
   // TODO: The Promise should be rejected if an uncaught error occurred at the listening endpoint.
-  // TODO: post with listener
+  public post (channel: string, ...data: any[]): Promise<any>
+  public post (channel: string, listener: Listener, ...data: any[]): Canceler
   /**
    * Posts a message to the given channel.
    * The Promise resolves either when a response is received or when the listening endpoint terminates.
    * @param channel The channel to post to
    * @param data The message to post
    */
-  public post (channel: string, ...data: any[]): Promise<any> {
-    const { requestChannel, responseChannel } = Channels.getCommunicationChannels(channel)
-    const responsePromise = new Promise((resolve) => {
-      const handler = (event: IpcEvent, response: any) => {
-        resolve(response)
-      }
-      this.ipcService.once(responseChannel, handler)
-    })
-    this.send(requestChannel, ...data)
-    return responsePromise
+  public post (channel: string, ...data: any[]): Promise<any> | Canceler {
+    const comChannels = Channels.getCommunicationChannels(channel)
+    if (typeof data[0] === 'function') {
+      const listener: Listener = data.splice(0, 1)[0]
+      return this.postListener(comChannels, listener, data)
+    } else {
+      return this.postPromise(comChannels, data)
+    }
   }
 
   /**
@@ -216,6 +215,28 @@ export abstract class Agent<T extends IpcService> {
    */
   protected getOptions (overrides?: Partial<Options>): Options {
     return Object.assign(Agent.fallbackOptions, this.defaultOptions, overrides)
+  }
+
+  private postPromise (comChannels: CommunicationChannels, data: any[]): Promise<any> {
+    const { requestChannel, responseChannel } = comChannels
+    const responsePromise = new Promise((resolve) => {
+      const handler = (event: IpcEvent, response: any) => {
+        resolve(response)
+      }
+      this.ipcService.once(responseChannel, handler)
+    })
+    this.send(requestChannel, ...data)
+    return responsePromise
+  }
+
+  private postListener (comChannels: CommunicationChannels, listener: Listener, data: any[]): Canceler {
+    const { requestChannel, responseChannel } = comChannels
+    const handler = (event: IpcEvent, response: any) => {
+      listener(response)
+    }
+    this.ipcService.once(responseChannel, handler)
+    this.send(requestChannel, ...data)
+    return new Canceler(this.ipcService, responseChannel, handler)
   }
 
   /**
