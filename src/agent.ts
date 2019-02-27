@@ -1,7 +1,8 @@
 import Promise from 'any-promise'
 import { IpcEvent, IpcService } from './aliases'
-import { Canceler } from './canceler'
+import { Cancelable, Canceler, isCancelable } from './canceler'
 import { Channels, CommunicationChannels } from './channels'
+import { ResponsivePromise } from './promise'
 
 /**
  * Represents a source of a response.
@@ -32,7 +33,6 @@ export interface Options {
   noop: any
 }
 
-// TODO: Replies with Promises
 /**
  * Represents an IPC communicator through which messages can be posted and received.
  */
@@ -127,11 +127,11 @@ export abstract class Agent<T extends IpcService> {
   /**
    * Listens for a message on the given channel. The Promise resolves once a message was received.
    * Canceling is only possible through the use of an additional library like Bluebird, not with native Promises.
-   * Responses using Promises are currently not supported. If you need to respond, use a listener instead.
+   * To send a response, call respond() on the returned Promise instead of then().
    * @param channel The channel to listen to
    * @param options A set of options to override the default options for this call only
    */
-  public once (channel: string, options?: Partial<Options>): Promise<any>
+  public once (channel: string, options?: Partial<Options>): ResponsivePromise<any>
 
   /**
    * Listens for a message on the given channel and calls the given listener when it is received.
@@ -147,9 +147,9 @@ export abstract class Agent<T extends IpcService> {
    * Listens for a message on the given channel and calls the given listener when it is received.
    * If no listener is specified, this method returns a Promise that resolves once the message is received instead.
    * To send a response, simply have the listener function return a value or a Promise.
+   * If you are using Promises, call respond() on the returned Promise instead of then().
    * To stop listening, just call cancel() on the return value of this method.
    * Canceling a Promise is only possible through the use of an additional library like Bluebird, not natively.
-   * Responses using Promises are currently not supported. If you need to respond, use a listener instead.
    * @param channel The channel to listen to
    * @param listenerOrOptions The listener to call once the message was received OR an Options object (Promise variant)
    * @param options A set of options to override the default options for this call only (Listener variant)
@@ -239,17 +239,16 @@ export abstract class Agent<T extends IpcService> {
    * @param comChannels The communication channels to use for sending and receiving messages
    * @param options A set of options to override the default options for this call only
    */
-  private oncePromise (comChannels: CommunicationChannels, options?: Partial<Options>): Promise<any> {
+  private oncePromise (comChannels: CommunicationChannels, options?: Partial<Options>): ResponsivePromise<any> {
     const { requestChannel, responseChannel } = comChannels
     const params = this.getOptions(options)
-    return new Promise((resolve) => {
+    const respond: ResponseHandler = (response: any) => this.send(responseChannel, response)
+    return new ResponsivePromise((resolve) => {
       const handler: Handler = (event: IpcEvent, data: any) => {
         resolve(data)
-        const response: ResponseSource<any> = undefined
-        this.send(responseChannel, response)
       }
       this.ipcService.once(requestChannel, handler)
-    })
+    }, respond)
   }
 
   /**
