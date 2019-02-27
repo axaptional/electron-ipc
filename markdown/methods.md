@@ -103,7 +103,3 @@ channel: `string`
 Removes all message listeners from the given channel.
 
 Otherwise, this method acts just like the one above.
-
-## Links
-
-[Back to README.md](../README.md)
