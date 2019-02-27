@@ -1,0 +1,17 @@
+{
+  "tsconfig": "tsconfig.json",
+  "output": "docs",
+  "theme": "readthedocs",
+  "name": "@axaptional/electron-ipc",
+  "includes": "markdown",
+  "navTabConfig": [
+    {
+      "id": "info",
+      "label": "Code Documentation"
+    },
+    {
+      "id": "source",
+      "label": "Source Code"
+    }
+  ]
+}
