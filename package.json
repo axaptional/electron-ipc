@@ -6,7 +6,7 @@
   "types": "dist/index.d.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "tsc",
+    "build": "webpack",
     "lint": "tslint -p tsconfig.json",
     "lint:fix": "tslint -p tsconfig.json --fix",
     "prepare": "npm run build",
@@ -44,9 +44,16 @@
   },
   "devDependencies": {
     "@compodoc/compodoc": "^1.1.8",
+    "clean-webpack-plugin": "^2.0.0",
+    "terser-webpack-plugin": "^1.2.3",
+    "ts-declaration-webpack-plugin": "^1.1.1",
+    "ts-loader": "^5.3.3",
     "tslint": "^5.12.1",
     "tslint-config-standard": "^8.0.1",
-    "typescript": "^3.3.3"
+    "typescript": "^3.3.3",
+    "webpack": "^4.29.6",
+    "webpack-cli": "^3.2.3",
+    "webpack-node-externals": "^1.7.2"
   },
   "optionalDependencies": {
     "bluebird": "^3.5.3"
