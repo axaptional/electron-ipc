@@ -1,7 +1,7 @@
 {
   "name": "@axaptional/electron-ipc",
   "version": "0.3.0",
-  "description": "An easy-to-use wrapper around Electron's inter-process communication API",
+  "description": "An easy-to-use symmetric wrapper around Electron's IPC API",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
@@ -30,8 +30,12 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/axaptional/electron-ipc.git"
+    "url": "git+https://github.com/axaptional/electron-ipc.git"
   },
+  "bugs": {
+    "url": "https://github.com/axaptional/electron-ipc/issues"
+  },
+  "homepage": "https://github.com/axaptional/electron-ipc",
   "files": [
     "dist/**/*",
     "LICENSE",
