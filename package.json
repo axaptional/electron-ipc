@@ -45,6 +45,7 @@
   "devDependencies": {
     "@compodoc/compodoc": "^1.1.8",
     "clean-webpack-plugin": "^2.0.0",
+    "remove-files-webpack-plugin": "^1.0.0",
     "terser-webpack-plugin": "^1.2.3",
     "ts-declaration-webpack-plugin": "^1.1.1",
     "ts-loader": "^5.3.3",

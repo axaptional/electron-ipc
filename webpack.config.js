@@ -1,7 +1,9 @@
+const path = require('path');
 const NodeExternals = require('webpack-node-externals');
-const CleanWebpackPlugin = require('clean-webpack-plugin');
+const CleanPlugin = require('clean-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
 const TSDeclarationPlugin = require('ts-declaration-webpack-plugin');
+const RemoveFilesPlugin = require('remove-files-webpack-plugin');
 
 module.exports = {
   mode: 'production',
@@ -14,7 +16,6 @@ module.exports = {
   resolve: {
     extensions: ['.ts', '.tsx', '.js']
   },
-  //externals: ['any-promise', 'electron'],
   externals: [NodeExternals()],
   module: {
     rules: [
@@ -26,10 +27,27 @@ module.exports = {
     ]
   },
   plugins: [
-    new CleanWebpackPlugin(),
+    // Clean dist directory before compilation
+    new CleanPlugin(),
+    // Bundle declaration files into one
     new TSDeclarationPlugin({
       name: 'index.d.ts'
-    })
+    }),
+    // Remove declaration files that were bundled with TSDeclarationPlugin
+    new RemoveFilesPlugin({
+      after: {
+        root: path.resolve('.'),
+        test: [
+          {
+            folder: 'dist',
+            method(filePath) {
+              return /\.d\.ts$/.test(filePath);
+            }
+          }
+        ],
+        exclude: ['dist/index.d.ts']
+      }
+    }),
   ],
   optimization: {
     minimizer: [
