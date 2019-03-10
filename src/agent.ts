@@ -25,6 +25,8 @@ export type Handler = (event: IpcEvent, data: any) => void
  */
 export type ResponseHandler = (response: any) => void
 
+export type Task = () => void
+
 /**
  * Represents a set of options for handling listener arguments and return values.
  */
@@ -120,15 +122,7 @@ export abstract class Agent<T extends IpcService> {
   public on (channel: string, listener: Listener, options?: Partial<Options>): void {
     const { requestChannel, responseChannel } = Channels.getCommunicationChannels(channel)
     const params = this.getOptions(options)
-    const handler: Handler = (event: IpcEvent, data: any) => {
-      const respond: ResponseHandler = (response: any) => this.send(responseChannel, response)
-      const responseSource: ResponseSource<any> = listener(data)
-      if (responseSource instanceof Promise) {
-        responseSource.then(respond)
-      } else {
-        respond(responseSource)
-      }
-    }
+    const handler: Handler = this.getHandler(responseChannel, listener)
     this.ipcService.on(requestChannel, handler)
     this.handlers.set(listener, handler)
   }
@@ -144,16 +138,9 @@ export abstract class Agent<T extends IpcService> {
   public once (channel: string, listener: Listener, options?: Partial<Options>): void {
     const { requestChannel, responseChannel } = Channels.getCommunicationChannels(channel)
     const params = this.getOptions(options)
-    const handler: Handler = (event: IpcEvent, data: any) => {
-      const respond: ResponseHandler = (response: any) => this.send(responseChannel, response)
-      const responseSource: ResponseSource<any> = listener(data)
-      if (responseSource instanceof Promise) {
-        responseSource.then(respond)
-      } else {
-        respond(responseSource)
-      }
+    const handler: Handler = this.getHandler(responseChannel, listener, () => {
       this.handlers.delete(listener)
-    }
+    })
     this.ipcService.once(requestChannel, handler)
     this.handlers.set(listener, handler)
   }
@@ -217,6 +204,21 @@ export abstract class Agent<T extends IpcService> {
    */
   protected getOptions (overrides?: Partial<Options>): Options {
     return Object.assign(Agent.fallbackOptions, this.defaultOptions, overrides)
+  }
+
+  protected getHandler (responseChannel: string, listener: Listener, teardown?: Task): Handler {
+    return (event: IpcEvent, data: any) => {
+      const respond: ResponseHandler = (response: any) => this.send(responseChannel, response)
+      const responseSource: ResponseSource<any> = listener(data)
+      if (responseSource instanceof Promise) {
+        responseSource.then(respond)
+      } else {
+        respond(responseSource)
+      }
+      if (typeof teardown !== 'undefined') {
+        teardown()
+      }
+    }
   }
 
   /**
