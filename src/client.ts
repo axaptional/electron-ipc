@@ -5,6 +5,7 @@ import { IpcRenderer } from './aliases'
  * Represents an API wrapper around Electron's ipcRenderer.
  */
 export class Client extends Agent<IpcRenderer> {
+
   /**
    * Initializes a new IPC Client.
    */
@@ -20,4 +21,5 @@ export class Client extends Agent<IpcRenderer> {
   protected send (channel: string, data: any): void {
     this.ipcService.send(channel, data)
   }
+
 }

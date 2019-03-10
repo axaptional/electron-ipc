@@ -97,7 +97,7 @@ export abstract class Agent<T extends IpcService> {
    * @param data The message to post
    * @param listener The listener to call once the response was received
    */
-  public post (channel: string, listenerOrData: Listener | any, data?: any): Promise<any> | void {
+  public post (channel: string, data: any, listener?: Listener): Promise<any> | void {
     const comChannels = Channels.getCommunicationChannels(channel)
     if (typeof listener !== 'undefined') {
       this.postListener(comChannels, data, listener)

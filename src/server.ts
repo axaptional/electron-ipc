@@ -5,6 +5,7 @@ import { IpcMain, WebContents } from './aliases'
  * Represents an API wrapper around Electron's ipcMain.
  */
 export class Server extends Agent<IpcMain> {
+
   /**
    * Initializes a new IPC Server.
    * @param webContents The Electron WebContents of the renderer view to post messages to and receive messages from
@@ -21,4 +22,5 @@ export class Server extends Agent<IpcMain> {
   protected send (channel: string, data: any): void {
     this.webContents.send(channel, data)
   }
+
 }
