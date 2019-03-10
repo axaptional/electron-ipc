@@ -21,7 +21,8 @@ exactly the same.
 
 The following means of asynchronous communication are currently supported:
 
-- listeners / callbacks
+- listeners
+- Node-style callbacks (_not yet available_)
 - native Promises (ES2015+)
 - custom Promises (like `bluebird`)
 

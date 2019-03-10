@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning][SEMVER].
 ### Added
 - [ ] `removeListener` method for removing a single listener
 - [ ] Errors in `on`/`once` listeners lead to the `post` Promise being rejected
+- [ ] `nodeCallbacks` option to opt for using one `(err, data)` function
 - [ ] Gulp scripts (release and documentation)
 - [ ] `get` method for synchronous posting (terminates after response)
 - [ ] Plugin support
@@ -24,7 +25,6 @@ and this project adheres to [Semantic Versioning][SEMVER].
 
 ### Removed
 - [ ] Support for listener Cancelers (use `removeListener` instead)
-- [ ] Support for Options (only removed from production)
 
 ### Fixed
 - [ ] Sending no response now results in a value of `undefined` instead of `null`
