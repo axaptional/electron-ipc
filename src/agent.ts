@@ -83,10 +83,10 @@ export abstract class Agent<T extends IpcService> {
    * Posts a message to the given channel.
    * The listener is called either when a response is received or when the listening endpoint terminates.
    * @param channel The channel to post to
-   * @param listener The listener to call once the response was received
    * @param data The message to post
+   * @param listener The listener to call once the response was received
    */
-  public post (channel: string, listener: Listener, data: any): void
+  public post (channel: string, data: any, listener: Listener): void
 
   // TODO: The Promise should be rejected if an uncaught error occurred at the listening endpoint.
   /**
@@ -94,15 +94,15 @@ export abstract class Agent<T extends IpcService> {
    * If no response is given, the listener will be called with null as the response instead.
    * If no listener is given, a Promise is returned instead.
    * @param channel The channel to post to
-   * @param listenerOrData The listener to call once the response was received OR the message to post (Promise variant)
-   * @param data The message to post (Listener variant)
+   * @param data The message to post
+   * @param listener The listener to call once the response was received
    */
   public post (channel: string, listenerOrData: Listener | any, data?: any): Promise<any> | void {
     const comChannels = Channels.getCommunicationChannels(channel)
-    if (typeof listenerOrData === 'function') {
-      this.postListener(comChannels, listenerOrData, data)
+    if (typeof listener !== 'undefined') {
+      this.postListener(comChannels, data, listener)
     } else {
-      return this.postPromise(comChannels, listenerOrData)
+      return this.postPromise(comChannels, data)
     }
   }
 
@@ -233,10 +233,10 @@ export abstract class Agent<T extends IpcService> {
   /**
    * Posts a message to the given channel.
    * @param comChannels The communication channels to use for sending and receiving messages
-   * @param listener The listener to call once the response was received
    * @param data The message to post
+   * @param listener The listener to call once the response was received
    */
-  private postListener (comChannels: CommunicationChannels, listener: Listener, data: any): void {
+  private postListener (comChannels: CommunicationChannels, data: any, listener: Listener): void {
     const { requestChannel, responseChannel } = comChannels
     const handler: Handler = (event: IpcEvent, response: any) => {
       listener(response)

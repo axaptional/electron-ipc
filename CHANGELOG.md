@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning][SEMVER].
 
 ### Changed
 - [X] Compiled package files are now minimized
+- [X] `post` now has the parameters `(channel, data, listener?)`
 - [ ] `once` with Promises is now called `capture`
 - [ ] Messages are now encapsulated in a (plain) Message object
 - [ ] Requests and responses are now handled using local EventEmitters
