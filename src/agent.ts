@@ -105,6 +105,11 @@ export abstract class Agent<T extends IpcService> {
     }
   }
 
+  public respond (channel: string, data: any): void {
+    const responseChannel = Channels.getResponseChannel(channel)
+    this.send(responseChannel, data)
+  }
+
   /**
    * Listens for messages on the given channel and calls the given listener when a message is received.
    * To send a response, simply have the listener function return a value or a Promise.

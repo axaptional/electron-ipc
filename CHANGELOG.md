@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning][SEMVER].
 
 ### Added
 - [X] `removeListener` method for removing a single listener
+- [X] `respond` method for responding in Promise handlers
 - [ ] Errors in `on`/`once` listeners lead to the `post` Promise being rejected
 - [ ] `nodeCallbacks` option to opt for using one `(err, data)` function
 - [ ] Gulp scripts (release and documentation)
@@ -27,7 +28,7 @@ and this project adheres to [Semantic Versioning][SEMVER].
 
 ### Removed
 - [X] Support for listener Cancelers (use `removeListener` instead)
-- [X] Support for responsive Promises (use `post` and Promise chaining instead)
+- [X] Support for ResponsivePromises (use `respond` instead)
 
 ### Fixed
 - [ ] Sending no response now results in a value of `undefined` instead of `null`

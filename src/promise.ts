@@ -4,7 +4,7 @@ import { ResponseHandler, ResponseSource } from './agent'
 type PromiseExecutor<R> = (resolve: (value?: R | Promise.Thenable<R>) => void, reject: (error?: any) => void) => void
 
 /**
- * @deprecated Use post() and Promise chaining instead
+ * @deprecated Use respond() and Promise chaining instead
  */
 export class ResponsivePromise<R> extends Promise<R> {
   constructor (executor: PromiseExecutor<R>, private handler: ResponseHandler) {
