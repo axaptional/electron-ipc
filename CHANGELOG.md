@@ -7,6 +7,28 @@ and this project adheres to [Semantic Versioning][SEMVER].
 
 ## [Unreleased]
 
+### Added
+- [ ] `removeListener` method for removing a single listener
+- [ ] Errors in `on`/`once` listeners lead to the `post` Promise being rejected
+- [ ] Gulp scripts (release and documentation)
+- [ ] `get` method for synchronous posting (terminates after response)
+- [ ] Plugin support
+- [ ] Spectron / Mocha tests
+
+### Changed
+- [X] Compiled package files are now minimized
+- [ ] `once` with Promises is now called `capture`
+- [ ] Messages are now encapsulated in a (plain) Message object
+- [ ] Requests and responses are now handled using local EventEmitters
+- [ ] Types are now bound to a separate namespace
+
+### Removed
+- [ ] Support for listener Cancelers (use `removeListener` instead)
+- [ ] Support for Options (only removed from production)
+
+### Fixed
+- [ ] Sending no response now results in a value of `undefined` instead of `null`
+
 ## [0.3.0] - 2019-02-21
 
 ### Added
@@ -69,6 +91,7 @@ and this project adheres to [Semantic Versioning][SEMVER].
 
 <!-- Versions -->
 [Unreleased]: https://github.com/axaptional/electron-ipc/compare/v0.3.0...HEAD
+[0.4.0]: https://github.com/axaptional/electron-ipc/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/axaptional/electron-ipc/compare/v0.2.1...v0.3.0
 [0.2.1]: https://github.com/axaptional/electron-ipc/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/axaptional/electron-ipc/compare/v0.1.0...v0.2.0
