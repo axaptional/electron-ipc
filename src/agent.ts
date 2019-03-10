@@ -87,7 +87,7 @@ export abstract class Agent<T extends IpcService> {
    * @param data The message to post
    * @param listener The listener to call once the response was received
    */
-  public post (channel: string, data: any, listener: Listener): void
+  public post (channel: string, data: any, listener: ResponseHandler): void
 
   // TODO: The Promise should be rejected if an uncaught error occurred at the listening endpoint.
   /**
@@ -98,7 +98,7 @@ export abstract class Agent<T extends IpcService> {
    * @param data The message to post
    * @param listener The listener to call once the response was received
    */
-  public post (channel: string, data: any, listener?: Listener): Promise<any> | void {
+  public post (channel: string, data: any, listener?: ResponseHandler): Promise<any> | void {
     const comChannels = Channels.getCommunicationChannels(channel)
     if (typeof listener !== 'undefined') {
       this.postListener(comChannels, data, listener)
@@ -155,9 +155,7 @@ export abstract class Agent<T extends IpcService> {
     const requestChannel = Channels.getRequestChannel(channel)
     const params = this.getOptions(options)
     return new Promise((resolve) => {
-      const handler: Handler = (event: IpcEvent, data: any) => {
-        resolve(data)
-      }
+      const handler: Handler = this.getWrapperHandler(resolve)
       this.ipcService.once(requestChannel, handler)
     })
   }
@@ -221,6 +219,10 @@ export abstract class Agent<T extends IpcService> {
     }
   }
 
+  protected getWrapperHandler (callback: ResponseHandler): Handler {
+    return (event: IpcEvent, response: any) => callback(response)
+  }
+
   /**
    * Posts a message to the given channel.
    * The Promise resolves either when a response is received or when the listening endpoint terminates.
@@ -230,9 +232,7 @@ export abstract class Agent<T extends IpcService> {
   private postPromise (comChannels: CommunicationChannels, data: any): Promise<any> {
     const { requestChannel, responseChannel } = comChannels
     const responsePromise = new Promise((resolve) => {
-      const handler: Handler = (event: IpcEvent, response: any) => {
-        resolve(response)
-      }
+      const handler: Handler = this.getWrapperHandler(resolve)
       this.ipcService.once(responseChannel, handler)
     })
     this.send(requestChannel, data)
@@ -245,11 +245,9 @@ export abstract class Agent<T extends IpcService> {
    * @param data The message to post
    * @param listener The listener to call once the response was received
    */
-  private postListener (comChannels: CommunicationChannels, data: any, listener: Listener): void {
+  private postListener (comChannels: CommunicationChannels, data: any, listener: ResponseHandler): void {
     const { requestChannel, responseChannel } = comChannels
-    const handler: Handler = (event: IpcEvent, response: any) => {
-      listener(response)
-    }
+    const handler: Handler = this.getWrapperHandler(listener)
     this.ipcService.once(responseChannel, handler)
     this.send(requestChannel, data)
   }
