@@ -1,6 +1,6 @@
 import Promise from 'any-promise'
 import { IpcEvent, IpcService } from './aliases'
-import { Cancelable, Canceler, isCancelable } from './canceler'
+import { Cancelable, isCancelable } from './canceler'
 import { Channels, CommunicationChannels } from './channels'
 import { ResponsivePromise } from './promise'
 
@@ -37,12 +37,18 @@ export interface Options {
  * Represents an IPC communicator through which messages can be posted and received.
  */
 export abstract class Agent<T extends IpcService> {
+
   /**
    * The set of options used by all instances by default.
    */
   private static readonly fallbackOptions: Options = {
     noop: true
   }
+
+  /**
+   * A listener-handler-pair collection tracking active listeners.
+   */
+  private handlers: WeakMap<Listener, Handler> = new WeakMap()
 
   /**
    * Initializes a new Agent for the given Electron IPC service.
@@ -80,7 +86,7 @@ export abstract class Agent<T extends IpcService> {
    * @param listener The listener to call once the response was received
    * @param data The message to post
    */
-  public post (channel: string, listener: Listener, data: any): Canceler
+  public post (channel: string, listener: Listener, data: any): void
 
   // TODO: The Promise should be rejected if an uncaught error occurred at the listening endpoint.
   /**
@@ -91,10 +97,10 @@ export abstract class Agent<T extends IpcService> {
    * @param listenerOrData The listener to call once the response was received OR the message to post (Promise variant)
    * @param data The message to post (Listener variant)
    */
-  public post (channel: string, listenerOrData: Listener | any, data?: any): Promise<any> | Canceler {
+  public post (channel: string, listenerOrData: Listener | any, data?: any): Promise<any> | void {
     const comChannels = Channels.getCommunicationChannels(channel)
     if (typeof listenerOrData === 'function') {
-      return this.postListener(comChannels, listenerOrData, data)
+      this.postListener(comChannels, listenerOrData, data)
     } else {
       return this.postPromise(comChannels, listenerOrData)
     }
@@ -103,12 +109,11 @@ export abstract class Agent<T extends IpcService> {
   /**
    * Listens for messages on the given channel and calls the given listener when a message is received.
    * To send a response, simply have the listener function return a value or a Promise.
-   * To stop listening, just call cancel() on the return value of this method.
    * @param channel The channel to listen to
    * @param listener The listener to call for each received message
    * @param options A set of options to override the default options for this call only
    */
-  public on (channel: string, listener: Listener, options?: Partial<Options>): Canceler {
+  public on (channel: string, listener: Listener, options?: Partial<Options>): void {
     const { requestChannel, responseChannel } = Channels.getCommunicationChannels(channel)
     const params = this.getOptions(options)
     const handler: Handler = (event: IpcEvent, data: any) => {
@@ -121,7 +126,7 @@ export abstract class Agent<T extends IpcService> {
       }
     }
     this.ipcService.on(requestChannel, handler)
-    return new Canceler(this.ipcService, requestChannel, handler)
+    this.handlers.set(listener, handler)
   }
 
   /**
@@ -141,7 +146,7 @@ export abstract class Agent<T extends IpcService> {
    * @param listener The listener to call once the message was received
    * @param options A set of options to override the default options for this call only
    */
-  public once (channel: string, listener: Listener, options?: Partial<Options>): Canceler
+  public once (channel: string, listener: Listener, options?: Partial<Options>): void
 
   /**
    * Listens for a message on the given channel and calls the given listener when it is received.
@@ -163,7 +168,14 @@ export abstract class Agent<T extends IpcService> {
     }
   }
 
-  // TODO: Request Promises should be canceled/rejected when removeAllListeners() is called.
+  public removeListener (channel: string, listener: Listener): void {
+    if (this.handlers.has(listener)) {
+      const requestChannel = Channels.getRequestChannel(channel)
+      const handler = this.handlers.get(listener)!
+      this.ipcService.removeListener(requestChannel, handler)
+    }
+  }
+
   /**
    * Unsubscribes all listeners from all channels.
    */
@@ -174,14 +186,14 @@ export abstract class Agent<T extends IpcService> {
    * @param channel The channel to unsubscribe from (or nothing)
    */
   public removeAllListeners (channel?: string): void {
-    const channelsToRemove = []
+    let channelsToClear: string[] = []
     if (typeof channel !== 'undefined') {
-      channelsToRemove.push(Channels.getRequestChannel(channel))
+      channelsToClear.push(Channels.getRequestChannel(channel))
     } else {
-      channelsToRemove.push(...this.ipcService.eventNames().filter(Channels.isRequestChannel))
+      channelsToClear = this.ipcService.eventNames().filter(Channels.isRequestChannel)
     }
-    for (const channelToRemove of channelsToRemove) {
-      this.ipcService.removeAllListeners(channelToRemove)
+    for (const channelToClear of channelsToClear) {
+      this.ipcService.removeAllListeners(channelToClear)
     }
   }
 
@@ -224,14 +236,13 @@ export abstract class Agent<T extends IpcService> {
    * @param listener The listener to call once the response was received
    * @param data The message to post
    */
-  private postListener (comChannels: CommunicationChannels, listener: Listener, data: any): Canceler {
+  private postListener (comChannels: CommunicationChannels, listener: Listener, data: any): void {
     const { requestChannel, responseChannel } = comChannels
     const handler: Handler = (event: IpcEvent, response: any) => {
       listener(response)
     }
     this.ipcService.once(responseChannel, handler)
     this.send(requestChannel, data)
-    return new Canceler(this.ipcService, responseChannel, handler)
   }
 
   /**
@@ -257,7 +268,7 @@ export abstract class Agent<T extends IpcService> {
    * @param listener The listener to call once the message was received
    * @param options A set of options to override the default options for this call only
    */
-  private onceListener (comChannels: CommunicationChannels, listener: Listener, options?: Partial<Options>): Canceler {
+  private onceListener (comChannels: CommunicationChannels, listener: Listener, options?: Partial<Options>): void {
     const { requestChannel, responseChannel } = comChannels
     const params = this.getOptions(options)
     const handler: Handler = (event: IpcEvent, data: any) => {
@@ -268,8 +279,10 @@ export abstract class Agent<T extends IpcService> {
       } else {
         respond(responseSource)
       }
+      this.handlers.delete(listener)
     }
     this.ipcService.once(requestChannel, handler)
-    return new Canceler(this.ipcService, requestChannel, handler)
+    this.handlers.set(listener, handler)
   }
+
 }

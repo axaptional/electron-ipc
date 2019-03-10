@@ -17,6 +17,7 @@ export function isCancelable (object: any): object is Cancelable {
 
 /**
  * Represents a helper to unsubscribe a listener function from a channel.
+ * @deprecated
  */
 export class Canceler implements Cancelable {
   /**

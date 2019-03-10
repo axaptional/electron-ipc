@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning][SEMVER].
 ## [Unreleased]
 
 ### Added
-- [ ] `removeListener` method for removing a single listener
+- [X] `removeListener` method for removing a single listener
 - [ ] Errors in `on`/`once` listeners lead to the `post` Promise being rejected
 - [ ] `nodeCallbacks` option to opt for using one `(err, data)` function
 - [ ] Gulp scripts (release and documentation)
@@ -24,7 +24,7 @@ and this project adheres to [Semantic Versioning][SEMVER].
 - [ ] Types are now bound to a separate namespace
 
 ### Removed
-- [ ] Support for listener Cancelers (use `removeListener` instead)
+- [X] Support for listener Cancelers (use `removeListener` instead)
 
 ### Fixed
 - [ ] Sending no response now results in a value of `undefined` instead of `null`
