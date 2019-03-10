@@ -13,19 +13,21 @@ and this project adheres to [Semantic Versioning][SEMVER].
 - [ ] `nodeCallbacks` option to opt for using one `(err, data)` function
 - [ ] Gulp scripts (release and documentation)
 - [ ] `get` method for synchronous posting (terminates after response)
+- [ ] Updated method quickstart
 - [ ] Plugin support
 - [ ] Spectron / Mocha tests
 
 ### Changed
 - [X] Compiled package files are now minimized
 - [X] `post` now has the parameters `(channel, data, listener?)`
-- [ ] `once` with Promises is now called `capture`
+- [X] `once` with Promises is now called `capture`
 - [ ] Messages are now encapsulated in a (plain) Message object
 - [ ] Requests and responses are now handled using local EventEmitters
 - [ ] Types are now bound to a separate namespace
 
 ### Removed
 - [X] Support for listener Cancelers (use `removeListener` instead)
+- [X] Support for responsive Promises (use `post` and Promise chaining instead)
 
 ### Fixed
 - [ ] Sending no response now results in a value of `undefined` instead of `null`

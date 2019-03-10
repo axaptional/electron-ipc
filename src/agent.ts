@@ -2,7 +2,6 @@ import Promise from 'any-promise'
 import { IpcEvent, IpcService } from './aliases'
 import { Cancelable, isCancelable } from './canceler'
 import { Channels, CommunicationChannels } from './channels'
-import { ResponsivePromise } from './promise'
 
 /**
  * Represents a source of a response.
@@ -130,15 +129,6 @@ export abstract class Agent<T extends IpcService> {
   }
 
   /**
-   * Listens for a message on the given channel. The Promise resolves once a message was received.
-   * Canceling is only possible through the use of an additional library like Bluebird, not with native Promises.
-   * To send a response, call respond() on the returned Promise instead of then().
-   * @param channel The channel to listen to
-   * @param options A set of options to override the default options for this call only
-   */
-  public once (channel: string, options?: Partial<Options>): ResponsivePromise<any>
-
-  /**
    * Listens for a message on the given channel and calls the given listener when it is received.
    * To send a response, simply have the listener function return a value or a Promise.
    * To stop listening, just call cancel() on the return value of this method.
@@ -146,26 +136,38 @@ export abstract class Agent<T extends IpcService> {
    * @param listener The listener to call once the message was received
    * @param options A set of options to override the default options for this call only
    */
-  public once (channel: string, listener: Listener, options?: Partial<Options>): void
+  public once (channel: string, listener: Listener, options?: Partial<Options>): void {
+    const { requestChannel, responseChannel } = Channels.getCommunicationChannels(channel)
+    const params = this.getOptions(options)
+    const handler: Handler = (event: IpcEvent, data: any) => {
+      const respond: ResponseHandler = (response: any) => this.send(responseChannel, response)
+      const responseSource: ResponseSource<any> = listener(data)
+      if (responseSource instanceof Promise) {
+        responseSource.then(respond)
+      } else {
+        respond(responseSource)
+      }
+      this.handlers.delete(listener)
+    }
+    this.ipcService.once(requestChannel, handler)
+    this.handlers.set(listener, handler)
+  }
 
   /**
-   * Listens for a message on the given channel and calls the given listener when it is received.
-   * If no listener is specified, this method returns a Promise that resolves once the message is received instead.
-   * To send a response, simply have the listener function return a value or a Promise.
-   * If you are using Promises, call respond() on the returned Promise instead of then().
-   * To stop listening, just call cancel() on the return value of this method.
-   * Canceling a Promise is only possible through the use of an additional library like Bluebird, not natively.
+   * Captures the next message on the given channel. The Promise resolves once a message was received.
+   * Canceling is only possible through the use of an additional library like Bluebird, not with native Promises.
    * @param channel The channel to listen to
-   * @param listenerOrOptions The listener to call once the message was received OR an Options object (Promise variant)
-   * @param options A set of options to override the default options for this call only (Listener variant)
+   * @param options A set of options to override the default options for this call only
    */
-  public once (channel: string, listenerOrOptions?: Listener | Partial<Options>, options?: Partial<Options>) {
-    const comChannels = Channels.getCommunicationChannels(channel)
-    if (typeof listenerOrOptions === 'function') {
-      return this.onceListener(comChannels, listenerOrOptions, options)
-    } else {
-      return this.oncePromise(comChannels, listenerOrOptions)
-    }
+  public capture (channel: string, options?: Partial<Options>): Promise<any> {
+    const requestChannel = Channels.getRequestChannel(channel)
+    const params = this.getOptions(options)
+    return new Promise((resolve) => {
+      const handler: Handler = (event: IpcEvent, data: any) => {
+        resolve(data)
+      }
+      this.ipcService.once(requestChannel, handler)
+    })
   }
 
   public removeListener (channel: string, listener: Listener): void {
@@ -243,46 +245,6 @@ export abstract class Agent<T extends IpcService> {
     }
     this.ipcService.once(responseChannel, handler)
     this.send(requestChannel, data)
-  }
-
-  /**
-   * Listens for a message. The Promise resolves once a message was received.
-   * @param comChannels The communication channels to use for sending and receiving messages
-   * @param options A set of options to override the default options for this call only
-   */
-  private oncePromise (comChannels: CommunicationChannels, options?: Partial<Options>): ResponsivePromise<any> {
-    const { requestChannel, responseChannel } = comChannels
-    const params = this.getOptions(options)
-    const respond: ResponseHandler = (response: any) => this.send(responseChannel, response)
-    return new ResponsivePromise((resolve) => {
-      const handler: Handler = (event: IpcEvent, data: any) => {
-        resolve(data)
-      }
-      this.ipcService.once(requestChannel, handler)
-    }, respond)
-  }
-
-  /**
-   * Listens for a message and calls the given listener when it is received.
-   * @param comChannels The communication channels to use for sending and receiving messages
-   * @param listener The listener to call once the message was received
-   * @param options A set of options to override the default options for this call only
-   */
-  private onceListener (comChannels: CommunicationChannels, listener: Listener, options?: Partial<Options>): void {
-    const { requestChannel, responseChannel } = comChannels
-    const params = this.getOptions(options)
-    const handler: Handler = (event: IpcEvent, data: any) => {
-      const respond: ResponseHandler = (response: any) => this.send(responseChannel, response)
-      const responseSource: ResponseSource<any> = listener(data)
-      if (responseSource instanceof Promise) {
-        responseSource.then(respond)
-      } else {
-        respond(responseSource)
-      }
-      this.handlers.delete(listener)
-    }
-    this.ipcService.once(requestChannel, handler)
-    this.handlers.set(listener, handler)
   }
 
 }
