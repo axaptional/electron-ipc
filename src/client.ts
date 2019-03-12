@@ -1,4 +1,4 @@
-import { Agent } from './agent'
+import { Agent, Message } from './agent'
 import { IpcRenderer } from './aliases'
 
 /**
@@ -16,10 +16,10 @@ export class Client extends Agent<IpcRenderer> {
   /**
    * Sends a message to the main process.
    * @param channel The channel to use for sending the data
-   * @param data The data to send
+   * @param message The message to send
    */
-  protected send (channel: string, data: any): void {
-    this.ipcService.send(channel, data)
+  protected send (channel: string, message: Message): void {
+    this.ipcService.send(channel, message)
   }
 
 }

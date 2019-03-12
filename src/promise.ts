@@ -18,6 +18,7 @@ export class ResponsivePromise<R> extends Promise<R> {
       if (responseSource instanceof Promise) {
         responseSource.then(this.handler)
       } else {
+        // @ts-ignore
         this.handler(responseSource)
       }
       return value // Received data will be propagated

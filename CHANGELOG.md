@@ -22,7 +22,7 @@ and this project adheres to [Semantic Versioning][SEMVER].
 - [X] Compiled package files are now minimized
 - [X] `post` now has the parameters `(channel, data, listener?)`
 - [X] `once` with Promises is now called `capture`
-- [ ] Messages are now encapsulated in a (plain) Message object
+- [X] Messages are now encapsulated in a (plain) Message object
 - [ ] Requests and responses are now handled using local EventEmitters
 - [ ] Types are now bound to a separate namespace
 

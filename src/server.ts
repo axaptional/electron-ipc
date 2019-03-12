@@ -1,4 +1,4 @@
-import { Agent } from './agent'
+import { Agent, Message } from './agent'
 import { IpcMain, WebContents } from './aliases'
 
 /**
@@ -17,10 +17,10 @@ export class Server extends Agent<IpcMain> {
   /**
    * Sends a message to the renderer process.
    * @param channel The channel to use for sending the data
-   * @param data The data to send
+   * @param message The message to send
    */
-  protected send (channel: string, data: any): void {
-    this.webContents.send(channel, data)
+  protected send (channel: string, message: Message): void {
+    this.webContents.send(channel, message)
   }
 
 }

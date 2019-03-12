@@ -18,7 +18,7 @@ export type Listener = (data: any) => ResponseSource<any>
 /**
  * Represents a handler for an Electron IPC service event.
  */
-export type Handler = (event: IpcEvent, data: any) => void
+export type Handler = (event: IpcEvent, message: Message) => void
 
 /**
  * Represents a proxy handler for responses.
@@ -32,6 +32,13 @@ export type Task = () => void
  */
 export interface Options {
   noop: any
+}
+
+export interface Message {
+  data: any,
+  response: boolean,
+  error: boolean,
+  isUndefined: boolean
 }
 
 /**
@@ -100,16 +107,18 @@ export abstract class Agent<T extends IpcService> {
    */
   public post (channel: string, data: any, listener?: ResponseHandler): Promise<any> | void {
     const comChannels = Channels.getCommunicationChannels(channel)
+    const message = this.constructMessage(data)
     if (typeof listener !== 'undefined') {
-      this.postListener(comChannels, data, listener)
+      this.postListener(comChannels, message, listener)
     } else {
-      return this.postPromise(comChannels, data)
+      return this.postPromise(comChannels, message)
     }
   }
 
   public respond (channel: string, data: any): void {
     const responseChannel = Channels.getResponseChannel(channel)
-    this.send(responseChannel, data)
+    const message: Message = this.constructMessage(data, true)
+    this.send(responseChannel, message)
   }
 
   /**
@@ -189,12 +198,30 @@ export abstract class Agent<T extends IpcService> {
     }
   }
 
+  protected constructMessage (data: any | Error, response: boolean = false): Message {
+    const error = data instanceof Error
+    const isNull = data === null
+    return { data, error, isUndefined: isNull, response }
+  }
+
+  protected deconstructMessage (message: Message): any {
+    let data = message.data
+    if (message.isUndefined) {
+      data = void 0
+    } else if (message.error) {
+      data = new Error(message.data.message)
+      data.name = message.data.name
+    }
+    data.$response = message.response
+    return message
+  }
+
   /**
    * Sends a message to the other service.
    * @param channel The channel to use for sending the data
-   * @param data The data to send
+   * @param message The message to send
    */
-  protected abstract send (channel: string, data: any): void
+  protected abstract send (channel: string, message: Message): void
 
   /**
    * Returns a set of options according to this instance's default options and the given overrides.
@@ -205,8 +232,9 @@ export abstract class Agent<T extends IpcService> {
   }
 
   protected getHandler (responseChannel: string, listener: Listener, teardown?: Task): Handler {
-    return (event: IpcEvent, data: any) => {
+    return (event: IpcEvent, message: Message) => {
       const respond: ResponseHandler = (response: any) => this.send(responseChannel, response)
+      const data = this.deconstructMessage(message)
       const responseSource: ResponseSource<any> = listener(data)
       if (responseSource instanceof Promise) {
         responseSource.then(respond)
@@ -220,36 +248,39 @@ export abstract class Agent<T extends IpcService> {
   }
 
   protected getWrapperHandler (callback: ResponseHandler): Handler {
-    return (event: IpcEvent, response: any) => callback(response)
+    return (event: IpcEvent, response: Message) => {
+      const data = this.deconstructMessage(response)
+      callback(data)
+    }
   }
 
   /**
    * Posts a message to the given channel.
    * The Promise resolves either when a response is received or when the listening endpoint terminates.
    * @param comChannels The communication channels to use for sending and receiving messages
-   * @param data The message to post
+   * @param message The message to post
    */
-  private postPromise (comChannels: CommunicationChannels, data: any): Promise<any> {
+  private postPromise (comChannels: CommunicationChannels, message: Message): Promise<any> {
     const { requestChannel, responseChannel } = comChannels
     const responsePromise = new Promise((resolve) => {
       const handler: Handler = this.getWrapperHandler(resolve)
       this.ipcService.once(responseChannel, handler)
     })
-    this.send(requestChannel, data)
+    this.send(requestChannel, message)
     return responsePromise
   }
 
   /**
    * Posts a message to the given channel.
    * @param comChannels The communication channels to use for sending and receiving messages
-   * @param data The message to post
+   * @param message The message to post
    * @param listener The listener to call once the response was received
    */
-  private postListener (comChannels: CommunicationChannels, data: any, listener: ResponseHandler): void {
+  private postListener (comChannels: CommunicationChannels, message: Message, listener: ResponseHandler): void {
     const { requestChannel, responseChannel } = comChannels
     const handler: Handler = this.getWrapperHandler(listener)
     this.ipcService.once(responseChannel, handler)
-    this.send(requestChannel, data)
+    this.send(requestChannel, message)
   }
 
 }
