@@ -201,20 +201,19 @@ export abstract class Agent<T extends IpcService> implements OptionsProvider<Opt
 
   protected constructMessage (data: any | Error, response: boolean = false): Message {
     const error = data instanceof Error
-    const isNull = data === null
-    return { data, error, isUndefined: isNull, response }
+    const isUndefined = data === undefined
+    return { data, error, isUndefined, response }
   }
 
   protected deconstructMessage (message: Message): any {
-    let data = message.data
+    let { data } = message
     if (message.isUndefined) {
       data = void 0
     } else if (message.error) {
       data = new Error(message.data.message)
       data.name = message.data.name
     }
-    data.$response = message.response
-    return message
+    return data
   }
 
   /**
