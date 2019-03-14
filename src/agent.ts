@@ -170,11 +170,13 @@ export abstract class Agent<T extends IpcService> implements OptionsProvider<Opt
     })
   }
 
+  // FIXME: Attaching the same listener twice will lead to the second instance not being recoverable
   public removeListener (channel: string, listener: Listener): void {
     if (this.handlers.has(listener)) {
       const requestChannel = Channels.getRequestChannel(channel)
       const handler = this.handlers.get(listener)!
       this.ipcService.removeListener(requestChannel, handler)
+      this.handlers.delete(listener)
     }
   }
 
