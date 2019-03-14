@@ -42,6 +42,8 @@ export interface Message {
   isUndefined: boolean
 }
 
+type HandlerMap = Map<string, Set<Handler>>
+
 /**
  * Represents an IPC communicator through which messages can be posted and received.
  */
@@ -59,7 +61,7 @@ export abstract class Agent<T extends IpcService> implements OptionsProvider<Opt
   /**
    * A listener-handler-pair collection tracking active listeners.
    */
-  private handlers: WeakMap<Listener, Handler> = new WeakMap()
+  private handlers: WeakMap<Listener, HandlerMap> = new WeakMap()
 
   /**
    * Initializes a new Agent for the given Electron IPC service.
@@ -134,7 +136,7 @@ export abstract class Agent<T extends IpcService> implements OptionsProvider<Opt
     const params = this.options.get(options)
     const handler: Handler = this.getHandler(responseChannel, listener)
     this.ipcService.on(requestChannel, handler)
-    this.handlers.set(listener, handler)
+    this.pushHandler(channel, listener, handler)
   }
 
   /**
@@ -152,7 +154,7 @@ export abstract class Agent<T extends IpcService> implements OptionsProvider<Opt
       this.handlers.delete(listener)
     })
     this.ipcService.once(requestChannel, handler)
-    this.handlers.set(listener, handler)
+    this.pushHandler(channel, listener, handler)
   }
 
   /**
@@ -170,24 +172,35 @@ export abstract class Agent<T extends IpcService> implements OptionsProvider<Opt
     })
   }
 
-  // FIXME: Attaching the same listener twice will lead to the second instance not being recoverable
+  /**
+   * Removes all subscriptions of a listener from the given channel.
+   * @param channel The channel whose subscriptions tied to the listener should be removed
+   * @param listener The listener whose subscriptions tied to the channel should be removed
+   */
   public removeListener (channel: string, listener: Listener): void {
     if (this.handlers.has(listener)) {
       const requestChannel = Channels.getRequestChannel(channel)
-      const handler = this.handlers.get(listener)!
-      this.ipcService.removeListener(requestChannel, handler)
-      this.handlers.delete(listener)
+      const handlers = this.pullHandlers(channel, listener)
+      for (const handler of handlers) {
+        /*
+          NOTE: Some handlers may be "phantoms", meaning they have already been removed from the ipcService despite
+          still being present in the handler set. In this case, the next line will still try to remove that "listener".
+          In other words, this behavior only works because ipcService.removeListener() does not throw an Error when
+          an attempt to remove an unattached listener is made.
+         */
+        this.ipcService.removeListener(requestChannel, handler)
+      }
     }
   }
 
   /**
-   * Unsubscribes all listeners from all channels.
+   * Removes all subscriptions of all listeners from all channels.
    */
   public removeAllListeners (): void
 
   /**
-   * Unsubscribes all listeners from the given channel. Omit the channel to unsubscribe from all channels.
-   * @param channel The channel to unsubscribe from (or nothing)
+   * Removes all subscriptions of all listeners from the given channel.
+   * @param channel The channel to unsubscribe from
    */
   public removeAllListeners (channel?: string): void {
     let channelsToClear: string[] = []
@@ -199,6 +212,34 @@ export abstract class Agent<T extends IpcService> implements OptionsProvider<Opt
     for (const channelToClear of channelsToClear) {
       this.ipcService.removeAllListeners(channelToClear)
     }
+  }
+
+  protected pushHandler (channel: string, listener: Listener, handler: Handler): void {
+    if (!this.handlers.has(listener)) {
+      this.handlers.set(listener, new Map())
+    }
+    const handlerMap = this.handlers.get(listener)!
+    if (!handlerMap.has(channel)) {
+      handlerMap.set(channel, new Set())
+    }
+    const handlerSet = handlerMap.get(channel)!
+    handlerSet.add(handler)
+  }
+
+  protected pullHandlers (channel: string, listener: Listener): Set<Handler> {
+    if (!this.handlers.has(listener)) {
+      return new Set()
+    }
+    const handlerMap = this.handlers.get(listener)!
+    if (!handlerMap.has(channel)) {
+      return new Set()
+    }
+    const handlerSet = handlerMap.get(channel)!
+    handlerMap.delete(channel)
+    if (handlerMap.size === 0) {
+      this.handlers.delete(listener)
+    }
+    return handlerSet
   }
 
   protected constructMessage (data: any | Error, response: boolean = false): Message {
