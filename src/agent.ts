@@ -2,6 +2,7 @@ import Promise from 'any-promise'
 import { IpcEvent, IpcService } from './aliases'
 import { Cancelable, isCancelable } from './canceler'
 import { Channels, CommunicationChannels } from './channels'
+import { OptionsProvider, OptionsStore } from './options'
 
 /**
  * Represents a source of a response.
@@ -44,7 +45,7 @@ export interface Message {
 /**
  * Represents an IPC communicator through which messages can be posted and received.
  */
-export abstract class Agent<T extends IpcService> {
+export abstract class Agent<T extends IpcService> implements OptionsProvider<Options> {
 
   /**
    * The set of options used by all instances by default.
@@ -52,6 +53,8 @@ export abstract class Agent<T extends IpcService> {
   private static readonly fallbackOptions: Options = {
     noop: true
   }
+
+  protected readonly options: OptionsStore<Options>
 
   /**
    * A listener-handler-pair collection tracking active listeners.
@@ -63,20 +66,18 @@ export abstract class Agent<T extends IpcService> {
    * @param ipcService Either the ipcMain or the ipcRenderer service from Electron
    * @param defaultOptions A set of options to use by default for all message handlers
    */
-  protected constructor (protected ipcService: T, protected defaultOptions: Partial<Options> = {}) {}
+  protected constructor (protected ipcService: T, defaultOptions?: Partial<Options>) {
+    this.options = new OptionsStore(Agent.fallbackOptions, defaultOptions)
+  }
 
   /**
    * Overrides the default settings of this IPC communicator instance.
    * Settings not specified in the options argument will retain their values by default.
    * @param options A set of options with settings you want to override
-   * @param replace If true, settings not specified in the options argument will be unset
+   * @param replace If true, the default options will be completely replaced instead of partially overwritten
    */
-  public configure (options: Partial<Options>, replace: boolean = false): void {
-    if (replace) {
-      this.defaultOptions = options
-      return
-    }
-    Object.assign(this.defaultOptions, options)
+  public configure (options: Partial<Options>, replace?: boolean): void {
+    this.options.configure(options, replace)
   }
 
   /**
@@ -130,7 +131,7 @@ export abstract class Agent<T extends IpcService> {
    */
   public on (channel: string, listener: Listener, options?: Partial<Options>): void {
     const { requestChannel, responseChannel } = Channels.getCommunicationChannels(channel)
-    const params = this.getOptions(options)
+    const params = this.options.get(options)
     const handler: Handler = this.getHandler(responseChannel, listener)
     this.ipcService.on(requestChannel, handler)
     this.handlers.set(listener, handler)
@@ -146,7 +147,7 @@ export abstract class Agent<T extends IpcService> {
    */
   public once (channel: string, listener: Listener, options?: Partial<Options>): void {
     const { requestChannel, responseChannel } = Channels.getCommunicationChannels(channel)
-    const params = this.getOptions(options)
+    const params = this.options.get(options)
     const handler: Handler = this.getHandler(responseChannel, listener, () => {
       this.handlers.delete(listener)
     })
@@ -162,7 +163,7 @@ export abstract class Agent<T extends IpcService> {
    */
   public capture (channel: string, options?: Partial<Options>): Promise<any> {
     const requestChannel = Channels.getRequestChannel(channel)
-    const params = this.getOptions(options)
+    const params = this.options.get(options)
     return new Promise((resolve) => {
       const handler: Handler = this.getWrapperHandler(resolve)
       this.ipcService.once(requestChannel, handler)
@@ -222,14 +223,6 @@ export abstract class Agent<T extends IpcService> {
    * @param message The message to send
    */
   protected abstract send (channel: string, message: Message): void
-
-  /**
-   * Returns a set of options according to this instance's default options and the given overrides.
-   * @param overrides A set of options with settings that should override default values
-   */
-  protected getOptions (overrides?: Partial<Options>): Options {
-    return Object.assign(Agent.fallbackOptions, this.defaultOptions, overrides)
-  }
 
   protected getHandler (responseChannel: string, listener: Listener, teardown?: Task): Handler {
     return (event: IpcEvent, message: Message) => {
