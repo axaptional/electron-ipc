@@ -1,5 +1,7 @@
 # Methods
 
+**NOTE: This guide is currently outdated and will be updated when 4.0.0 releases.**
+
 Here are short explanations on most visible methods.
 
 ## Client / Server
