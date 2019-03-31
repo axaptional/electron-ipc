@@ -24,7 +24,7 @@ and this project adheres to [Semantic Versioning][SEMVER].
 - [X] `once` with Promises is now called `capture`
 - [X] Messages are now encapsulated in a (plain) Message object
 - [X] Option-related members were outsourced to a new `OptionsStore` class
-- [ ] Requests and responses are now handled using local EventEmitters
+- [X] Requests and responses are now handled using local EventEmitters
 - [ ] Types are now bound to a separate namespace
 
 ### Removed
@@ -32,7 +32,7 @@ and this project adheres to [Semantic Versioning][SEMVER].
 - [X] Support for ResponsivePromises (use `respond` instead)
 
 ### Fixed
-- [ ] Sending no response now results in a value of `undefined` instead of `null`
+- [X] Sending no response now results in a value of `undefined` instead of `null`
 
 ## [0.3.0] - 2019-02-21
 

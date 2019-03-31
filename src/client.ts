@@ -15,11 +15,10 @@ export class Client extends Agent<IpcRenderer> {
 
   /**
    * Sends a message to the main process.
-   * @param channel The channel to use for sending the data
    * @param message The message to send
    */
-  protected send (channel: string, message: Message): void {
-    this.ipcService.send(channel, message)
+  protected send (message: Message): void {
+    this.ipcService.send(Client.ipcChannel, message)
   }
 
 }

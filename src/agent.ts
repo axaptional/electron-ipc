@@ -1,7 +1,6 @@
 import Promise from 'any-promise'
+import EventEmitter from 'eventemitter3'
 import { IpcEvent, IpcService } from './aliases'
-import { Cancelable, isCancelable } from './canceler'
-import { Channels, CommunicationChannels } from './channels'
 import { OptionsProvider, OptionsStore } from './options'
 
 /**
@@ -32,14 +31,17 @@ export type Task = () => void
  * Represents a set of options for handling listener arguments and return values.
  */
 export interface Options {
-  noop: any
+  /**
+   * If true, success listeners take (err, data) arguments and error listeners are disallowed.
+   */
+  nodeCallbacks: boolean
 }
 
 export interface Message {
-  data: any,
+  data?: any,
+  channel: string,
   response: boolean,
-  error: boolean,
-  isUndefined: boolean
+  error: boolean
 }
 
 type HandlerMap = Map<string, Set<Handler>>
@@ -50,13 +52,31 @@ type HandlerMap = Map<string, Set<Handler>>
 export abstract class Agent<T extends IpcService> implements OptionsProvider<Options> {
 
   /**
+   * The channel used for communication by "electron-ipc".
+   */
+  public static readonly ipcChannel: string = '$electron-ipc'
+
+  /**
    * The set of options used by all instances by default.
    */
   private static readonly fallbackOptions: Options = {
-    noop: true
+    nodeCallbacks: false
   }
 
+  /**
+   * The set of options used for this instance.
+   */
   protected readonly options: OptionsStore<Options>
+
+  /**
+   * The EventEmitter used for emitting data of incoming requests.
+   */
+  protected readonly requestEvents: EventEmitter<any> = new EventEmitter()
+
+  /**
+   * The EventEmitter used for emitting data of incoming responses.
+   */
+  protected readonly responseEvents: EventEmitter<any> = new EventEmitter()
 
   /**
    * A listener-handler-pair collection tracking active listeners.
@@ -70,6 +90,7 @@ export abstract class Agent<T extends IpcService> implements OptionsProvider<Opt
    */
   protected constructor (protected ipcService: T, defaultOptions?: Partial<Options>) {
     this.options = new OptionsStore(Agent.fallbackOptions, defaultOptions)
+    ipcService.on(Agent.ipcChannel, this.onDataReceived)
   }
 
   /**
@@ -102,26 +123,29 @@ export abstract class Agent<T extends IpcService> implements OptionsProvider<Opt
   // TODO: The Promise should be rejected if an uncaught error occurred at the listening endpoint.
   /**
    * Posts a message to the given channel and calls the listener when a response is received.
-   * If no response is given, the listener will be called with null as the response instead.
+   * If no response is given, the listener will be called with an undefined response instead.
    * If no listener is given, a Promise is returned instead.
    * @param channel The channel to post to
    * @param data The message to post
    * @param listener The listener to call once the response was received
    */
   public post (channel: string, data: any, listener?: ResponseHandler): Promise<any> | void {
-    const comChannels = Channels.getCommunicationChannels(channel)
-    const message = this.constructMessage(data)
+    const message: Message = this.constructMessage(channel, data)
     if (typeof listener !== 'undefined') {
-      this.postListener(comChannels, message, listener)
+      this.postListener(channel, message, listener)
     } else {
-      return this.postPromise(comChannels, message)
+      return this.postPromise(channel, message)
     }
   }
 
+  /**
+   * Sends a response on the given channel.
+   * @param channel The channel to respond to
+   * @param data The response data
+   */
   public respond (channel: string, data: any): void {
-    const responseChannel = Channels.getResponseChannel(channel)
-    const message: Message = this.constructMessage(data, true)
-    this.send(responseChannel, message)
+    const message: Message = this.constructMessage(channel, data, true)
+    this.send(message)
   }
 
   /**
@@ -132,28 +156,25 @@ export abstract class Agent<T extends IpcService> implements OptionsProvider<Opt
    * @param options A set of options to override the default options for this call only
    */
   public on (channel: string, listener: Listener, options?: Partial<Options>): void {
-    const { requestChannel, responseChannel } = Channels.getCommunicationChannels(channel)
     const params = this.options.get(options)
-    const handler: Handler = this.getHandler(responseChannel, listener)
-    this.ipcService.on(requestChannel, handler)
+    const handler: Handler = this.getHandler(channel, listener)
+    this.requestEvents.on(channel, handler)
     this.pushHandler(channel, listener, handler)
   }
 
   /**
    * Listens for a message on the given channel and calls the given listener when it is received.
    * To send a response, simply have the listener function return a value or a Promise.
-   * To stop listening, just call cancel() on the return value of this method.
    * @param channel The channel to listen to
    * @param listener The listener to call once the message was received
    * @param options A set of options to override the default options for this call only
    */
   public once (channel: string, listener: Listener, options?: Partial<Options>): void {
-    const { requestChannel, responseChannel } = Channels.getCommunicationChannels(channel)
     const params = this.options.get(options)
-    const handler: Handler = this.getHandler(responseChannel, listener, () => {
+    const handler: Handler = this.getHandler(channel, listener, () => {
       this.handlers.delete(listener)
     })
-    this.ipcService.once(requestChannel, handler)
+    this.requestEvents.once(channel, handler)
     this.pushHandler(channel, listener, handler)
   }
 
@@ -164,11 +185,10 @@ export abstract class Agent<T extends IpcService> implements OptionsProvider<Opt
    * @param options A set of options to override the default options for this call only
    */
   public capture (channel: string, options?: Partial<Options>): Promise<any> {
-    const requestChannel = Channels.getRequestChannel(channel)
     const params = this.options.get(options)
     return new Promise((resolve) => {
       const handler: Handler = this.getWrapperHandler(resolve)
-      this.ipcService.once(requestChannel, handler)
+      this.requestEvents.once(channel, handler)
     })
   }
 
@@ -179,7 +199,6 @@ export abstract class Agent<T extends IpcService> implements OptionsProvider<Opt
    */
   public removeListener (channel: string, listener: Listener): void {
     if (this.handlers.has(listener)) {
-      const requestChannel = Channels.getRequestChannel(channel)
       const handlers = this.pullHandlers(channel, listener)
       for (const handler of handlers) {
         /*
@@ -188,7 +207,7 @@ export abstract class Agent<T extends IpcService> implements OptionsProvider<Opt
           In other words, this behavior only works because ipcService.removeListener() does not throw an Error when
           an attempt to remove an unattached listener is made.
          */
-        this.ipcService.removeListener(requestChannel, handler)
+        this.requestEvents.removeListener(channel, handler)
       }
     }
   }
@@ -205,12 +224,12 @@ export abstract class Agent<T extends IpcService> implements OptionsProvider<Opt
   public removeAllListeners (channel?: string): void {
     let channelsToClear: string[] = []
     if (typeof channel !== 'undefined') {
-      channelsToClear.push(Channels.getRequestChannel(channel))
+      channelsToClear.push(channel)
     } else {
-      channelsToClear = this.ipcService.eventNames().filter(Channels.isRequestChannel)
+      channelsToClear = this.requestEvents.eventNames()
     }
     for (const channelToClear of channelsToClear) {
-      this.ipcService.removeAllListeners(channelToClear)
+      this.requestEvents.removeAllListeners(channelToClear)
     }
   }
 
@@ -242,17 +261,18 @@ export abstract class Agent<T extends IpcService> implements OptionsProvider<Opt
     return handlerSet
   }
 
-  protected constructMessage (data: any | Error, response: boolean = false): Message {
+  protected constructMessage (channel: string, data: any | Error, response: boolean = false): Message {
     const error = data instanceof Error
-    const isUndefined = data === undefined
-    return { data, error, isUndefined, response }
+    const message: Message = { channel, data, error, response }
+    if (typeof data === 'undefined') {
+      delete message.data
+    }
+    return message
   }
 
   protected deconstructMessage (message: Message): any {
     let { data } = message
-    if (message.isUndefined) {
-      data = void 0
-    } else if (message.error) {
+    if (message.error) {
       data = new Error(message.data.message)
       data.name = message.data.name
     }
@@ -261,14 +281,13 @@ export abstract class Agent<T extends IpcService> implements OptionsProvider<Opt
 
   /**
    * Sends a message to the other service.
-   * @param channel The channel to use for sending the data
    * @param message The message to send
    */
-  protected abstract send (channel: string, message: Message): void
+  protected abstract send (message: Message): void
 
-  protected getHandler (responseChannel: string, listener: Listener, teardown?: Task): Handler {
+  protected getHandler (channel: string, listener: Listener, teardown?: Task): Handler {
     return (event: IpcEvent, message: Message) => {
-      const respond: ResponseHandler = (response: any) => this.send(responseChannel, response)
+      const respond: ResponseHandler = (response: any) => this.respond(channel, response)
       const data = this.deconstructMessage(message)
       const responseSource: ResponseSource<any> = listener(data)
       if (responseSource instanceof Promise) {
@@ -276,7 +295,7 @@ export abstract class Agent<T extends IpcService> implements OptionsProvider<Opt
       } else {
         respond(responseSource)
       }
-      if (typeof teardown !== 'undefined') {
+      if (typeof teardown === 'function') {
         teardown()
       }
     }
@@ -290,32 +309,41 @@ export abstract class Agent<T extends IpcService> implements OptionsProvider<Opt
   }
 
   /**
+   * Listener for incoming messages. Redistributes message data to specialized EventEmitters.
+   * @param ipcEvent The Electron IPC event
+   * @param message The message that was received
+   */
+  private onDataReceived (ipcEvent: IpcEvent, message: Message) {
+    const data: any = this.deconstructMessage(message)
+    const emitter: EventEmitter = (message.response) ? this.responseEvents : this.requestEvents
+    emitter.emit(message.channel, data)
+  }
+
+  /**
    * Posts a message to the given channel.
    * The Promise resolves either when a response is received or when the listening endpoint terminates.
-   * @param comChannels The communication channels to use for sending and receiving messages
+   * @param channel The channel to use for communication
    * @param message The message to post
    */
-  private postPromise (comChannels: CommunicationChannels, message: Message): Promise<any> {
-    const { requestChannel, responseChannel } = comChannels
+  private postPromise (channel: string, message: Message): Promise<any> {
     const responsePromise = new Promise((resolve) => {
       const handler: Handler = this.getWrapperHandler(resolve)
-      this.ipcService.once(responseChannel, handler)
+      this.responseEvents.once(channel, handler)
     })
-    this.send(requestChannel, message)
+    this.send(message)
     return responsePromise
   }
 
   /**
    * Posts a message to the given channel.
-   * @param comChannels The communication channels to use for sending and receiving messages
+   * @param channel The channel to use for communication
    * @param message The message to post
    * @param listener The listener to call once the response was received
    */
-  private postListener (comChannels: CommunicationChannels, message: Message, listener: ResponseHandler): void {
-    const { requestChannel, responseChannel } = comChannels
+  private postListener (channel: string, message: Message, listener: ResponseHandler): void {
     const handler: Handler = this.getWrapperHandler(listener)
-    this.ipcService.once(responseChannel, handler)
-    this.send(requestChannel, message)
+    this.responseEvents.once(channel, handler)
+    this.send(message)
   }
 
 }

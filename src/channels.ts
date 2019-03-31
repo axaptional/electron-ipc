@@ -1,5 +1,6 @@
 /**
  * Represents a pair of communication channels for requests and responses.
+ * @deprecated Internally deprecated. Replaced by message encapsulation and specialized EventEmitters.
  */
 export interface CommunicationChannels {
   /**
@@ -14,6 +15,7 @@ export interface CommunicationChannels {
 
 /**
  * Represents a service for generating channel names.
+ * @deprecated Internally deprecated. Replaced by message encapsulation and specialized EventEmitters.
  */
 export class Channels {
   /**
