@@ -62,7 +62,7 @@ module.exports = {
           },
           // Workaround for default imports being output as named imports in declaration files
           {
-            search: /(?<=import ){ (\w+),/g,
+            search: /(?<=import ){ (\w+),?/g,
             replace: '$1, {'
           }
         ]
