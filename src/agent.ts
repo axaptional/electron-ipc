@@ -1,6 +1,7 @@
 import Promise from 'any-promise'
 import EventEmitter from 'eventemitter3'
 import { IpcEvent, IpcService } from './aliases'
+import { AbstractMessage, Message } from './message'
 import { OptionsProvider, OptionsStore } from './options'
 
 /**
@@ -18,7 +19,7 @@ export type Listener = (data: any) => ResponseSource<any>
 /**
  * Represents a handler for an Electron IPC service event.
  */
-export type Handler = (event: IpcEvent, message: Message) => void
+export type Handler = (event: IpcEvent, message: AbstractMessage) => void
 
 /**
  * Represents a proxy handler for responses.
@@ -35,13 +36,6 @@ export interface Options {
    * If true, success listeners take (err, data) arguments and error listeners are disallowed.
    */
   nodeCallbacks: boolean
-}
-
-export interface Message {
-  data?: any,
-  channel: string,
-  response: boolean,
-  error: boolean
 }
 
 type HandlerMap = Map<string, Set<Handler>>
@@ -129,12 +123,11 @@ export abstract class Agent<T extends IpcService> implements OptionsProvider<Opt
    * @param data The message to post
    * @param listener The listener to call once the response was received
    */
-  public post (channel: string, data: any, listener?: ResponseHandler): Promise<any> | void {
-    const message: Message = this.constructMessage(channel, data)
+  public post (channel: string, data: any | Error, listener?: ResponseHandler): Promise<any> | void {
     if (typeof listener !== 'undefined') {
-      this.postListener(channel, message, listener)
+      this.postListener(channel, data, listener)
     } else {
-      return this.postPromise(channel, message)
+      return this.postPromise(channel, data)
     }
   }
 
@@ -143,9 +136,14 @@ export abstract class Agent<T extends IpcService> implements OptionsProvider<Opt
    * @param channel The channel to respond to
    * @param data The response data
    */
-  public respond (channel: string, data: any): void {
-    const message: Message = this.constructMessage(channel, data, true)
-    this.send(message)
+  public respond (channel: string, data: any | Error): void {
+    const message = new Message(channel, data, true)
+    this.send(message.serialize())
+  }
+
+  public request (channel: string, data: any | Error): void {
+    const message = new Message(channel, data)
+    this.send(message.serialize())
   }
 
   /**
@@ -157,7 +155,7 @@ export abstract class Agent<T extends IpcService> implements OptionsProvider<Opt
    */
   public on (channel: string, listener: Listener, options?: Partial<Options>): void {
     const params = this.options.get(options)
-    const handler: Handler = this.getHandler(channel, listener)
+    const handler: Handler = this.getResponsiveHandler(channel, listener)
     this.requestEvents.on(channel, handler)
     this.pushHandler(channel, listener, handler)
   }
@@ -171,7 +169,7 @@ export abstract class Agent<T extends IpcService> implements OptionsProvider<Opt
    */
   public once (channel: string, listener: Listener, options?: Partial<Options>): void {
     const params = this.options.get(options)
-    const handler: Handler = this.getHandler(channel, listener, () => {
+    const handler: Handler = this.getResponsiveHandler(channel, listener, () => {
       this.handlers.delete(listener)
     })
     this.requestEvents.once(channel, handler)
@@ -187,7 +185,7 @@ export abstract class Agent<T extends IpcService> implements OptionsProvider<Opt
   public capture (channel: string, options?: Partial<Options>): Promise<any> {
     const params = this.options.get(options)
     return new Promise((resolve) => {
-      const handler: Handler = this.getWrapperHandler(resolve)
+      const handler: Handler = this.getDeserializationHandler(resolve)
       this.requestEvents.once(channel, handler)
     })
   }
@@ -261,34 +259,16 @@ export abstract class Agent<T extends IpcService> implements OptionsProvider<Opt
     return handlerSet
   }
 
-  protected constructMessage (channel: string, data: any | Error, response: boolean = false): Message {
-    const error = data instanceof Error
-    const message: Message = { channel, data, error, response }
-    if (typeof data === 'undefined') {
-      delete message.data
-    }
-    return message
-  }
-
-  protected deconstructMessage (message: Message): any {
-    let { data } = message
-    if (message.error) {
-      data = new Error(message.data.message)
-      data.name = message.data.name
-    }
-    return data
-  }
-
   /**
    * Sends a message to the other service.
    * @param message The message to send
    */
-  protected abstract send (message: Message): void
+  protected abstract send (message: AbstractMessage): void
 
-  protected getHandler (channel: string, listener: Listener, teardown?: Task): Handler {
-    return (event: IpcEvent, message: Message) => {
+  protected getResponsiveHandler (channel: string, listener: Listener, teardown?: Task): Handler {
+    return (event: IpcEvent, message: AbstractMessage) => {
       const respond: ResponseHandler = (response: any) => this.respond(channel, response)
-      const data = this.deconstructMessage(message)
+      const { data } = Message.deserialize(message)
       const responseSource: ResponseSource<any> = listener(data)
       if (responseSource instanceof Promise) {
         responseSource.then(respond)
@@ -301,9 +281,9 @@ export abstract class Agent<T extends IpcService> implements OptionsProvider<Opt
     }
   }
 
-  protected getWrapperHandler (callback: ResponseHandler): Handler {
-    return (event: IpcEvent, response: Message) => {
-      const data = this.deconstructMessage(response)
+  protected getDeserializationHandler (callback: ResponseHandler): Handler {
+    return (event: IpcEvent, response: AbstractMessage) => {
+      const { data } = Message.deserialize(response)
       callback(data)
     }
   }
@@ -313,37 +293,37 @@ export abstract class Agent<T extends IpcService> implements OptionsProvider<Opt
    * @param ipcEvent The Electron IPC event
    * @param message The message that was received
    */
-  private onDataReceived (ipcEvent: IpcEvent, message: Message) {
-    const data: any = this.deconstructMessage(message)
-    const emitter: EventEmitter = (message.response) ? this.responseEvents : this.requestEvents
-    emitter.emit(message.channel, data)
+  private onDataReceived (ipcEvent: IpcEvent, message: AbstractMessage) {
+    const { data, channel, isResponse } = Message.deserialize(message)
+    const emitter: EventEmitter = (isResponse) ? this.responseEvents : this.requestEvents
+    emitter.emit(channel, data)
   }
 
   /**
    * Posts a message to the given channel.
    * The Promise resolves either when a response is received or when the listening endpoint terminates.
    * @param channel The channel to use for communication
-   * @param message The message to post
+   * @param data The message data to post
    */
-  private postPromise (channel: string, message: Message): Promise<any> {
+  private postPromise (channel: string, data: any | Error): Promise<any> {
     const responsePromise = new Promise((resolve) => {
-      const handler: Handler = this.getWrapperHandler(resolve)
+      const handler: Handler = this.getDeserializationHandler(resolve)
       this.responseEvents.once(channel, handler)
     })
-    this.send(message)
+    this.request(channel, data)
     return responsePromise
   }
 
   /**
    * Posts a message to the given channel.
    * @param channel The channel to use for communication
-   * @param message The message to post
+   * @param data The message data to post
    * @param listener The listener to call once the response was received
    */
-  private postListener (channel: string, message: Message, listener: ResponseHandler): void {
-    const handler: Handler = this.getWrapperHandler(listener)
+  private postListener (channel: string, data: any | Error, listener: ResponseHandler): void {
+    const handler: Handler = this.getDeserializationHandler(listener)
     this.responseEvents.once(channel, handler)
-    this.send(message)
+    this.request(channel, data)
   }
 
 }

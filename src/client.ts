@@ -1,5 +1,6 @@
-import { Agent, Message } from './agent'
+import { Agent } from './agent'
 import { IpcRenderer } from './aliases'
+import { AbstractMessage } from './message'
 
 /**
  * Represents an API wrapper around Electron's ipcRenderer.
@@ -17,7 +18,7 @@ export class Client extends Agent<IpcRenderer> {
    * Sends a message to the main process.
    * @param message The message to send
    */
-  protected send (message: Message): void {
+  protected send (message: AbstractMessage): void {
     this.ipcService.send(Client.ipcChannel, message)
   }
 

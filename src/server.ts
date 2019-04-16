@@ -1,5 +1,6 @@
-import { Agent, Message } from './agent'
+import { Agent } from './agent'
 import { IpcMain, WebContents } from './aliases'
+import { AbstractMessage } from './message'
 
 /**
  * Represents an API wrapper around Electron's ipcMain.
@@ -18,7 +19,7 @@ export class Server extends Agent<IpcMain> {
    * Sends a message to the renderer process.
    * @param message The message to send
    */
-  protected send (message: Message): void {
+  protected send (message: AbstractMessage): void {
     this.webContents.send(Server.ipcChannel, message)
   }
 
