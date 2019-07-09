@@ -1,5 +1,5 @@
 import Promise from 'any-promise'
-import { ResponseHandler, ResponseSource } from './agent'
+import { ResponseListener, ResponseSource } from './agent'
 
 type PromiseExecutor<R> = (resolve: (value?: R | Promise.Thenable<R>) => void, reject: (error?: any) => void) => void
 
@@ -7,7 +7,7 @@ type PromiseExecutor<R> = (resolve: (value?: R | Promise.Thenable<R>) => void, r
  * @deprecated Use respond() and Promise chaining instead
  */
 export class ResponsivePromise<R> extends Promise<R> {
-  constructor (executor: PromiseExecutor<R>, private handler: ResponseHandler) {
+  constructor (executor: PromiseExecutor<R>, private listener: ResponseListener) {
     super(executor)
   }
 
@@ -16,10 +16,10 @@ export class ResponsivePromise<R> extends Promise<R> {
     const onFulfilled = (value: R) => {
       const responseSource: ResponseSource<U> = onData(value) // Use onFulfilled as regular function
       if (responseSource instanceof Promise) {
-        responseSource.then(this.handler)
+        responseSource.then(this.listener)
       } else {
         // @ts-ignore
-        this.handler(responseSource)
+        this.listener(responseSource)
       }
       return value // Received data will be propagated
     }

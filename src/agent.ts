@@ -1,6 +1,7 @@
 import Promise from 'any-promise'
 import EventEmitter from 'eventemitter3'
 import { IpcEvent, IpcService } from './aliases'
+import { HandlerMap } from './handler-map'
 import { AbstractMessage, Message } from './message'
 import { OptionsProvider, OptionsStore } from './options'
 
@@ -8,7 +9,7 @@ import { OptionsProvider, OptionsStore } from './options'
  * Represents a source of a response.
  * The actual response can be resolved synchronously or asynchronously.
  */
-export type ResponseSource<T> = Promise.Thenable<T> | T
+export type ResponseSource<T> = Promise.Thenable<T> | T | void
 
 /**
  * Represents a listener function.
@@ -16,17 +17,14 @@ export type ResponseSource<T> = Promise.Thenable<T> | T
  */
 export type Listener = (data: any) => ResponseSource<any>
 
+export interface ResponseListener extends Listener {
+  (response: any): void
+}
+
 /**
  * Represents a handler for an Electron IPC service event.
  */
 export type Handler = (event: IpcEvent, message: AbstractMessage) => void
-
-/**
- * Represents a proxy handler for responses.
- */
-export type ResponseHandler = (response: any) => void
-
-export type Task = () => void
 
 /**
  * Represents a set of options for handling listener arguments and return values.
@@ -38,7 +36,7 @@ export interface Options {
   nodeCallbacks: boolean
 }
 
-type HandlerMap = Map<string, Set<Handler>>
+export type Persistence = 'on' | 'once' | 'never'
 
 /**
  * Represents an IPC communicator through which messages can be posted and received.
@@ -65,17 +63,14 @@ export abstract class Agent<T extends IpcService> implements OptionsProvider<Opt
   /**
    * The EventEmitter used for emitting data of incoming requests.
    */
-  protected readonly requestEvents: EventEmitter<any> = new EventEmitter()
+  protected readonly requestEvents: EventEmitter<string> = new EventEmitter()
 
   /**
    * The EventEmitter used for emitting data of incoming responses.
    */
-  protected readonly responseEvents: EventEmitter<any> = new EventEmitter()
+  protected readonly responseEvents: EventEmitter<string> = new EventEmitter()
 
-  /**
-   * A listener-handler-pair collection tracking active listeners.
-   */
-  private handlers: WeakMap<Listener, HandlerMap> = new WeakMap()
+  private handlers: HandlerMap
 
   /**
    * Initializes a new Agent for the given Electron IPC service.
@@ -84,6 +79,7 @@ export abstract class Agent<T extends IpcService> implements OptionsProvider<Opt
    */
   protected constructor (protected ipcService: T, defaultOptions?: Partial<Options>) {
     this.options = new OptionsStore(Agent.fallbackOptions, defaultOptions)
+    this.handlers = new HandlerMap(this.requestEvents)
     ipcService.on(Agent.ipcChannel, this.onDataReceived)
   }
 
@@ -112,7 +108,7 @@ export abstract class Agent<T extends IpcService> implements OptionsProvider<Opt
    * @param data The message to post
    * @param listener The listener to call once the response was received
    */
-  public post (channel: string, data: any, listener: ResponseHandler): void
+  public post (channel: string, data: any, listener: ResponseListener): void
 
   // TODO: The Promise should be rejected if an uncaught error occurred at the listening endpoint.
   /**
@@ -123,7 +119,7 @@ export abstract class Agent<T extends IpcService> implements OptionsProvider<Opt
    * @param data The message to post
    * @param listener The listener to call once the response was received
    */
-  public post (channel: string, data: any | Error, listener?: ResponseHandler): Promise<any> | void {
+  public post (channel: string, data: any | Error, listener?: ResponseListener): Promise<any> | void {
     if (typeof listener !== 'undefined') {
       this.postListener(channel, data, listener)
     } else {
@@ -141,6 +137,11 @@ export abstract class Agent<T extends IpcService> implements OptionsProvider<Opt
     this.send(message.serialize())
   }
 
+  /**
+   * Sends a request on the given channel.
+   * @param channel The channel to send the request to
+   * @param data The data to send
+   */
   public request (channel: string, data: any | Error): void {
     const message = new Message(channel, data)
     this.send(message.serialize())
@@ -155,9 +156,8 @@ export abstract class Agent<T extends IpcService> implements OptionsProvider<Opt
    */
   public on (channel: string, listener: Listener, options?: Partial<Options>): void {
     const params = this.options.get(options)
-    const handler: Handler = this.getResponsiveHandler(channel, listener)
+    const handler: Handler = this.getResponsiveHandler(channel, listener, 'on')
     this.requestEvents.on(channel, handler)
-    this.pushHandler(channel, listener, handler)
   }
 
   /**
@@ -169,11 +169,8 @@ export abstract class Agent<T extends IpcService> implements OptionsProvider<Opt
    */
   public once (channel: string, listener: Listener, options?: Partial<Options>): void {
     const params = this.options.get(options)
-    const handler: Handler = this.getResponsiveHandler(channel, listener, () => {
-      this.handlers.delete(listener)
-    })
+    const handler: Handler = this.getResponsiveHandler(channel, listener, 'once')
     this.requestEvents.once(channel, handler)
-    this.pushHandler(channel, listener, handler)
   }
 
   /**
@@ -184,8 +181,8 @@ export abstract class Agent<T extends IpcService> implements OptionsProvider<Opt
    */
   public capture (channel: string, options?: Partial<Options>): Promise<any> {
     const params = this.options.get(options)
-    return new Promise((resolve) => {
-      const handler: Handler = this.getDeserializationHandler(resolve)
+    return new Promise((resolve, reject) => {
+      const handler: Handler = this.getDeserializationHandler(channel, resolve, 'once')
       this.requestEvents.once(channel, handler)
     })
   }
@@ -196,18 +193,7 @@ export abstract class Agent<T extends IpcService> implements OptionsProvider<Opt
    * @param listener The listener whose subscriptions tied to the channel should be removed
    */
   public removeListener (channel: string, listener: Listener): void {
-    if (this.handlers.has(listener)) {
-      const handlers = this.pullHandlers(channel, listener)
-      for (const handler of handlers) {
-        /*
-          NOTE: Some handlers may be "phantoms", meaning they have already been removed from the ipcService despite
-          still being present in the handler set. In this case, the next line will still try to remove that "listener".
-          In other words, this behavior only works because ipcService.removeListener() does not throw an Error when
-          an attempt to remove an unattached listener is made.
-         */
-        this.requestEvents.removeListener(channel, handler)
-      }
-    }
+    this.handlers.purge(channel, listener)
   }
 
   /**
@@ -220,43 +206,11 @@ export abstract class Agent<T extends IpcService> implements OptionsProvider<Opt
    * @param channel The channel to unsubscribe from
    */
   public removeAllListeners (channel?: string): void {
-    let channelsToClear: string[] = []
     if (typeof channel !== 'undefined') {
-      channelsToClear.push(channel)
+      this.handlers.purge(channel)
     } else {
-      channelsToClear = this.requestEvents.eventNames()
+      this.handlers.clear()
     }
-    for (const channelToClear of channelsToClear) {
-      this.requestEvents.removeAllListeners(channelToClear)
-    }
-  }
-
-  protected pushHandler (channel: string, listener: Listener, handler: Handler): void {
-    if (!this.handlers.has(listener)) {
-      this.handlers.set(listener, new Map())
-    }
-    const handlerMap = this.handlers.get(listener)!
-    if (!handlerMap.has(channel)) {
-      handlerMap.set(channel, new Set())
-    }
-    const handlerSet = handlerMap.get(channel)!
-    handlerSet.add(handler)
-  }
-
-  protected pullHandlers (channel: string, listener: Listener): Set<Handler> {
-    if (!this.handlers.has(listener)) {
-      return new Set()
-    }
-    const handlerMap = this.handlers.get(listener)!
-    if (!handlerMap.has(channel)) {
-      return new Set()
-    }
-    const handlerSet = handlerMap.get(channel)!
-    handlerMap.delete(channel)
-    if (handlerMap.size === 0) {
-      this.handlers.delete(listener)
-    }
-    return handlerSet
   }
 
   /**
@@ -265,27 +219,28 @@ export abstract class Agent<T extends IpcService> implements OptionsProvider<Opt
    */
   protected abstract send (message: AbstractMessage): void
 
-  protected getResponsiveHandler (channel: string, listener: Listener, teardown?: Task): Handler {
-    return (event: IpcEvent, message: AbstractMessage) => {
-      const respond: ResponseHandler = (response: any) => this.respond(channel, response)
-      const { data } = Message.deserialize(message)
-      const responseSource: ResponseSource<any> = listener(data)
+  protected getResponsiveHandler (channel: string, listener: Listener, persistence: Persistence): Handler {
+    const handler = (event: IpcEvent, message: any) => {
+      const respond: ResponseListener = (response: any) => this.respond(channel, response)
+      const responseSource: ResponseSource<any> = listener(message)
+      if (persistence === 'once') this.handlers.delete(channel, listener, persistence, handler)
       if (responseSource instanceof Promise) {
         responseSource.then(respond)
       } else {
         respond(responseSource)
       }
-      if (typeof teardown === 'function') {
-        teardown()
-      }
     }
+    if (persistence !== 'never') this.handlers.set(channel, listener, persistence, handler)
+    return handler
   }
 
-  protected getDeserializationHandler (callback: ResponseHandler): Handler {
-    return (event: IpcEvent, response: AbstractMessage) => {
-      const { data } = Message.deserialize(response)
-      callback(data)
+  protected getDeserializationHandler (channel: string, listener: ResponseListener, persistence: Persistence): Handler {
+    const handler = (event: IpcEvent, response: any) => {
+      listener(response)
+      if (persistence === 'once') this.handlers.delete(channel, listener, persistence, handler)
     }
+    if (persistence !== 'never') this.handlers.set(channel, listener, persistence, handler)
+    return handler
   }
 
   /**
@@ -307,21 +262,22 @@ export abstract class Agent<T extends IpcService> implements OptionsProvider<Opt
    */
   private postPromise (channel: string, data: any | Error): Promise<any> {
     const responsePromise = new Promise((resolve) => {
-      const handler: Handler = this.getDeserializationHandler(resolve)
+      const handler: Handler = this.getDeserializationHandler(channel, resolve, 'never')
       this.responseEvents.once(channel, handler)
     })
     this.request(channel, data)
     return responsePromise
   }
 
+  // TODO: Make cancelable
   /**
    * Posts a message to the given channel.
    * @param channel The channel to use for communication
    * @param data The message data to post
    * @param listener The listener to call once the response was received
    */
-  private postListener (channel: string, data: any | Error, listener: ResponseHandler): void {
-    const handler: Handler = this.getDeserializationHandler(listener)
+  private postListener (channel: string, data: any | Error, listener: ResponseListener): void {
+    const handler: Handler = this.getDeserializationHandler(channel, listener, 'never')
     this.responseEvents.once(channel, handler)
     this.request(channel, data)
   }

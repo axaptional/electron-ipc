@@ -140,7 +140,7 @@ via `on` or `once` will have all class prototype information stripped.
 
 ### Methods
 
-**NOTE: The documentation is currently outdated but will be updated when 4.0.0 releases**
+**NOTE: The documentation is currently outdated but will be updated when 0.4.0 releases**
 
 For short explanations on available methods, as well as
 the code documentation, see [Documentation][PAGES].
