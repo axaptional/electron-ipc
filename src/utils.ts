@@ -4,6 +4,10 @@ export interface MapLike<K, V> {
   set (key: K, value: V): this
 }
 
+export function defined<T> (object: T | any): object is T {
+  return typeof object !== 'undefined'
+}
+
 export class Utils {
 
   public static computeIfAbsent<K, V> (map: MapLike<K, V>, key: K, insert: V): V {

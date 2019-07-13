@@ -5,6 +5,7 @@ import { Handler, IpcListener, Persistence, TeardownFunction } from './handler'
 import { HandlerMap } from './handler-map'
 import { AbstractMessage, Message } from './message'
 import { OptionsProvider, OptionsStore } from './options'
+import { defined } from './utils'
 
 /**
  * Represents a source of a response.
@@ -114,7 +115,7 @@ export abstract class Agent<T extends IpcService> implements OptionsProvider<Opt
    * @param listener The listener to call once the response was received
    */
   public post (channel: string, data: any | Error, listener?: ResponseListener): Promise<any> | void {
-    if (typeof listener !== 'undefined') {
+    if (defined(listener)) {
       this.postListener(channel, data, listener)
     } else {
       return this.postPromise(channel, data)
@@ -200,7 +201,7 @@ export abstract class Agent<T extends IpcService> implements OptionsProvider<Opt
    * @param channel The channel to unsubscribe from
    */
   public removeAllListeners (channel?: string): void {
-    if (typeof channel !== 'undefined') {
+    if (defined(channel)) {
       this.handlers.purge(channel)
     } else {
       this.handlers.clear()
@@ -265,7 +266,6 @@ export abstract class Agent<T extends IpcService> implements OptionsProvider<Opt
     return responsePromise
   }
 
-  // TODO: Make cancelable
   /**
    * Posts a message to the given channel.
    * @param channel The channel to use for communication

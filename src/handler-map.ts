@@ -1,7 +1,7 @@
 import EventEmitter from 'eventemitter3'
 import { Listener } from './agent'
 import { Handler } from './handler'
-import { Utils } from './utils'
+import { defined, Utils } from './utils'
 
 type Channel = string
 
@@ -28,18 +28,18 @@ export class HandlerMap {
   }
 
   public purge (channel: string, listener?: Listener): boolean {
-    if (typeof listener === 'undefined') {
-      this.linkedEmitter.removeAllListeners(channel)
-      this.cancelAll(channel)
-      this.channelMap.delete(channel)
-      return this.map.delete(channel)
-    } else {
+    if (defined(listener)) {
       for (const handler of this.getAllHandlers(channel, listener)) {
         this.linkedEmitter.removeListener(channel, handler.run)
         handler.cancel()
         Utils.removeFromArray(this.channelMap.get(channel)!, handler)
       }
       return this.map.get(channel)!.delete(listener)
+    } else {
+      this.linkedEmitter.removeAllListeners(channel)
+      this.cancelAll(channel)
+      this.channelMap.delete(channel)
+      return this.map.delete(channel)
     }
   }
 
@@ -80,7 +80,7 @@ export class HandlerMap {
 
   private cancelAll (channel?: string): void {
     const channels: string[] = []
-    if (typeof channel !== 'undefined') {
+    if (defined(channel)) {
       channels.push(channel)
     } else {
       channels.push(...this.channelMap.keys())
