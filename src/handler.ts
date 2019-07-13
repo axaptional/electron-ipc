@@ -14,8 +14,8 @@ export class Handler {
 
   public constructor (public run: IpcListener, public persistence: Persistence, private teardown?: TeardownFunction) {}
 
-  public cancel (): void {
-    if (typeof this.teardown === 'function') this.teardown()
+  public cancel (reason?: any): void {
+    if (typeof this.teardown === 'function') this.teardown(reason)
   }
 
 }
