@@ -1,6 +1,6 @@
 import EventEmitter from 'eventemitter3'
 import { Listener } from './agent'
-import { Handler, teardownIfPossible } from './handler'
+import { Handler } from './handler'
 import { Utils } from './utils'
 
 type Channel = string
@@ -36,7 +36,7 @@ export class HandlerMap {
     } else {
       for (const handler of this.getAllHandlers(channel, listener)) {
         this.linkedEmitter.removeListener(channel, handler.run)
-        teardownIfPossible(handler)
+        handler.cancel()
         Utils.removeFromArray(this.channelMap.get(channel)!, handler)
       }
       return this.map.get(channel)!.delete(listener)
@@ -49,7 +49,7 @@ export class HandlerMap {
     const result = Utils.removeFromArray(handlers, handler)
     Utils.removeFromArray(this.channelMap.get(channel)!, handler)
     this.linkedEmitter.removeListener(channel, handler.run)
-    teardownIfPossible(handler)
+    handler.cancel()
     if (handlers.length === 0) {
       listeners.delete(listener)
       if (this.linkedEmitter.listenerCount(channel) === 0) {
@@ -87,7 +87,7 @@ export class HandlerMap {
     }
     for (const ch of channels) {
       for (const handler of this.channelMap.get(ch)!) {
-        teardownIfPossible(handler)
+        handler.cancel()
       }
     }
   }

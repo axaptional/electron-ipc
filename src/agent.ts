@@ -215,34 +215,26 @@ export abstract class Agent<T extends IpcService> implements OptionsProvider<Opt
 
   protected getResponder (channel: string, listener: Listener, persistence: Persistence,
                           teardown?: TeardownFunction): IpcListener {
-    const handler: Handler = {
-      persistence,
-      run: (event: IpcEvent, message: any) => {
-        const respond: ResponseListener = (response: any) => this.respond(channel, response)
-        const responseSource: ResponseSource<any> = listener(message)
-        if (persistence === 'once') this.handlers.delete(channel, listener, handler)
-        if (responseSource instanceof Promise) {
-          responseSource.then(respond)
-        } else {
-          respond(responseSource)
-        }
-      },
-      teardown
-    }
+    const handler = new Handler((event: IpcEvent, message: any) => {
+      const respond: ResponseListener = (response: any) => this.respond(channel, response)
+      const responseSource: ResponseSource<any> = listener(message)
+      if (persistence === 'once') this.handlers.delete(channel, listener, handler)
+      if (responseSource instanceof Promise) {
+        responseSource.then(respond)
+      } else {
+        respond(responseSource)
+      }
+    }, persistence, teardown)
     if (persistence !== 'never') this.handlers.set(channel, listener, handler)
     return handler.run
   }
 
   protected getForwarder (channel: string, listener: ResponseListener, persistence: Persistence,
                           teardown?: TeardownFunction): IpcListener {
-    const handler: Handler = {
-      persistence,
-      run: (event: IpcEvent, response: any) => {
-        listener(response)
-        if (persistence === 'once') this.handlers.delete(channel, listener, handler)
-      },
-      teardown
-    }
+    const handler = new Handler((event: IpcEvent, response: any) => {
+      listener(response)
+      if (persistence === 'once') this.handlers.delete(channel, listener, handler)
+    }, persistence, teardown)
     if (persistence !== 'never') this.handlers.set(channel, listener, handler)
     return handler.run
   }

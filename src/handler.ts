@@ -10,12 +10,12 @@ export type TeardownFunction = (reason?: any) => void
 /**
  * Represents a handler for an Electron IPC service event.
  */
-export interface Handler {
-  persistence: Persistence,
-  run: IpcListener,
-  teardown?: TeardownFunction
-}
+export class Handler {
 
-export function teardownIfPossible (handler: Handler) {
-  if (typeof handler.teardown === 'function') handler.teardown()
+  public constructor (public run: IpcListener, public persistence: Persistence, private teardown?: TeardownFunction) {}
+
+  public cancel (): void {
+    if (typeof this.teardown === 'function') this.teardown()
+  }
+
 }
