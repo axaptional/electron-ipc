@@ -4,6 +4,10 @@ export interface MapLike<K, V> {
   set (key: K, value: V): this
 }
 
+export interface Deletable<T> {
+  delete (value: T): boolean
+}
+
 export function defined<T> (object: T | any): object is T {
   return typeof object !== 'undefined'
 }
@@ -16,6 +20,13 @@ export class Utils {
       return insert
     }
     return map.get(key)!
+  }
+
+  public static removeIfPresent<K, V> (map: MapLike<K, Deletable<V>>, key: K, value: V): boolean {
+    if (map.has(key)) {
+      return map.get(key)!.delete(value)
+    }
+    return false
   }
 
   public static removeFromArray<T> (array: T[], item: T): boolean {

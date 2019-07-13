@@ -7,24 +7,21 @@ type Channel = string
 
 export class HandlerMap {
 
-  private map: Map<Channel, WeakMap<Listener, Handler[]>> = new Map()
+  private map: Map<Channel, WeakMap<Listener, Set<Handler>>> = new Map()
 
-  private channelMap: Map<Channel, Handler[]> = new Map()
+  private channelMap: Map<Channel, Set<Handler>> = new Map()
 
   public constructor (private linkedEmitter: EventEmitter<string>) {}
 
   // TODO: Remove channel entry from channelMap if handler array is empty
   // TODO: Make attempts to remove non-existent handlers NOT throw an exception
 
-  public set (channel: string, listener: Listener, handler: Handler): number {
+  public set (channel: string, listener: Listener, handler: Handler): void {
     const listeners = Utils.computeIfAbsent(this.map, channel, new WeakMap())
-    const handlers = Utils.computeIfAbsent(listeners, listener, [] as Handler[])
-    if (!this.channelMap.has(channel)) {
-      this.channelMap.set(channel, [handler])
-    } else {
-      this.channelMap.get(channel)!.push(handler)
-    }
-    return handlers.push(handler)
+    const handlers = Utils.computeIfAbsent(listeners, listener, new Set())
+    const channelHandlers = Utils.computeIfAbsent(this.channelMap, channel, new Set())
+    channelHandlers.add(handler)
+    handlers.add(handler)
   }
 
   public purge (channel: string, listener?: Listener): boolean {
@@ -32,9 +29,9 @@ export class HandlerMap {
       for (const handler of this.getAllHandlers(channel, listener)) {
         this.linkedEmitter.removeListener(channel, handler.run)
         handler.cancel()
-        Utils.removeFromArray(this.channelMap.get(channel)!, handler)
+        Utils.removeIfPresent(this.channelMap, channel, handler)
       }
-      return this.map.get(channel)!.delete(listener)
+      return Utils.removeIfPresent(this.map, channel, listener)
     } else {
       this.linkedEmitter.removeAllListeners(channel)
       this.cancelAll(channel)
@@ -46,14 +43,15 @@ export class HandlerMap {
   public delete (channel: string, listener: Listener, handler: Handler): boolean {
     const listeners = this.map.get(channel)!
     const handlers = listeners.get(listener)!
-    const result = Utils.removeFromArray(handlers, handler)
-    Utils.removeFromArray(this.channelMap.get(channel)!, handler)
+    const result = handlers.delete(handler)
+    Utils.removeIfPresent(this.channelMap, channel, handler)
     this.linkedEmitter.removeListener(channel, handler.run)
     handler.cancel()
-    if (handlers.length === 0) {
+    if (handlers.size === 0) {
       listeners.delete(listener)
       if (this.linkedEmitter.listenerCount(channel) === 0) {
         this.map.delete(channel)
+        this.channelMap.delete(channel)
       }
     }
     return result
@@ -68,14 +66,14 @@ export class HandlerMap {
     return result
   }
 
-  private getAllHandlers (channel: string, listener: Listener): Handler[] {
+  private getAllHandlers (channel: string, listener: Listener): Set<Handler> {
     if (this.map.has(channel)) {
       const listeners = this.map.get(channel)!
       if (listeners.has(listener)) {
         return listeners.get(listener)!
       }
     }
-    return []
+    return new Set()
   }
 
   private cancelAll (channel?: string): void {
