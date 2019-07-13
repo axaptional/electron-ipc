@@ -1,6 +1,7 @@
 import Promise from 'any-promise'
 import EventEmitter from 'eventemitter3'
 import { IpcEvent, IpcService } from './aliases'
+import { Handler, IpcListener, Persistence, TeardownFunction } from './handler'
 import { HandlerMap } from './handler-map'
 import { AbstractMessage, Message } from './message'
 import { OptionsProvider, OptionsStore } from './options'
@@ -22,11 +23,6 @@ export interface ResponseListener extends Listener {
 }
 
 /**
- * Represents a handler for an Electron IPC service event.
- */
-export type Handler = (event: IpcEvent, message: AbstractMessage) => void
-
-/**
  * Represents a set of options for handling listener arguments and return values.
  */
 export interface Options {
@@ -35,8 +31,6 @@ export interface Options {
    */
   nodeCallbacks: boolean
 }
-
-export type Persistence = 'on' | 'once' | 'never'
 
 /**
  * Represents an IPC communicator through which messages can be posted and received.
@@ -156,7 +150,7 @@ export abstract class Agent<T extends IpcService> implements OptionsProvider<Opt
    */
   public on (channel: string, listener: Listener, options?: Partial<Options>): void {
     const params = this.options.get(options)
-    const handler: Handler = this.getResponsiveHandler(channel, listener, 'on')
+    const handler: IpcListener = this.getResponder(channel, listener, 'on')
     this.requestEvents.on(channel, handler)
   }
 
@@ -169,7 +163,7 @@ export abstract class Agent<T extends IpcService> implements OptionsProvider<Opt
    */
   public once (channel: string, listener: Listener, options?: Partial<Options>): void {
     const params = this.options.get(options)
-    const handler: Handler = this.getResponsiveHandler(channel, listener, 'once')
+    const handler: IpcListener = this.getResponder(channel, listener, 'once')
     this.requestEvents.once(channel, handler)
   }
 
@@ -182,7 +176,7 @@ export abstract class Agent<T extends IpcService> implements OptionsProvider<Opt
   public capture (channel: string, options?: Partial<Options>): Promise<any> {
     const params = this.options.get(options)
     return new Promise((resolve, reject) => {
-      const handler: Handler = this.getDeserializationHandler(channel, resolve, 'once')
+      const handler: IpcListener = this.getForwarder(channel, resolve, 'once', reject)
       this.requestEvents.once(channel, handler)
     })
   }
@@ -219,28 +213,38 @@ export abstract class Agent<T extends IpcService> implements OptionsProvider<Opt
    */
   protected abstract send (message: AbstractMessage): void
 
-  protected getResponsiveHandler (channel: string, listener: Listener, persistence: Persistence): Handler {
-    const handler = (event: IpcEvent, message: any) => {
-      const respond: ResponseListener = (response: any) => this.respond(channel, response)
-      const responseSource: ResponseSource<any> = listener(message)
-      if (persistence === 'once') this.handlers.delete(channel, listener, persistence, handler)
-      if (responseSource instanceof Promise) {
-        responseSource.then(respond)
-      } else {
-        respond(responseSource)
-      }
+  protected getResponder (channel: string, listener: Listener, persistence: Persistence,
+                          teardown?: TeardownFunction): IpcListener {
+    const handler: Handler = {
+      persistence,
+      run: (event: IpcEvent, message: any) => {
+        const respond: ResponseListener = (response: any) => this.respond(channel, response)
+        const responseSource: ResponseSource<any> = listener(message)
+        if (persistence === 'once') this.handlers.delete(channel, listener, handler)
+        if (responseSource instanceof Promise) {
+          responseSource.then(respond)
+        } else {
+          respond(responseSource)
+        }
+      },
+      teardown
     }
-    if (persistence !== 'never') this.handlers.set(channel, listener, persistence, handler)
-    return handler
+    if (persistence !== 'never') this.handlers.set(channel, listener, handler)
+    return handler.run
   }
 
-  protected getDeserializationHandler (channel: string, listener: ResponseListener, persistence: Persistence): Handler {
-    const handler = (event: IpcEvent, response: any) => {
-      listener(response)
-      if (persistence === 'once') this.handlers.delete(channel, listener, persistence, handler)
+  protected getForwarder (channel: string, listener: ResponseListener, persistence: Persistence,
+                          teardown?: TeardownFunction): IpcListener {
+    const handler: Handler = {
+      persistence,
+      run: (event: IpcEvent, response: any) => {
+        listener(response)
+        if (persistence === 'once') this.handlers.delete(channel, listener, handler)
+      },
+      teardown
     }
-    if (persistence !== 'never') this.handlers.set(channel, listener, persistence, handler)
-    return handler
+    if (persistence !== 'never') this.handlers.set(channel, listener, handler)
+    return handler.run
   }
 
   /**
@@ -261,8 +265,8 @@ export abstract class Agent<T extends IpcService> implements OptionsProvider<Opt
    * @param data The message data to post
    */
   private postPromise (channel: string, data: any | Error): Promise<any> {
-    const responsePromise = new Promise((resolve) => {
-      const handler: Handler = this.getDeserializationHandler(channel, resolve, 'never')
+    const responsePromise = new Promise((resolve, reject) => {
+      const handler: IpcListener = this.getForwarder(channel, resolve, 'never', reject)
       this.responseEvents.once(channel, handler)
     })
     this.request(channel, data)
@@ -277,7 +281,7 @@ export abstract class Agent<T extends IpcService> implements OptionsProvider<Opt
    * @param listener The listener to call once the response was received
    */
   private postListener (channel: string, data: any | Error, listener: ResponseListener): void {
-    const handler: Handler = this.getDeserializationHandler(channel, listener, 'never')
+    const handler: IpcListener = this.getForwarder(channel, listener, 'never')
     this.responseEvents.once(channel, handler)
     this.request(channel, data)
   }

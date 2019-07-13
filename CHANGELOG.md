@@ -25,6 +25,7 @@ and this project adheres to [Semantic Versioning][SEMVER].
 - [X] Messages are now encapsulated in a (plain) Message object
 - [X] Option-related members were outsourced to a new `OptionsStore` class
 - [X] Requests and responses are now handled using local EventEmitters
+- [X] Removing a Promise listener now leads to its rejection
 - [ ] Types are now bound to a separate namespace
 
 ### Removed
