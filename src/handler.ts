@@ -1,5 +1,6 @@
 import { IpcEvent } from './aliases'
 import { AbstractMessage } from './message'
+import { Utils } from './utils'
 
 export type Persistence = 'on' | 'once' | 'never'
 
@@ -16,6 +17,10 @@ export class Handler {
 
   public cancel (reason?: any): void {
     if (typeof this.teardown === 'function') this.teardown(reason)
+  }
+
+  public throw (error: any | Error): void {
+    this.cancel(Utils.coerceToError(error))
   }
 
 }
