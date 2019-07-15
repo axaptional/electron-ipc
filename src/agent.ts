@@ -224,12 +224,16 @@ export abstract class Agent<T extends IpcService> implements OptionsProvider<Opt
                           teardown?: TeardownFunction): IpcListener {
     const respond: ResponseListener = this.curriedRespond(channel)
     const handler = new Handler((event: IpcEvent, message: any) => {
-      const responseSource: ResponseSource<any> = listener(message)
       if (persistence === 'once') this.handlers.delete(channel, listener, handler)
-      if (responseSource instanceof Promise) {
-        responseSource.then(respond)
-      } else {
-        respond(responseSource)
+      try {
+        const responseSource: ResponseSource<any> = listener(message)
+        if (responseSource instanceof Promise) {
+          responseSource.then(respond)
+        } else {
+          respond(responseSource)
+        }
+      } catch (err) {
+        handler.throw(err)
       }
     }, persistence, teardown)
     if (persistence !== 'never') this.handlers.add(channel, listener, handler)
@@ -239,8 +243,12 @@ export abstract class Agent<T extends IpcService> implements OptionsProvider<Opt
   protected getForwarder (channel: string, listener: ResponseListener, persistence: Persistence,
                           teardown?: TeardownFunction): IpcListener {
     const handler = new Handler((event: IpcEvent, response: any) => {
-      listener(response)
       if (persistence === 'once') this.handlers.delete(channel, listener, handler)
+      try {
+        listener(response)
+      } catch (err) {
+        handler.throw(err)
+      }
     }, persistence, teardown)
     if (persistence !== 'never') this.handlers.add(channel, listener, handler)
     return handler.run
