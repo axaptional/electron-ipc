@@ -226,7 +226,7 @@ export abstract class Agent<T extends IpcService> implements OptionsProvider<Opt
         respond(responseSource)
       }
     }, persistence, teardown)
-    if (persistence !== 'never') this.handlers.set(channel, listener, handler)
+    if (persistence !== 'never') this.handlers.add(channel, listener, handler)
     return handler.run
   }
 
@@ -236,7 +236,7 @@ export abstract class Agent<T extends IpcService> implements OptionsProvider<Opt
       listener(response)
       if (persistence === 'once') this.handlers.delete(channel, listener, handler)
     }, persistence, teardown)
-    if (persistence !== 'never') this.handlers.set(channel, listener, handler)
+    if (persistence !== 'never') this.handlers.add(channel, listener, handler)
     return handler.run
   }
 

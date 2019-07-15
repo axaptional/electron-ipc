@@ -16,7 +16,7 @@ export class HandlerMap {
   // TODO: Remove channel entry from channelMap if handler array is empty
   // TODO: Make attempts to remove non-existent handlers NOT throw an exception
 
-  public set (channel: string, listener: Listener, handler: Handler): void {
+  public add (channel: string, listener: Listener, handler: Handler): void {
     const listeners = Utils.computeIfAbsent(this.map, channel, new WeakMap())
     const handlers = Utils.computeIfAbsent(listeners, listener, new Set())
     const channelHandlers = Utils.computeIfAbsent(this.channelMap, channel, new Set())
