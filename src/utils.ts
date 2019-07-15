@@ -14,6 +14,25 @@ export function defined<T> (object: T | any): object is T {
 
 export class Utils {
 
+  public static coerceToError (error: any | Error): Error {
+    if (error instanceof Error) {
+      return error
+    } else {
+      return new Error(Utils.coerceToString(error))
+    }
+  }
+
+  public static coerceToString (str: any | string): string {
+    if (typeof str === 'string') {
+      return str
+    } else if (typeof str === 'symbol') {
+      const badString = str.toString()
+      return badString.slice(7, badString.length - 1)
+    } else {
+      return str.toString()
+    }
+  }
+
   public static computeIfAbsent<K, V> (map: MapLike<K, V>, key: K, insert: V): V {
     if (!map.has(key)) {
       map.set(key, insert)
