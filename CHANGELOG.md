@@ -8,36 +8,28 @@ and this project adheres to [Semantic Versioning][SEMVER].
 ## [Unreleased]
 
 ### Added
-- [X] `removeListener` method for removing a single listener
-- [X] `respond` method for responding in Promise handlers
-- [X] Errors in `on`/`once` listeners lead to the `post` Promise being rejected
-- [ ] `nodeCallbacks` option to opt for using one `(err, data)` function
-- [ ] Gulp scripts (release and documentation)
-- [ ] `get` method for synchronous posting (terminates after response)
-- [ ] Per-request responses
-- [ ] Updated method quickstart with new terminology (request, response, etc.)
-- [ ] Plugin support
-- [ ] Spectron / Mocha tests
+- `removeListener` method for removing a single listener
+- `respond` method for responding in Promise handlers
+- Errors in `on`/`once` listeners lead to the `post` Promise being rejected
 
 ### Changed
-- [X] Compiled package files are now minimized
-- [X] `post` now has the parameters `(channel, data, listener?)`
-- [X] `once` with Promises is now called `capture`
-- [X] Messages are now encapsulated in a (plain) Message object
-- [X] Option-related members were outsourced to a new `OptionsStore` class
-- [X] Requests and responses are now handled using local EventEmitters
-- [X] Removing a Promise listener now leads to its rejection
-- [ ] Types are now bound to a separate namespace
+- Compiled package files are now minimized
+- `post` now has the parameters `(channel, data, listener?)`
+- `once` with Promises is now called `capture`
+- Messages are now encapsulated in a (plain) Message object
+- Option-related members were outsourced to a new `OptionsStore` class
+- Requests and responses are now handled using local EventEmitters
+- Removing a Promise listener now leads to its rejection
 
 ### Removed
-- [X] Support for listener Cancelers (use `removeListener` instead)
-- [X] Support for ResponsivePromises (use `respond` instead)
+- Support for listener Cancelers (use `removeListener` instead)
+- Support for ResponsivePromises (use `respond` instead)
 
 ### Fixed
-- [X] Sending no response now results in a value of `undefined` instead of `null`
+- Sending no response now results in a value of `undefined` instead of `null`
 
 ### Security
-- [X] Various security vulnerabilities were fixed through dependency updates
+- Various security vulnerabilities were fixed through dependency updates
 
 ## [0.3.0] - 2019-02-21
 
