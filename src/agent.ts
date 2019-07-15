@@ -128,8 +128,7 @@ export abstract class Agent<T extends IpcService> implements OptionsProvider<Opt
    * @param data The response data
    */
   public respond (channel: string, data: any | Error): void {
-    const message = new Message(channel, data, true)
-    this.send(message.serialize())
+    this.curriedRespond(channel)(data)
   }
 
   /**
@@ -214,10 +213,17 @@ export abstract class Agent<T extends IpcService> implements OptionsProvider<Opt
    */
   protected abstract send (message: AbstractMessage): void
 
+  protected curriedRespond (channel: string): ResponseListener {
+    return (data: any | Error): void => {
+      const message = new Message(channel, data, true)
+      this.send(message.serialize())
+    }
+  }
+
   protected getResponder (channel: string, listener: Listener, persistence: Persistence,
                           teardown?: TeardownFunction): IpcListener {
+    const respond: ResponseListener = this.curriedRespond(channel)
     const handler = new Handler((event: IpcEvent, message: any) => {
-      const respond: ResponseListener = (response: any) => this.respond(channel, response)
       const responseSource: ResponseSource<any> = listener(message)
       if (persistence === 'once') this.handlers.delete(channel, listener, handler)
       if (responseSource instanceof Promise) {
