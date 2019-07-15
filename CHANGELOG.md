@@ -10,11 +10,12 @@ and this project adheres to [Semantic Versioning][SEMVER].
 ### Added
 - [X] `removeListener` method for removing a single listener
 - [X] `respond` method for responding in Promise handlers
-- [ ] Errors in `on`/`once` listeners lead to the `post` Promise being rejected
+- [X] Errors in `on`/`once` listeners lead to the `post` Promise being rejected
 - [ ] `nodeCallbacks` option to opt for using one `(err, data)` function
 - [ ] Gulp scripts (release and documentation)
 - [ ] `get` method for synchronous posting (terminates after response)
-- [ ] Updated method quickstart
+- [ ] Per-request responses
+- [ ] Updated method quickstart with new terminology (request, response, etc.)
 - [ ] Plugin support
 - [ ] Spectron / Mocha tests
 
@@ -34,6 +35,9 @@ and this project adheres to [Semantic Versioning][SEMVER].
 
 ### Fixed
 - [X] Sending no response now results in a value of `undefined` instead of `null`
+
+### Security
+- [X] Various security vulnerabilities were fixed through dependency updates
 
 ## [0.3.0] - 2019-02-21
 
