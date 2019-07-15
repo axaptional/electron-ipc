@@ -13,11 +13,11 @@ export class Message implements AbstractMessage {
     this.isError = data instanceof Error
   }
 
-  public static deserialize (message: AbstractMessage): Message {
-    const result = new Message(message.channel, message.data, message.isResponse)
-    if (message.isError) {
-      result.data = new Error(message.data.message)
-      result.data.name = message.data.name
+  public static deserialize ({ channel, data, isResponse, isError }: AbstractMessage): Message {
+    const result = new Message(channel, data, isResponse)
+    if (isError) {
+      result.data = new Error(data.message)
+      result.data.name = data.name
     }
     return result
   }
