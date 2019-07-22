@@ -5,11 +5,13 @@ export interface AbstractMessage {
   isError: boolean
 }
 
+export type MessageData = any | Error
+
 export class Message implements AbstractMessage {
 
   public isError: boolean
 
-  public constructor (public channel: string, public data: any | Error, public isResponse: boolean = false) {
+  public constructor (public channel: string, public data: MessageData, public isResponse: boolean = false) {
     this.isError = data instanceof Error
   }
 

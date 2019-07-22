@@ -3,7 +3,7 @@ import EventEmitter from 'eventemitter3'
 import { IpcEvent, IpcService } from './aliases'
 import { Handler, IpcListener, Persistence, TeardownFunction } from './handler'
 import { HandlerMap } from './handler-map'
-import { AbstractMessage, Message } from './message'
+import { AbstractMessage, Message, MessageData } from './message'
 import { OptionsProvider, OptionsStore } from './options'
 import { defined } from './utils'
 
@@ -105,7 +105,6 @@ export abstract class Agent<T extends IpcService> implements OptionsProvider<Opt
    */
   public post (channel: string, data: any, listener: ResponseListener): void
 
-  // TODO: The Promise should be rejected if an uncaught error occurred at the listening endpoint.
   /**
    * Posts a message to the given channel and calls the listener when a response is received.
    * If no response is given, the listener will be called with an undefined response instead.
@@ -114,7 +113,7 @@ export abstract class Agent<T extends IpcService> implements OptionsProvider<Opt
    * @param data The message to post
    * @param listener The listener to call once the response was received
    */
-  public post (channel: string, data: any | Error, listener?: ResponseListener): Promise<any> | void {
+  public post (channel: string, data: MessageData, listener?: ResponseListener): Promise<any> | void {
     if (defined(listener)) {
       this.postListener(channel, data, listener)
     } else {
@@ -127,7 +126,7 @@ export abstract class Agent<T extends IpcService> implements OptionsProvider<Opt
    * @param channel The channel to respond to
    * @param data The response data
    */
-  public respond (channel: string, data: any | Error): void {
+  public respond (channel: string, data: MessageData): void {
     this.curriedRespond(channel)(data)
   }
 
@@ -136,7 +135,7 @@ export abstract class Agent<T extends IpcService> implements OptionsProvider<Opt
    * @param channel The channel to send the request to
    * @param data The data to send
    */
-  public request (channel: string, data: any | Error): void {
+  public request (channel: string, data: MessageData): void {
     const message = new Message(channel, data)
     this.send(message.serialize())
   }
