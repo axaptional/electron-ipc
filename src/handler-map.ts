@@ -9,12 +9,12 @@ export class HandlerMap {
 
   private map: Map<Channel, WeakMap<Listener, Set<Handler>>> = new Map()
 
+  // NOTE: Since handlers are always uniquely created for each registration, they can be put into a set.
   private channelMap: Map<Channel, Set<Handler>> = new Map()
 
   public constructor (private linkedEmitter: EventEmitter<string>) {}
 
   // TODO: Remove channel entry from channelMap if handler array is empty
-  // TODO: Make attempts to remove non-existent handlers NOT throw an exception
 
   public add (channel: string, listener: Listener, handler: Handler): void {
     const listeners = Utils.computeIfAbsent(this.map, channel, new WeakMap())
@@ -41,7 +41,9 @@ export class HandlerMap {
   }
 
   public delete (channel: string, listener: Listener, handler: Handler): boolean {
+    if (!this.map.has(channel)) return false
     const listeners = this.map.get(channel)!
+    if (!listeners.has(listener)) return false
     const handlers = listeners.get(listener)!
     const result = handlers.delete(handler)
     Utils.removeIfPresent(this.channelMap, channel, handler)
@@ -78,7 +80,7 @@ export class HandlerMap {
 
   private cancelAll (channel?: string): void {
     const channels: string[] = []
-    if (defined(channel)) {
+    if (defined(channel) && this.channelMap.has(channel)) {
       channels.push(channel)
     } else {
       channels.push(...this.channelMap.keys())
