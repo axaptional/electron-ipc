@@ -1,7 +1,8 @@
 import EventEmitter from 'eventemitter3'
 import { Listener } from './agent'
+import { defined } from './conversions'
 import { Handler } from './handler'
-import { defined, Utils } from './utils'
+import { computeIfAbsent, removeIfPresent } from './map-helpers'
 
 type Channel = string
 
@@ -17,9 +18,9 @@ export class HandlerMap {
   // TODO: Remove channel entry from channelMap if handler array is empty
 
   public add (channel: string, listener: Listener, handler: Handler): void {
-    const listeners = Utils.computeIfAbsent(this.map, channel, new WeakMap())
-    const handlers = Utils.computeIfAbsent(listeners, listener, new Set())
-    const channelHandlers = Utils.computeIfAbsent(this.channelMap, channel, new Set())
+    const listeners = computeIfAbsent(this.map, channel, new WeakMap())
+    const handlers = computeIfAbsent(listeners, listener, new Set())
+    const channelHandlers = computeIfAbsent(this.channelMap, channel, new Set())
     channelHandlers.add(handler)
     handlers.add(handler)
   }
@@ -29,9 +30,9 @@ export class HandlerMap {
       for (const handler of this.getAllHandlers(channel, listener)) {
         this.linkedEmitter.removeListener(channel, handler.run)
         handler.cancel()
-        Utils.removeIfPresent(this.channelMap, channel, handler)
+        removeIfPresent(this.channelMap, channel, handler)
       }
-      return Utils.removeIfPresent(this.map, channel, listener)
+      return removeIfPresent(this.map, channel, listener)
     } else {
       this.linkedEmitter.removeAllListeners(channel)
       this.cancelAll(channel)
@@ -46,7 +47,7 @@ export class HandlerMap {
     if (!listeners.has(listener)) return false
     const handlers = listeners.get(listener)!
     const result = handlers.delete(handler)
-    Utils.removeIfPresent(this.channelMap, channel, handler)
+    removeIfPresent(this.channelMap, channel, handler)
     this.linkedEmitter.removeListener(channel, handler.run)
     handler.cancel()
     if (handlers.size === 0) {

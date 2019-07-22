@@ -1,11 +1,11 @@
 import Promise from 'any-promise'
 import EventEmitter from 'eventemitter3'
 import { IpcEvent, IpcService } from './aliases'
+import { defined } from './conversions'
 import { Handler, IpcListener, Persistence, TeardownFunction } from './handler'
 import { HandlerMap } from './handler-map'
 import { AbstractMessage, Message, MessageData } from './message'
 import { OptionsProvider, OptionsStore } from './options'
-import { defined } from './utils'
 
 /**
  * Represents a source of a response.

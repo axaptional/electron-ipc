@@ -1,6 +1,6 @@
 import { IpcEvent } from './aliases'
+import { coerceToError } from './conversions'
 import { AbstractMessage } from './message'
-import { Utils } from './utils'
 
 export type Persistence = 'on' | 'once' | 'never'
 
@@ -20,7 +20,7 @@ export class Handler {
   }
 
   public throw (error: any | Error): void {
-    this.cancel(Utils.coerceToError(error))
+    this.cancel(coerceToError(error))
   }
 
 }
