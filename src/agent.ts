@@ -261,7 +261,7 @@ export abstract class Agent<T extends IpcService> implements OptionsProvider<Opt
    */
   private onDataReceived (ipcEvent: IpcEvent, message: AbstractMessage) {
     const { data, channel, isResponse } = Message.deserialize(message)
-    const emitter: EventEmitter = (isResponse) ? this.responseEvents : this.requestEvents
+    const emitter = (isResponse) ? this.responseEvents : this.requestEvents
     emitter.emit(channel, data)
   }
 
