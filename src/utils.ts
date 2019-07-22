@@ -48,14 +48,4 @@ export class Utils {
     return false
   }
 
-  public static removeFromArray<T> (array: T[], item: T): boolean {
-    for (let i = 0; i < array.length; i++) {
-      if (array[i] === item) {
-        array.splice(i, 1)
-        return true
-      }
-    }
-    return false
-  }
-
 }
