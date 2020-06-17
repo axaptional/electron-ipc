@@ -8,10 +8,11 @@
 
 An easy-to-use symmetric wrapper around Electron's IPC API
 
-**Note:**
-This package is still a **work in progress** and
-**has not been extensively tested**.
-Therefore, it should not be used in any production environments yet.
+## 🛑 **DEPRECATION NOTICE**
+
+```diff
+- This repository/package is currently not maintained.
+```
 
 ## Features
 
